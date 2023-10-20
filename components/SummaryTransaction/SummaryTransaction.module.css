@@ -1,0 +1,6 @@
+.maxLong {
+    white-space: nowrap;        /* Prevent text from wrapping */
+    overflow: hidden;           /* Hide overflowing content */
+    text-overflow: ellipsis;    /* Display an ellipsis (...) for overflowed content */
+    max-width: 100px; 
+}

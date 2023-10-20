@@ -1,0 +1,50 @@
+.tableRowLayout {
+    display: grid;
+    grid-template-columns: 180px 110px 110px 110px;
+    grid-template-rows: 30px;
+    align-items: center;
+}
+
+.tableRowLayoutSubcategory {
+    display: grid;
+    grid-template-columns: 150px 110px 110px 110px;
+    margin-left: 30px;
+    grid-template-rows: 30px;
+    align-items: center;
+}
+
+.tableRowNewCategoryLayout {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 30px;
+    align-items: center;
+}
+
+.tableRowFooterLayout {
+    display: grid;
+    grid-template-columns: 180px 110px 110px 110px;
+    grid-template-rows: 30px;
+    align-items: center;
+    background-color: greenyellow;
+    color: black;
+    font-weight: 600;
+}
+
+.subCategoriesInput {
+    border: 1px solid transparent;
+    border-bottom: 1px solid greenyellow;
+}
+
+.subCategoriesInput:focus {
+    border: 1px solid greenyellow;
+    border-radius: 6px;
+    outline: none; /* Optional: Remove the default focus outline */
+}
+
+/* Remove the increment and decrement controls for number input */
+.subCategoriesInput::-webkit-inner-spin-button,
+.subCategoriesInput::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0; /* Optional: Set margin to control spacing */
+}

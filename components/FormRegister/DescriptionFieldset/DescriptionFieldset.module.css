@@ -1,0 +1,8 @@
+.textarea {
+    border-bottom: 1px solid greenyellow;
+}
+
+.textarea:focus {
+    border: 1px solid greenyellow;
+    outline: none; /* Optional: Remove the default focus outline */
+}
