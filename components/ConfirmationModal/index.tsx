@@ -4,12 +4,12 @@ import BorderDiv from '@/components/BorderDiv';
 import RegularButtonList from '@/components/RegularButtonList';
 import RegularButton from '@/components/RegularButton';
 
-interface ConfirmationActionModalProps {
+interface ConfirmationModalProps {
     message: string;
-    buttonsOptions: ButtonData[]
+    buttonsData: ButtonData[]
 }
 
-const ConfirmationActionModal: React.FC<ConfirmationActionModalProps> = ({message, buttonsOptions}) => {
+const ConfirmationModal: React.FC<ConfirmationModalProps> = ({message, buttonsData}) => {
 
     return (
         <>
@@ -20,7 +20,7 @@ const ConfirmationActionModal: React.FC<ConfirmationActionModalProps> = ({messag
                             <span>{message}</span>
                             <RegularButtonList>
                                 {
-                                    buttonsOptions.map((buttonOption) => {
+                                    buttonsData.map((buttonOption) => {
                                         return (
                                             <RegularButton
                                                 key={buttonOption.title}
@@ -39,4 +39,4 @@ const ConfirmationActionModal: React.FC<ConfirmationActionModalProps> = ({messag
     )
 }
 
-export default ConfirmationActionModal
+export default ConfirmationModal

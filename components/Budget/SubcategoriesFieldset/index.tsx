@@ -6,18 +6,18 @@ import ActionButton from "@/components/ActionButton"
 import EditSubcategoryInput from "@/components/Budget/BudgetRow/EditSubcategoryInputs"
 
 interface SubcategoriesBudgetFieldsetProps {
+    children?: React.ReactNode;
     setShowSubcategoriesFieldset: React.Dispatch<React.SetStateAction<boolean>>;
-    subCategoriesState: BudgetItem[] | undefined;
-    setSubCategoriesState: React.Dispatch<React.SetStateAction<BudgetItem[] | undefined>>;
-    addNewSubcategory: React.MouseEventHandler<HTMLButtonElement>;
+    addNewSubcategory?: React.MouseEventHandler<HTMLButtonElement>;
+    setComposeState: React.Dispatch<React.SetStateAction<BudgetItem[] | undefined>>;
 }
 
 const SubcategoriesBudgetFieldset: React.FC<SubcategoriesBudgetFieldsetProps> = ({
+    children,
     setShowSubcategoriesFieldset,
-    subCategoriesState,
-    setSubCategoriesState,
-    addNewSubcategory
+    addNewSubcategory,
 }) => {
+
     return (
         <>
             <fieldset className='my-4'>
@@ -28,22 +28,7 @@ const SubcategoriesBudgetFieldset: React.FC<SubcategoriesBudgetFieldsetProps> = 
                     <h3>Titulo</h3>
                     <h3>Monto presupuestado</h3>
                 </div>
-                    {
-                        <fieldset>
-                            {
-                                subCategoriesState?.map((subCategory) => {
-                                    return (
-                                        <EditSubcategoryInput
-                                            subcategoryID={subCategory.id}
-                                            subCategoryTitle={subCategory.category}
-                                            subCategoryAmount={subCategory.amount}
-                                            setSubcategoryState={setSubCategoriesState}
-                                        />
-                                    )
-                                })
-                            }
-                        </fieldset>
-                    }
+                {children}
             </fieldset>
             <div className='flex flex-col items-end mt-2'>
                 <ActionButton

@@ -10,16 +10,16 @@ interface AmountFieldsetProps {
     className?: string,
     title?: string,
     amount: number | undefined
-    setAmount?: React.Dispatch<React.SetStateAction<number | undefined>>,
+    setComposeState?: React.Dispatch<React.SetStateAction<number | BudgetItem[] | undefined>>,
     readOnly?: boolean
 }
 
-const AmountFieldset: React.FC<AmountFieldsetProps> = ({className, title = 'Cantidad', amount, setAmount, readOnly = false}) => {
+const AmountFieldset: React.FC<AmountFieldsetProps> = ({className, title = 'Cantidad', amount, setComposeState, readOnly = false}) => {
     
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         const {value} = event.target;
         const inputValue = extractNumberFromString(value); // Extract the number from the formated string input value
-        setAmount && setAmount(inputValue); // validating it exits and Set the state with the numeric value
+        setComposeState && setComposeState(inputValue); // validating it exits and Set the state with the numeric value
     };
 
     return(

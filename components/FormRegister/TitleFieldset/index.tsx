@@ -6,15 +6,31 @@ import styles from './Title.module.css'
 interface TitleFieldsetProps {
     className?: string,
     title: string | undefined,
-    setTitle: React.Dispatch<React.SetStateAction<string | undefined>>,
+    setComposeState: React.Dispatch<React.SetStateAction<BudgetItem[] | undefined>>,
+    itemID: number
     
 }
 
-const TitleFieldset: React.FC<TitleFieldsetProps> = ({className, title, setTitle}) => {
+// We receive the title from a map but we receive the setState updater from a compose state
+
+const TitleFieldset: React.FC<TitleFieldsetProps> = ({className, title, setComposeState, itemID}) => {
     
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-            const inputValue = event.target.value;
-            setTitle(inputValue);
+
+            const {value} = event.target;
+
+            setComposeState((prevState) => {
+                const newState = prevState?.map((item) => {
+                    if (item.id === itemID) {
+                        return {
+                            ...item,
+                            title: value
+                        };
+                    }
+                    return item;
+                });
+                return newState;
+            });
     };
 
     return (

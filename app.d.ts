@@ -13,6 +13,13 @@ type UserAccount = {
     id: number
 }
 
+type FormRegisterData = {
+    name: string,
+    email: string,
+    password: string,
+    confirmPassword: string
+}
+
 type Transaction = {
     type: string,
     date: string,
@@ -53,7 +60,7 @@ type DebtPaymentRecord = {
 
 type BudgetItem = {
     id: number;
-    category: string;
+    title: string;
     amount: number;
     used?: number;
     remaining?: number;
