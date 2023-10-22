@@ -8,6 +8,7 @@ import TitleFieldset from '@/components/FormRegister/TitleFieldset'
 import AmountFieldset from '@/components/FormRegister/AmountFieldset'
 import SubmitButton from '@/components/FormRegister/SubmitButton'
 import MessageInfo from '@/components/MessageInfo'
+import ConfirmationModal from '@/components/ConfirmationModal'
 
 import styles from '@/components/Budget/Budget.module.css'
 import formatMoney from '@/utils/formatMoney'
@@ -15,85 +16,26 @@ import {extractNumberFromString} from '@/utils/formatMoney'
 
 interface EditCategoryModalProps {
     setShowEditCategoryModal: React.Dispatch<React.SetStateAction<boolean>>;
-    categoryTitle: string;
-    categoryAmount: number;
-    setComposeState: React.Dispatch<React.SetStateAction<BudgetItem[] | undefined>>;
-    itemID: number;
+    showConfirmationModal: boolean;
     setShowConfirmationModal: React.Dispatch<React.SetStateAction<boolean>>;
-    children?: React.ReactNode;
-    subCategories?: BudgetItem[];
+    selectedCategory: BudgetItem | undefined;
+    setSelectedCategory: React.Dispatch<React.SetStateAction<BudgetItem | undefined>>;
+    setBudgetData: React.Dispatch<React.SetStateAction<BudgetItem[] | undefined>>;
 }
 
 const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
     setShowEditCategoryModal,
-    categoryTitle,
-    categoryAmount,
-    setComposeState,
-    itemID,
+    showConfirmationModal,
     setShowConfirmationModal,
-    children,
-    subCategories,
+    selectedCategory,
+    setSelectedCategory,
+    setBudgetData,
 }) => {
 
     // The state of the fieldset that show the subcategories inputs
-    const [showSubcategoriesFieldset, setShowSubcategoriesFieldset] = React.useState<boolean>(subCategories ? true : false)
+    const [showSubcategoriesFieldset, setShowSubcategoriesFieldset] = React.useState<boolean>(selectedCategory?.subcategories ? true : false)
 
-    // subCategoriesState can't be undefined because we need to map it when the showSubcategoriesFieldset is true
-    // if(showSubcategoriesFieldset && !subCategories) {
-
-
-    //     setComposeState((prevState) => {
-    //         const newState = prevState?.map((category) => {
-    //             if (category.id === itemID) {
-    //                 category.subcategories?.map((subcategory) => {
-    //                     if (subcategory.id === subcategoryID) {
-    //                         return {
-    //                             ...subcategory,
-    //                             amount: value
-    //                         };
-    //                     }
-    //                     return subcategory;
-    //                 })
-    //             }
-    //         })
-    //         return newState;
-    //     })
-
-
-        // setSubCategoriesState([{
-        //     id: Math.floor(Math.random() * (1100 - 1003 + 1)) + 1003,
-        //     category: '',
-        //     amount: 0
-        // }])
-
-
-    //     setComposeState((prevState) => {
-    //         const newState = prevState?.map((category) => {
-    //             if (category.id === itemID) {
-    //                 category.subcategories?.map((subcategory) => {
-    //                     if(subcategory.id === 1) {
-    //                         return {
-    //                             ...subcategory,
-    //                             category: '',
-    //                             amount: 0
-    //                     }
-    //                     }
-    //                 })
-    //             }
-    //         })
-    //     })
-    
-
-    // But we need to hide the subcategories fieldset when the subcategoriesState is empty
-    // The useEffect avoid an infinity loop when the subcategoriesState is empty
-    React.useEffect(() => {
-        if (subCategories?.length === 0) {
-            setShowSubcategoriesFieldset(false);
-        }
-    }, [subCategories]);
-
-
-    const totalSubcategoriesAmount = subCategories?.reduce((acc, subcategory) => {
+    const totalSubcategoriesAmount = selectedCategory?.subcategories?.reduce((acc, subcategory) => {
         return acc + subcategory.amount
     }, 0)
 
@@ -107,127 +49,129 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-    }
-
-    // const handleAddNewSubcategory = () => {
-    //     setComposeState((prevState) => {
-    //         const newState = prevState?.map((category) => {
-    //             if (category.id === itemID) {
-    //                 category.subcategories = category.subcategories ? [...category.subcategories] : []
-    //                 category.subcategories = [...category.subcategories]
-    //                 category.subcategories.push({
-    //                     id: Math.floor(Math.random() * (1100 - 1003 + 1)) + 1003,
-    //                     title: '',
-    //                     amount: 0,
-    //                     used: 0,
-    //                     remaining: 0
-    //                 })
-    //             }
-    //             return category;
-    //         })
-    //         return newState;
-    //     })
-    // }
-
-    const handleAddNewSubcategory = () => {
-        setComposeState((prevState) => {
+        setBudgetData((prevState) => {
             const newState = prevState?.map((category) => {
-                if (category.id === itemID) {
-                    const subcategories = 
-                        category.subcategories
-                            ? category.subcategories.map((subcategory) => ({ ...subcategory })) 
-                            : [];
-                    subcategories?.push({
-                        id: Math.floor(Math.random() * (1100 - 1003 + 1)) + 1003,
-                        title: '',
-                        amount: 0,
-                        used: 0,
-                        remaining: 0
-                    });
-                    category.subcategories = subcategories;
+                if (category.id === selectedCategory?.id) {
+                    return selectedCategory
                 }
-                
-                return category;
-            });
-            return newState;
-        });
-    };
-
-    const handleDeleteAllSubcategories = () => {
-        setComposeState((prevState) => {
-            const newState = prevState?.map((category) => {
-                if (category.id === itemID) {
-                    category.subcategories = []
-                }
-                return category;
+                return category
             })
-            return newState;
+            return newState
         })
+        setShowEditCategoryModal(false)
     }
+
+    
 
     const handleClickDeleteCategory = () => {
         setShowConfirmationModal(true)
     }
 
-    const handleClickInputText = (event: React.ChangeEvent<HTMLInputElement>, subcategoryID: number) => {
+    const TitleFieldsetOnChange = (value: string) => {
+        setSelectedCategory((currentCategory) => {
+            return {
+                ...currentCategory,
+                title: value
+            }
+        })
+    }
+
+    const AmountFieldsetOnChange = (value: string) => {
+        setSelectedCategory((currentCategory) => {
+            return {
+                ...currentCategory,
+                amount: value
+            }
+        })
+    }
+
+    const confirmationMondalDeletecategory = [
+        {
+            title: 'Si',
+            id: 1,
+            onClick: () => {
+                setShowEditCategoryModal(false)
+                setShowConfirmationModal(false)
+                setComposeState((prevState) => {
+                    const newState = prevState?.filter((category) => {
+                        return category.id !== selectedCategory?.id
+                    })
+                    return newState;
+                })
+            },
+            
+        },
+        {
+            title: 'No',
+            id: 2,
+            onClick: () => {
+                setShowConfirmationModal(false)
+            }
+        }
+    ]
+
+    
+    const handleAddNewSubcategory = () => {
+        setSelectedCategory((currentCategory) => {
+            const newSubcategory = {
+                id: Math.floor(Math.random() * (1100 - 1003 + 1)) + 1003,
+                title: '',
+                amount: 0
+            };
+            const subcategories = currentCategory?.subcategories || [];
+            const newSubcategories = [...subcategories, newSubcategory];
+            return {
+                ...currentCategory,
+                subcategories: newSubcategories
+            };
+        });
+    };
+    
+    const handleOnChangeInputTitleSubcategory = (event: React.ChangeEvent<HTMLInputElement>, subcategoryID: number) => {
         const { value } = event.target;
-        setComposeState((prevState) => {
-            const newState = prevState?.map((category) => {
-                if (category.id === itemID) {
-                    const subcategories = category.subcategories?.map((subcategory) => {
-                        if (subcategory.id === subcategoryID) {
-                            return {
-                                ...subcategory,
-                                title: value
-                            };
-                        }
-                        return subcategory;
-                    });
-                    category.subcategories = subcategories;
+        setSelectedCategory((currentCategory) => {
+            const newSubcategories = currentCategory?.subcategories?.map((subcategory) => {
+                if (subcategory.id === subcategoryID) {
+                    return { ...subcategory, title: value };
                 }
-                return category;
+                return subcategory;
             });
-            return newState;
+            return { ...currentCategory, subcategories: newSubcategories };
         });
     };
 
-    const handleClickInputNumber = (event: React.ChangeEvent<HTMLInputElement>, subcategoryID: number) => {
+    const handleOnChangeInputAmountSubcategory = (event: React.ChangeEvent<HTMLInputElement>, subcategoryID: number) => {
         const { value } = event.target;
-        const valueAsNumber = extractNumberFromString(value);
-
-        setComposeState((prevState) => {
-            const newState = prevState?.map((category) => {
-                if (category.id === itemID) {
-                    const subcategories = category.subcategories?.map((subcategory) => {
-                        if (subcategory.id === subcategoryID) {
-                            return {
-                                ...subcategory,
-                                amount: valueAsNumber
-                            };
-                        }
-                        return subcategory;
-                    });
-                    category.subcategories = subcategories;
+        setSelectedCategory((currentCategory) => {
+            const newSubcategories = currentCategory?.subcategories?.map((subcategory) => {
+                if (subcategory.id === subcategoryID) {
+                    return { ...subcategory, amount: extractNumberFromString(value) };
                 }
-                return category;
+                return subcategory;
             });
-            return newState;
+            return { ...currentCategory, subcategories: newSubcategories };
         });
     };
 
-    const deleteSubcategoryHandleClick = () => {
-        setComposeState((prevState) => {
-            const newState = prevState?.map((category) => {
-                if (category.id === itemID) {
-                    category.subcategories = category.subcategories?.filter((subcategory) => {
-                        return subcategory.id !== 1;
-                    });
-                }
-                return category;
+    const deleteSubcategoryHandleClick = (subcategoryID : number) => {
+        setSelectedCategory((currentCategory) => {
+            const newSubcategories = currentCategory?.subcategories?.filter((subcategory) => {
+                return subcategory.id !== subcategoryID;
             });
-            return newState;
+            return { ...currentCategory, subcategories: newSubcategories };
         });
     }
+
+    const handleDeleteAllSubcategories = () => {
+        setSelectedCategory((currentCategory) => {
+            return {
+                ...currentCategory,
+                subcategories: []
+            }
+        })
+        setShowSubcategoriesFieldset(false)
+    }
+
 
     return (
         <>
@@ -241,16 +185,15 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
                                         <div className='py-2'>
                                             <ElementTitle title='Editar categoria' />
                                             <TitleFieldset 
-                                                title={categoryTitle}
-                                                setComposeState={setComposeState}
-                                                itemID={itemID}
+                                                title={selectedCategory?.title}
+                                                onChange={TitleFieldsetOnChange}
                                             />
                                             {
                                                 !showSubcategoriesFieldset && (
                                                     <AmountFieldset
                                                         title='Monto presupuestado'
-                                                        amount={categoryAmount}
-                                                        setComposeState={setComposeState}
+                                                        amount={selectedCategory?.amount}
+                                                        onChange={AmountFieldsetOnChange}
                                                     />
                                                 )
                                             }
@@ -258,7 +201,7 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
                                                 showSubcategoriesFieldset && (
                                                     <>
                                                         <AmountFieldset
-                                                            title='Monto presupuestado'
+                                                            titleElement='Monto presupuestado'
                                                             className=' bg-greenYellow text-black rounded-lg'
                                                             amount={totalSubcategoriesAmount}
                                                             readOnly={true}
@@ -274,11 +217,17 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
                                                 type='delete'
                                                 onClick={handleClickDeleteCategory}
                                             />
+                                                { showConfirmationModal && (
+                                                    <ConfirmationModal
+                                                        buttonsData={confirmationMondalDeletecategory}
+                                                        message='¿Estas seguro que quieres eliminar esta categoria?'
+                                                    />
+                                                )}
                                             {
                                                 !showSubcategoriesFieldset && (
                                                     <div className='flex justify-end'>
                                                         <ActionButton 
-                                                            title='Agregar subcategoria'
+                                                            title='Crear Subcategorias'
                                                             type='add'
                                                             onClick={handleShowSubcategoriesFieldset}
                                                         />
@@ -296,37 +245,27 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
                                                             <h3>Monto presupuestado</h3>
                                                         </div>
                                                         
-                                                        {
-                                                            subCategories?.map((subCategory) => {
-                                                                return (
-                                                                    <>
-                                                                            <div className='flex justify-between items-center gap-4 mb-1'>
-                                                                                <input 
-                                                                                    type="text"
-                                                                                    className={`${styles.subCategoriesInput} border-1 px-2 bg-backgroundBlue border-b-greenYellow w-2/4 `}
-                                                                                    value={subCategory.title}
-                                                                                    onChange={(event) => handleClickInputText(event, subCategory.id)}
-                                                                                />
-                                                                                <input 
-                                                                                    type="text"
-                                                                                    className={`${styles.subCategoriesInput} border-1 px-2 bg-backgroundBlue border-b-greenYellow w-2/4 text-end`}
-                                                                                    value={formatMoney(subCategory.amount)}
-                                                                                    onChange={(event) => handleClickInputNumber(event, subCategory.id)}
-                                                                                />
-                                                                                <button onClick={deleteSubcategoryHandleClick}>X</button>
-                                                                            </div>
-                                                                            {/* <EditSubcategoryInput
-                                                                                key={subCategory.id}
-                                                                                subcategoryID={subCategory.id}
-                                                                                itemID={itemID}
-                                                                                subCategoryTitle={subCategory.title}
-                                                                                subCategoryAmount={subCategory.amount}
-                                                                                setComposeState={setComposeState}
-                                                                            /> */}
-                                                                    </>
-                                                                )
-                                                            })
-                                                        }
+                                                        { selectedCategory?.subcategories?.map((subCategory) => {
+                                                            return (
+                                                                <>
+                                                                        <div className='flex justify-between items-center gap-4 mb-1'>
+                                                                            <input 
+                                                                                type="text"
+                                                                                className={`${styles.subCategoriesInput} border-1 px-2 bg-backgroundBlue border-b-greenYellow w-2/4 `}
+                                                                                value={subCategory.title}
+                                                                                onChange={(event) => handleOnChangeInputTitleSubcategory(event, subCategory.id)}
+                                                                            />
+                                                                            <input 
+                                                                                type="text"
+                                                                                className={`${styles.subCategoriesInput} border-1 px-2 bg-backgroundBlue border-b-greenYellow w-2/4 text-end`}
+                                                                                value={formatMoney(subCategory.amount)}
+                                                                                onChange={(event) => handleOnChangeInputAmountSubcategory(event, subCategory.id)}
+                                                                            />
+                                                                            <button onClick={() => deleteSubcategoryHandleClick(subCategory.id)}>X</button>
+                                                                        </div>
+                                                                </>
+                                                            )
+                                                            })}
 
                                                     </fieldset>
                                                     <div className='flex flex-col items-end mt-2'>
@@ -352,7 +291,6 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
                             
                         </div>
                     </PopUpLayer>
-                    {children}
         </>
     )
 }

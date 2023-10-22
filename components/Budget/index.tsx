@@ -14,8 +14,6 @@ import BudgetRowAddNewCategory from '@/components/Budget/BudgetRowAddNewCategory
 import BudgetRowFooter from '@/components/Budget/BudgetRowFooter'
 import EditCategoryModal from '@/components/Budget/EditCategoryModal'
 
-import ConfirmationModal from '@/components/ConfirmationModal'
-
 interface BudgetProps {
     userBudget: BudgetItem[];
     title: string;
@@ -26,48 +24,11 @@ const Budget: React.FC<BudgetProps> = ({userBudget, title, type}) => {
 
     const[showEditCategoryModal, setShowEditCategoryModal] = React.useState<boolean>(false)
     const[showConfirmationModal, setShowConfirmationModal] = React.useState<boolean>(false)
-    const[showSubcategoriesFieldset, setShowSubcategoriesFieldset] = React.useState<boolean>(false)
 
     const[budgetData, setBudgetData] = React.useState<BudgetItem[] | undefined>(userBudget)
     const[selectedCategory, setSelectedCategory] = React.useState<BudgetItem | undefined>(undefined)
-
-    React.useEffect(() => {
-        if(selectedCategory) {
-            const sellectedCategoryUpdated = budgetData?.map(category => {
-                if(category.id === selectedCategory.id) {
-                    return selectedCategory
-                }
-                return category
-            })
-            setBudgetData(sellectedCategoryUpdated)
-        }
-    }, [userBudget])
     
-    console.log(budgetData)
-    console.log(selectedCategory)
-
     const [totalAmount, totalUsed, totalRemaining] = calculateBudgetTotals(userBudget)
-
-
-    // The data for the confirmation modal buttons
-    const confirmationMondalButtonsData = [
-        {
-            title: 'Si',
-            id: 1,
-            onClick: () => {
-                setShowEditCategoryModal(false)
-                setShowConfirmationModal(false)
-            },
-            
-        },
-        {
-            title: 'No',
-            id: 2,
-            onClick: () => {
-                setShowConfirmationModal(false)
-            }
-        }
-    ]
 
     const budgetRowHandleClick = (category: BudgetItem) => {
         setSelectedCategory(category)
@@ -92,23 +53,15 @@ const Budget: React.FC<BudgetProps> = ({userBudget, title, type}) => {
                                     categoryRemaining={category.remaining}
                                     onClick={() => budgetRowHandleClick(category)}
                                 >
-                                    { showEditCategoryModal && selectedCategory && (
+                                    { showEditCategoryModal && (
                                         <EditCategoryModal
                                             setShowEditCategoryModal={setShowEditCategoryModal}
-                                            setComposeState={setBudgetData}
-                                            categoryTitle={selectedCategory.title}
-                                            categoryAmount={selectedCategory.amount}
-                                            itemID={selectedCategory.id}
-                                            subCategories={selectedCategory.subcategories}
+                                            showConfirmationModal={showConfirmationModal}
                                             setShowConfirmationModal={setShowConfirmationModal}
-                                        >
-                                            { showConfirmationModal && (
-                                                <ConfirmationModal
-                                                    message='¿Estás seguro de eliminar esta categoria?'
-                                                    buttonsData={confirmationMondalButtonsData}
-                                                />
-                                            )}
-                                        </EditCategoryModal>                                            
+                                            selectedCategory={selectedCategory}
+                                            setSelectedCategory={setSelectedCategory}
+                                            setBudgetData={setBudgetData}
+                                        />                                         
                                     )}
                                 </BudgetRow>
                                 {
@@ -125,7 +78,7 @@ const Budget: React.FC<BudgetProps> = ({userBudget, title, type}) => {
                                 }
                             </>
                         ))
-            }
+                    }
                     <BudgetRowAddNewCategory />
                     <BudgetRowFooter
                         amount={totalAmount}

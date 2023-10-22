@@ -4,28 +4,27 @@ import FieldsetTitle from "@/components/FormRegister/FieldsetTitle";
 import styles from './AmountFielset.module.css'
 import formatMoney from "@/utils/formatMoney";
 import { extractNumberFromString } from "@/utils/formatMoney";
-import { set } from "date-fns";
 
 interface AmountFieldsetProps {
     className?: string,
-    title?: string,
+    titleElement?: string,
     amount: number | undefined
-    setComposeState?: React.Dispatch<React.SetStateAction<number | BudgetItem[] | undefined>>,
+    onChange?: React.ChangeEventHandler<HTMLInputElement>,
     readOnly?: boolean
 }
 
-const AmountFieldset: React.FC<AmountFieldsetProps> = ({className, title = 'Cantidad', amount, setComposeState, readOnly = false}) => {
+const AmountFieldset: React.FC<AmountFieldsetProps> = ({className, titleElement = 'Cantidad', amount, onChange, readOnly = false}) => {
     
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         const {value} = event.target;
         const inputValue = extractNumberFromString(value); // Extract the number from the formated string input value
-        setComposeState && setComposeState(inputValue); // validating it exits and Set the state with the numeric value
+        onChange && onChange(inputValue)
     };
 
     return(
         <>
             <fieldset className="mb-6 w-full">
-                <FieldsetTitle title={title} />
+                <FieldsetTitle title={titleElement} />
                 <input 
                     type="text" 
                     readOnly={readOnly}

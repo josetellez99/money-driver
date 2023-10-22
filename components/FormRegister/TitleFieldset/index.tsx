@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from "react";
+import React from "react";
 
 import FieldsetTitle from "@/components/FormRegister/FieldsetTitle";
 import styles from './Title.module.css'
@@ -6,31 +6,17 @@ import styles from './Title.module.css'
 interface TitleFieldsetProps {
     className?: string,
     title: string | undefined,
-    setComposeState: React.Dispatch<React.SetStateAction<BudgetItem[] | undefined>>,
-    itemID: number
-    
+    onChange: React.ChangeEventHandler<HTMLInputElement>  
 }
 
 // We receive the title from a map but we receive the setState updater from a compose state
 
-const TitleFieldset: React.FC<TitleFieldsetProps> = ({className, title, setComposeState, itemID}) => {
+const TitleFieldset: React.FC<TitleFieldsetProps> = ({className, title, onChange}) => {
     
-    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (event: React.ChangeEventHandler<HTMLInputElement>) => {
 
             const {value} = event.target;
-
-            setComposeState((prevState) => {
-                const newState = prevState?.map((item) => {
-                    if (item.id === itemID) {
-                        return {
-                            ...item,
-                            title: value
-                        };
-                    }
-                    return item;
-                });
-                return newState;
-            });
+            onChange(value)
     };
 
     return (
