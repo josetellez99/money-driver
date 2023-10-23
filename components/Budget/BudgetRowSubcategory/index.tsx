@@ -11,8 +11,8 @@ interface BudgetRowProps {
 }
 const BudgetRowSubcategory: React.FC<BudgetRowProps> = ({ category, amount, used, remaining }) => {
     return (
-        <tr className={`${styles.tableRowLayoutSubcategory} border border-greenYellow rounded-lg mb-2 cursor-pointer`}>
-            <td className='border-r border-greenYellow px-2'>{category}</td>
+        <tr className={`${styles.tableRowLayoutSubcategory} border border-greenYellow text-sm rounded-lg mb-2 cursor-pointer`}>
+            <td className='border-r border-greenYellow px-2 truncate max-w-xs'>{category}</td>
             <td className='border-r border-greenYellow text-center'>{formatMoney(amount)}</td>
             <td className='border-r border-greenYellow text-center'>{formatMoney(used)}</td>
             <td className=' text-center'>{formatMoney(remaining)}</td>

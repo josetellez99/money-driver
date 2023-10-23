@@ -12,7 +12,7 @@ import BudgetRow from '@/components/Budget/BudgetRow'
 import BudgetRowSubcategory from '@/components/Budget/BudgetRowSubcategory'
 import BudgetRowAddNewCategory from '@/components/Budget/BudgetRowAddNewCategory'
 import BudgetRowFooter from '@/components/Budget/BudgetRowFooter'
-import EditCategoryModal from '@/components/Budget/EditCategoryModal'
+import CategoryModal from '@/components/Budget/CategoryModal'
 
 interface BudgetProps {
     userBudget: BudgetItem[];
@@ -23,16 +23,22 @@ interface BudgetProps {
 const Budget: React.FC<BudgetProps> = ({userBudget, title, type}) => {
 
     const[showEditCategoryModal, setShowEditCategoryModal] = React.useState<boolean>(false)
+    const[showNewCategoryModal, setShowNewCategoryModal] = React.useState<boolean>(false)
     const[showConfirmationModal, setShowConfirmationModal] = React.useState<boolean>(false)
 
-    const[budgetData, setBudgetData] = React.useState<BudgetItem[] | undefined>(userBudget)
+    const[budgetData, setBudgetData] = React.useState<BudgetItem[]>(userBudget)
     const[selectedCategory, setSelectedCategory] = React.useState<BudgetItem | undefined>(undefined)
+    const[newCategory, setNewCategory] = React.useState<BudgetItem | undefined>(undefined)
     
-    const [totalAmount, totalUsed, totalRemaining] = calculateBudgetTotals(userBudget)
+    const [totalAmount, totalUsed, totalRemaining] = calculateBudgetTotals(budgetData)
 
     const budgetRowHandleClick = (category: BudgetItem) => {
         setSelectedCategory(category)
         setShowEditCategoryModal(true)
+    }
+
+    const budgetRowAddNewCategoryHandleClick = () => {
+        setShowNewCategoryModal(true)
     }
 
     return (
@@ -54,13 +60,14 @@ const Budget: React.FC<BudgetProps> = ({userBudget, title, type}) => {
                                     onClick={() => budgetRowHandleClick(category)}
                                 >
                                     { showEditCategoryModal && (
-                                        <EditCategoryModal
-                                            setShowEditCategoryModal={setShowEditCategoryModal}
+                                        <CategoryModal
+                                            setShowCategoryModal={setShowEditCategoryModal}
                                             showConfirmationModal={showConfirmationModal}
                                             setShowConfirmationModal={setShowConfirmationModal}
-                                            selectedCategory={selectedCategory}
-                                            setSelectedCategory={setSelectedCategory}
+                                            currentCategory={selectedCategory}
+                                            setCurrentCategory={setSelectedCategory}
                                             setBudgetData={setBudgetData}
+                                            type='Edit'
                                         />                                         
                                     )}
                                 </BudgetRow>
@@ -79,7 +86,21 @@ const Budget: React.FC<BudgetProps> = ({userBudget, title, type}) => {
                             </>
                         ))
                     }
-                    <BudgetRowAddNewCategory />
+                    <BudgetRowAddNewCategory
+                        onClick={budgetRowAddNewCategoryHandleClick}
+                    >
+                        { showNewCategoryModal && (
+                            <CategoryModal
+                                setShowCategoryModal={setShowNewCategoryModal}
+                                showConfirmationModal={showConfirmationModal}
+                                setShowConfirmationModal={setShowConfirmationModal}
+                                currentCategory={newCategory}
+                                setCurrentCategory={setNewCategory}
+                                setBudgetData={setBudgetData}
+                                type='Create'
+                            /> 
+                        )}
+                    </BudgetRowAddNewCategory>
                     <BudgetRowFooter
                         amount={totalAmount}
                         used={totalUsed}

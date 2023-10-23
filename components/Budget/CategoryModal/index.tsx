@@ -14,113 +14,98 @@ import styles from '@/components/Budget/Budget.module.css'
 import formatMoney from '@/utils/formatMoney'
 import {extractNumberFromString} from '@/utils/formatMoney'
 
-interface EditCategoryModalProps {
-    setShowEditCategoryModal: React.Dispatch<React.SetStateAction<boolean>>;
+interface CategoryModalProps {
+    setShowCategoryModal: React.Dispatch<React.SetStateAction<boolean>>;
     showConfirmationModal: boolean;
     setShowConfirmationModal: React.Dispatch<React.SetStateAction<boolean>>;
-    selectedCategory: BudgetItem | undefined;
-    setSelectedCategory: React.Dispatch<React.SetStateAction<BudgetItem | undefined>>;
-    setBudgetData: React.Dispatch<React.SetStateAction<BudgetItem[] | undefined>>;
+    currentCategory: BudgetItem | undefined;
+    setCurrentCategory: React.Dispatch<React.SetStateAction<BudgetItem | undefined>>;
+    setBudgetData: React.Dispatch<React.SetStateAction<BudgetItem[]>>;
+    type: 'Create' | 'Edit';
 }
 
-const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
-    setShowEditCategoryModal,
+const CategoryModal: React.FC<CategoryModalProps> = ({
+    setShowCategoryModal,
     showConfirmationModal,
     setShowConfirmationModal,
-    selectedCategory,
-    setSelectedCategory,
+    currentCategory,
+    setCurrentCategory,
     setBudgetData,
+    type
 }) => {
 
     // The state of the fieldset that show the subcategories inputs
-    const [showSubcategoriesFieldset, setShowSubcategoriesFieldset] = React.useState<boolean>(selectedCategory?.subcategories ? true : false)
+    const [showSubcategoriesFieldset, setShowSubcategoriesFieldset] = React.useState<boolean>(currentCategory?.subcategories ? true : false)
 
-    const totalSubcategoriesAmount = selectedCategory?.subcategories?.reduce((acc, subcategory) => {
-        return acc + subcategory.amount
-    }, 0)
 
     const handleClickClosePopUp = () => {
-        setShowEditCategoryModal(false)
+        setShowCategoryModal(false)
     }
 
     const handleShowSubcategoriesFieldset = () => {
         setShowSubcategoriesFieldset(true)
-        setSelectedCategory((currentCategory) => {
+        setCurrentCategory((currentCategory) => {
             const newSubcategory = {
                 id: Math.floor(Math.random() * (1100 - 1003 + 1)) + 1003,
                 title: '',
-                amount: 0
+                amount: 0,
+                used: 0,
+                remaining: 0
             };
             const subcategories = currentCategory?.subcategories || [];
             const newSubcategories = [...subcategories, newSubcategory];
-            return {
+
+            const newCurrentCategory = {
                 ...currentCategory,
+                amount: 0,
                 subcategories: newSubcategories
-            };
+            }
+            return newCurrentCategory
         });
     }
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        setBudgetData((prevState) => {
-            const newState = prevState?.map((category) => {
-                if (category.id === selectedCategory?.id) {
-                    return selectedCategory
-                }
-                return category
+
+        if (type === 'Create') {
+            setBudgetData((prevState) => {
+                const newState = prevState?.concat(currentCategory)
+                return newState
             })
-            return newState
-        })
-        setShowEditCategoryModal(false)
+            setCurrentCategory(undefined)
+        } else if (type === 'Edit') {
+            setBudgetData((prevState) => {
+                const newState = prevState?.map((category) => {
+                    if (category.id === currentCategory?.id) {
+                        return currentCategory
+                    }
+                    return category
+                })
+                return newState
+            })
+        }
+
+        setShowCategoryModal(false)
     }
 
        //This use effect is to make sure that the fieldset is not shown when the subcategories array is empty
        React.useEffect(() => {
-        if(selectedCategory?.subcategories?.length === 0) {
+        if(currentCategory?.subcategories?.length === 0) {
             setShowSubcategoriesFieldset(false)
         }
-    }, [selectedCategory?.subcategories])
+    }, [currentCategory?.subcategories])
 
-    const handleClickDeleteCategory = () => {
-        setShowConfirmationModal(true)
-        setBudgetData((prevState) => {
-            const newState = prevState?.filter((category) => {
-                if (category.id !== selectedCategory?.id) {
-                    return selectedCategory
-                }
-            })
-            return newState
-        })
-    }
-
-    const TitleFieldsetOnChange = (value: string) => {
-        setSelectedCategory((currentCategory) => {
-            return {
-                ...currentCategory,
-                title: value
-            }
-        })
-    }
-
-    const AmountFieldsetOnChange = (value: string) => {
-        setSelectedCategory((currentCategory) => {
-            return {
-                ...currentCategory,
-                amount: value
-            }
-        })
-    }
 
     const confirmationMondalDeletecategory = [
         {
             title: 'Si',
             id: 1,
             onClick: () => {
-                setShowEditCategoryModal(false)
+                setShowCategoryModal(false)
                 setShowConfirmationModal(false)
-                setComposeState((prevState) => {
+                setBudgetData((prevState) => {
                     const newState = prevState?.filter((category) => {
-                        return category.id !== selectedCategory?.id
+                        return category.id !== currentCategory?.id
                     })
                     return newState;
                 })
@@ -136,9 +121,33 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
         }
     ]
 
+    const handleClickDeleteCategory = () => {
+        setShowConfirmationModal(true)
+    }
+
+    const TitleFieldsetOnChange = (value: string) => {
+        setCurrentCategory((currentCategory) => {
+            return {
+                ...currentCategory,
+                title: value
+            }
+        })
+    }
+
+    const AmountFieldsetOnChange = (value: string) => {
+        setCurrentCategory((currentCategory) => {
+            return {
+                ...currentCategory,
+                amount: value
+            }
+        })
+    }
+
+   
+
     
     const handleAddNewSubcategory = () => {
-        setSelectedCategory((currentCategory) => {
+        setCurrentCategory((currentCategory) => {
             const newSubcategory = {
                 id: Math.floor(Math.random() * (1300 - 1000 + 1)) + 1000,
                 title: '',
@@ -155,7 +164,7 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
     
     const handleOnChangeInputTitleSubcategory = (event: React.ChangeEvent<HTMLInputElement>, subcategoryID: number) => {
         const { value } = event.target;
-        setSelectedCategory((currentCategory) => {
+        setCurrentCategory((currentCategory) => {
             const newSubcategories = currentCategory?.subcategories?.map((subcategory) => {
                 if (subcategory.id === subcategoryID) {
                     return { ...subcategory, title: value };
@@ -168,20 +177,30 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
 
     const handleOnChangeInputAmountSubcategory = (event: React.ChangeEvent<HTMLInputElement>, subcategoryID: number) => {
         const { value } = event.target;
-        setSelectedCategory((currentCategory) => {
+        setCurrentCategory((currentCategory) => {
             const newSubcategories = currentCategory?.subcategories?.map((subcategory) => {
                 if (subcategory.id === subcategoryID) {
                     return { ...subcategory, amount: extractNumberFromString(value) };
                 }
                 return subcategory;
             });
-            return { ...currentCategory, subcategories: newSubcategories };
+
+            const totalSubcategoriesAmount = newSubcategories?.reduce((acc, subcategory) => {
+                return acc + subcategory.amount
+            }, 0)
+
+            const newCurrentCategory = {
+                ...currentCategory,
+                amount: totalSubcategoriesAmount,
+                subcategories: newSubcategories
+            }
+            return newCurrentCategory;
         });
     };
 
     const deleteSubcategoryHandleClick = (event: React.MouseEvent<HTMLButtonElement>, subcategoryID : number) => {
         event.preventDefault();
-        setSelectedCategory((currentCategory) => {
+        setCurrentCategory((currentCategory) => {
             const newSubcategories = currentCategory?.subcategories?.filter((subcategory) => {
                 return subcategory.id !== subcategoryID;
             });
@@ -190,7 +209,7 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
     }
 
     const handleDeleteAllSubcategories = () => {
-        setSelectedCategory((currentCategory) => {
+        setCurrentCategory((currentCategory) => {
             return {
                 ...currentCategory,
                 subcategories: []
@@ -210,40 +229,40 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
                                     className='bg-backgroundBlue'
                                     >
                                         <div className='py-2'>
-                                            <ElementTitle title='Editar categoria' />
+                                            <ElementTitle title={type === 'Create' ? 'Crear categoria' : 'Editar categoria'} />
                                             <TitleFieldset 
-                                                title={selectedCategory?.title}
+                                                title={currentCategory?.title}
                                                 onChange={TitleFieldsetOnChange}
                                             />
                                             {
                                                 !showSubcategoriesFieldset && (
                                                     <AmountFieldset
                                                         title='Monto presupuestado'
-                                                        amount={selectedCategory?.amount}
+                                                        amount={currentCategory?.amount}
                                                         onChange={AmountFieldsetOnChange}
                                                     />
                                                 )
                                             }
-                                            {
-                                                showSubcategoriesFieldset && (
+                                            { showSubcategoriesFieldset && (
                                                     <>
                                                         <AmountFieldset
                                                             titleElement='Monto presupuestado'
                                                             className=' bg-greenYellow text-black rounded-lg'
-                                                            amount={totalSubcategoriesAmount}
+                                                            amount={currentCategory?.amount}
                                                             readOnly={true}
                                                             />
                                                         <MessageInfo
                                                             message='El monto presupuestado será el total de la suma de las subcategorias'
                                                             />
                                                     </>
-                                                )
-                                            }
-                                            <ActionButton 
-                                                title='Eliminar esta categoria'
-                                                type='delete'
-                                                onClick={handleClickDeleteCategory}
-                                            />
+                                            )}
+                                            { type === 'Edit' && (
+                                                    <ActionButton 
+                                                        title='Eliminar esta categoria'
+                                                        type='delete'
+                                                        onClick={handleClickDeleteCategory}
+                                                    />
+                                            )}
                                                 { showConfirmationModal && (
                                                     <ConfirmationModal
                                                         buttonsData={confirmationMondalDeletecategory}
@@ -272,7 +291,7 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
                                                             <h3>Monto presupuestado</h3>
                                                         </div>
                                                         
-                                                        { selectedCategory?.subcategories?.map((subCategory) => {
+                                                        { currentCategory?.subcategories?.map((subCategory) => {
                                                             return (
                                                                 <>
                                                                         <div className='flex justify-between items-center gap-4 mb-1'>
@@ -321,4 +340,4 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
     )
 }
 
-export default EditCategoryModal
+export default CategoryModal

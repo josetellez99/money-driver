@@ -1,14 +1,16 @@
 import React from 'react'
 import styles from '@/components/Budget/Budget.module.css'
-import CreateNewCategoryModal from '@/components/Budget/BudgetRowAddNewCategory/CreateNewCategoryModal'
+import CreateNewCategoryModal from '@/components/Budget/CreateNewCategoryModal'
 
-const BudgetRowAddNewCategory = () => {
+interface BudgetRowAddNewCategoryProps {
+    children: React.ReactNode;
+    onClick: React.MouseEventHandler<HTMLTableRowElement>;
+}
 
-    const [showModal, setShowModal] = React.useState<boolean>(false)
+const BudgetRowAddNewCategory: React.FC<BudgetRowAddNewCategoryProps> = ({children, onClick}) => {
 
-
-    const handleClick = () => {
-        setShowModal(true)
+    const handleClick = (event: React.MouseEvent<HTMLTableRowElement>) => {
+        onClick(event)
     }
 
     return (
@@ -19,15 +21,7 @@ const BudgetRowAddNewCategory = () => {
             >
                 <td className='border-greenYellow px-2 font-bold'>Añadir nueva categoria...</td>
             </tr>
-            {
-                showModal && (
-                    <>
-                        <CreateNewCategoryModal 
-                            setShowModal={setShowModal}
-                        />
-                    </>
-                )
-            }
+            {children}
         </>
     )
 }

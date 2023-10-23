@@ -29,6 +29,7 @@ const AmountFieldset: React.FC<AmountFieldsetProps> = ({className, titleElement 
                     type="text" 
                     readOnly={readOnly}
                     onChange={handleChange}
+                    required
                     value={formatMoney(amount)}
                     className={`h-[36px] w-full border-b-[1px] bg-backgroundBlue border-greenYellow px-3 focus:rounded-md ${styles.input} ${className}`}
                 />
