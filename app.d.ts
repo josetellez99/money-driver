@@ -8,9 +8,9 @@ type ButtonData = {
 
 type UserAccount = {
     title: string,
-    amount?: number,
-    UrlIcon?: string,
     id: number
+    amount: number,
+    UrlIcon?: string,
 }
 
 type FormRegisterData = {
@@ -62,8 +62,8 @@ type BudgetItem = {
     id: number;
     title: string;
     amount: number;
-    used?: number;
-    remaining?: number;
+    used: number;
+    remaining: number;
     subcategories?: BudgetItem[];
 }
 

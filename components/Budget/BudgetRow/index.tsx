@@ -6,16 +6,22 @@ import styles from '@/components/Budget/Budget.module.css'
 import BudgetRowSubcategory from '../BudgetRowSubcategory'
 
 interface BudgetRowProps {
-    children: React.ReactNode;
-    itemID: number;
     categoryTitle: string;
     categoryAmount: number;
     categoryUsed: number | undefined;
     categoryRemaining: number | undefined;
+    subcategories: BudgetItem[] | undefined;
     onClick: (event: React.MouseEvent<HTMLTableRowElement, MouseEvent>) => void;
 }
 
-const BudgetRow: React.FC<BudgetRowProps> = ({ children, categoryTitle, categoryAmount, categoryUsed, categoryRemaining, onClick }) => {
+const BudgetRow: React.FC<BudgetRowProps> = ({ 
+        categoryTitle, 
+        categoryAmount, 
+        categoryUsed, 
+        categoryRemaining, 
+        onClick ,
+        subcategories
+    }) => {
 
     const handleClick = (event: React.MouseEvent<HTMLTableRowElement, MouseEvent>) => {
         onClick(event)
@@ -23,28 +29,45 @@ const BudgetRow: React.FC<BudgetRowProps> = ({ children, categoryTitle, category
 
     return (
         <>
-            {/* <tr 
-                className={`${styles.tableRowLayout} border border-greenYellow rounded-lg mb-2 cursor-pointer`}
-                onClick={handleClick} 
-            >
-                <td className='border-r border-greenYellow px-2 truncate max-w-xs'>{categoryTitle}</td>
-                <td className='border-r border-greenYellow text-center'>{formatMoney(categoryAmount)}</td>
-                <td className='border-r border-greenYellow text-center'>{formatMoney(categoryUsed)}</td>
-                <td className=' text-center'>{formatMoney(categoryRemaining)}</td>
-            </tr>
-            {children} */}
-            { true && (
-                <tr className='block border border-greenYellow rounded-lg mb-2 px-2 cursor-pointer'>
-                    <p>categoryTitle</p>
-                    <BudgetRowSubcategory 
-                        category='Subcategory'
-                        amount={1000000}
-                        used={500000}
-                        remaining={500000}
-                    />
+            {/*If subcategories exits, the style is different */}
+            { subcategories && ( 
+                <tr 
+                    className='block border border-greenYellow rounded-lg mb-2 p-1 px-2 cursor-pointer'
+                    onClick={handleClick} 
+                >
+                    { subcategories?.map((subcategory) => (
+                        <BudgetRowSubcategory
+                            key={subcategory.id}
+                            category={subcategory.title}
+                            amount={subcategory.amount}
+                            used={subcategory.used}
+                            remaining={subcategory.remaining}
+                        />
+                    ))}
+                    <div 
+                        className={`${styles.tableRowLayout} cursor-pointer`}
+                        onClick={handleClick} 
+                    >
+                        <td className='truncate max-w-xs'>{categoryTitle}</td>
+                        <td className=''>{formatMoney(categoryAmount)}</td>
+                        <td className=''>{formatMoney(categoryUsed)}</td>
+                        <td className=''>{formatMoney(categoryRemaining)}</td>
+                    </div>
                 </tr>
-                )
+                ) 
             }
+            {/*If subcategories doens't exits, this is the default style */}
+            { !subcategories && (
+                    <tr 
+                        className={`${styles.tableRowLayout} border border-greenYellow rounded-lg mb-2 cursor-pointer`}
+                        onClick={handleClick} 
+                    >
+                        <td className='px-2 truncate max-w-xs'>{categoryTitle}</td>
+                        <td className=''>{formatMoney(categoryAmount)}</td>
+                        <td className=''>{formatMoney(categoryUsed)}</td>
+                        <td className=''>{formatMoney(categoryRemaining)}</td>
+                    </tr>
+            )}
         </>
     )
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import AccountsSummary from '@/components/SummaryAccounts';
+import AccountsTable from '@/components/AccountsTable';
 import Budget from '@/components/Budget';
 import MainDefault from '@/components/MainDefault';
 import SummaryCreditCard from '@/components/SummaryCreditCard';
@@ -9,18 +9,21 @@ interface BudgetAccountPageProps {
 }
 
 // Where this "cuentas" should came from?
-const cuentas = [
+const accounts = [
     {
+        id: 1,
         title: 'Cuenta de ahorros que madre flipas con la que estoy montando',
-        value: 2000500,
+        amount: 2000500,
     },
     {
+        id: 2,
         title: 'Efectivo',
-        value: 150500,
+        amount: 150500,
     },
     {
+        id: 3,
         title: 'Daviplata',
-        value: 687500,
+        amount: 687500,
     }
 ]
 
@@ -177,8 +180,8 @@ const BudgetAccountPage: React.FC<BudgetAccountPageProps> = () => {
     return (
         <>
             <MainDefault>
-                <AccountsSummary
-                    accounts={cuentas}
+                <AccountsTable
+                    accounts={accounts}
                 />
                 <Budget
                     userBudget={incomeBudget}

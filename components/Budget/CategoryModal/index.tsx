@@ -37,9 +37,9 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
     // The state of the fieldset that show the subcategories inputs
     const [showSubcategoriesFieldset, setShowSubcategoriesFieldset] = React.useState<boolean>(currentCategory?.subcategories ? true : false)
 
-
     const handleClickClosePopUp = () => {
         setShowCategoryModal(false)
+        setCurrentCategory(undefined)   
     }
 
     const handleShowSubcategoriesFieldset = () => {
@@ -69,7 +69,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
 
         if (type === 'Create') {
             setBudgetData((prevState) => {
-                const newState = prevState?.concat(currentCategory)
+                const newState = [...prevState, currentCategory]
                 return newState
             })
             setCurrentCategory(undefined)
@@ -86,10 +86,11 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
         }
 
         setShowCategoryModal(false)
+        setCurrentCategory(undefined)
     }
 
        //This use effect is to make sure that the fieldset is not shown when the subcategories array is empty
-       React.useEffect(() => {
+    React.useEffect(() => {
         if(currentCategory?.subcategories?.length === 0) {
             setShowSubcategoriesFieldset(false)
         }
@@ -125,16 +126,32 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
         setShowConfirmationModal(true)
     }
 
-    const TitleFieldsetOnChange = (value: string) => {
+    // When you create a new category, the id, used and remaining properties are set to 0
+    // When you edit a category, the id, used and remaining properties are not changed.
+    // That's why we need two different handlers for the title fieldset*
+
+    const TitleFieldsetOnChangeCreateCategory = (value: string) => {
         setCurrentCategory((currentCategory) => {
             return {
                 ...currentCategory,
-                title: value
+                title: value,
+                id: Math.floor(Math.random() * (1300 - 1000 + 1)) + 1000, 
+                used: 0, 
+                remaining: 0
             }
         })
     }
 
-    const AmountFieldsetOnChange = (value: string) => {
+    const TitleFieldsetOnChangeEditCategory = (value: string) => {
+        setCurrentCategory((currentCategory) => {
+            return {
+                ...currentCategory,
+                title: value,
+            }
+        })
+    }
+
+    const AmountFieldsetOnChange = (value: number) => {
         setCurrentCategory((currentCategory) => {
             return {
                 ...currentCategory,
@@ -151,7 +168,9 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
             const newSubcategory = {
                 id: Math.floor(Math.random() * (1300 - 1000 + 1)) + 1000,
                 title: '',
-                amount: 0
+                amount: 0,
+                used: 0,
+                remaining: 0
             };
             const subcategories = currentCategory?.subcategories || [];
             const newSubcategories = [...subcategories, newSubcategory];
@@ -230,10 +249,21 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
                                     >
                                         <div className='py-2'>
                                             <ElementTitle title={type === 'Create' ? 'Crear categoria' : 'Editar categoria'} />
-                                            <TitleFieldset 
-                                                title={currentCategory?.title}
-                                                onChange={TitleFieldsetOnChange}
-                                            />
+
+                                            {/* Condiitonal rendering becasue we need differents handlers */}
+                                            { type === 'Create' && (
+                                                <TitleFieldset 
+                                                    title={currentCategory?.title}
+                                                    onChange={TitleFieldsetOnChangeCreateCategory}
+                                                />
+                                            )}
+                                            { type === 'Edit' && (
+                                                <TitleFieldset 
+                                                    title={currentCategory?.title}
+                                                    onChange={TitleFieldsetOnChangeEditCategory}
+                                                />
+                                            )}
+                                            {/**/}
                                             {
                                                 !showSubcategoriesFieldset && (
                                                     <AmountFieldset

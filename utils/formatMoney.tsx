@@ -1,5 +1,6 @@
 function formatMoney(amount: number | undefined) {
-    if(amount) {
+    // Check if amount is a number and exits to return the formatted amount
+    if(typeof amount == 'number') {
         return '$ ' + amount.toLocaleString('es-CO');
     }
 }
