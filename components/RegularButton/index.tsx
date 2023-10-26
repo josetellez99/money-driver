@@ -1,21 +1,19 @@
 'use client'
 
-import React, { MouseEvent, MouseEventHandler} from 'react'
+import React, { MouseEvent} from 'react'
 
 interface RegularButtonProps {
-    title: string,
+    buttonData: ButtonData,
     className?: string
     isActive?: boolean,
-    setActive?: React.Dispatch<React.SetStateAction<string>>
-    onClick?: MouseEventHandler<HTMLButtonElement>
+    onClick?: React.MouseEventHandler<HTMLButtonElement>
 }
 
-const RegularButton: React.FC<RegularButtonProps> = ({title, className, isActive, setActive, onClick }) => {
+const RegularButton: React.FC<RegularButtonProps> = ({buttonData, className, isActive, onClick }) => {
 
     const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
         event.preventDefault()
 
-        setActive && setActive(title)
         onClick && onClick(event)
 
     }
@@ -26,7 +24,7 @@ const RegularButton: React.FC<RegularButtonProps> = ({title, className, isActive
         <>
             <li>
                 <button onClick={handleClick} className={`${activeClass} min-w-[80px]  border-white border-2 mr-2 rounded-md px-2 py-1  ${className}`}>
-                    {title}
+                    {buttonData.title}
                 </button>
             </li>
         </>

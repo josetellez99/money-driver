@@ -5,7 +5,7 @@ interface HighLightedContainerProps {
 
 const HighLightedContainer: React.FC<HighLightedContainerProps> = ({ children, className }) => {
     return (
-        <div className={`${className} flex items-center my-2 bg-greenYellow h-[36px] p-1 rounded-md`}>
+        <div className={`${className} flex items-center my-2 bg-greenYellow py-2 p-1 rounded-md`}>
             {children}
         </div>
     )

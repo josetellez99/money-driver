@@ -18,7 +18,7 @@ const PopUpLayer: React.FC<PopUpLayerProps> = ({
     
   return (
     <div
-      className={`fixed ${top} ${left} ${right} ${bottom} p-2 bg-black bg-opacity-90 flex z-50`}
+      className={`fixed overflow-y-scroll ${top} ${left} ${right} ${bottom} p-2 bg-black bg-opacity-90 flex z-50`}
     >
       {children}
     </div>

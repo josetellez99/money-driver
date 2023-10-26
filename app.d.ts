@@ -9,7 +9,7 @@ type ButtonData = {
 type UserAccount = {
     title: string,
     id: number
-    amount: number,
+    amount: number | undefined,
     UrlIcon?: string,
 }
 
@@ -21,12 +21,13 @@ type FormRegisterData = {
 }
 
 type Transaction = {
-    type: string,
-    date: string,
-    accountFrom: string,
-    accountTo: string,
-    amount: number,
-    description?: string
+    id: number,
+    type: string | undefined,
+    date: Date,
+    accountFrom: string | undefined,
+    accountTo: string | undefined,
+    amount: number | undefined,
+    description?: string | undefined,
 }
 
 type Debt = {

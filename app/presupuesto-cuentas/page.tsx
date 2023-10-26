@@ -12,7 +12,7 @@ interface BudgetAccountPageProps {
 const accounts = [
     {
         id: 1,
-        title: 'Cuenta de ahorros que madre flipas con la que estoy montando',
+        title: 'Nequi',
         amount: 2000500,
     },
     {
@@ -24,6 +24,11 @@ const accounts = [
         id: 3,
         title: 'Daviplata',
         amount: 687500,
+    },
+    {
+        id: 4,
+        title: 'RappiPay',
+        amount: 750000,
     }
 ]
 
@@ -182,6 +187,8 @@ const BudgetAccountPage: React.FC<BudgetAccountPageProps> = () => {
             <MainDefault>
                 <AccountsTable
                     accounts={accounts}
+                    incomesBudget={incomeBudget}
+                    expensesBudget={expenseBudget}
                 />
                 <Budget
                     userBudget={incomeBudget}

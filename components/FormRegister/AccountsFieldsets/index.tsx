@@ -8,7 +8,7 @@ const AccountsFieldsets: React.FC<AccountsFieldsetsProps> = ({children}) => {
 
     return (
         <>
-            <fieldset className="grid grid-cols-4 w-full gap-1 mb-6">
+            <fieldset className="grid grid-cols-3 w-full gap-1 mb-6">
                 {children}
             </fieldset>
         </>

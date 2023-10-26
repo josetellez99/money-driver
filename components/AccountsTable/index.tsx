@@ -8,17 +8,16 @@ import HighLightedContainer from '@/components/HighLightedContainer';
 import formatMoney from '@/utils/formatMoney';
 import AccountModal from '@/components/AccountsTable/AccountModal';
 
-import PopUpLayer from '@/components/PopupLayer';
-
 interface AccountsTableProps {
     accounts: UserAccount[]
+    incomesBudget: BudgetItem[],
+    expensesBudget: BudgetItem[],
 }
 
-const AccountsTable: React.FC<AccountsTableProps> = ({accounts}) => {
+const AccountsTable: React.FC<AccountsTableProps> = ({accounts, incomesBudget, expensesBudget}) => {
 
     const[showEditAccountModal, setShowEditAccountModal] = React.useState<boolean>(false);
     const[showAddAccountModal, setShowAddAccountModal] = React.useState<boolean>(false);
-    const[showConfirmationModal, setShowConfirmationModal] = React.useState<boolean>(false)
 
     const[userAccounts, setUserAccounts] = React.useState<UserAccount[]>(accounts);
     const[currentAccount, setCurrentAccount] = React.useState<UserAccount | undefined>();
@@ -83,8 +82,8 @@ const AccountsTable: React.FC<AccountsTableProps> = ({accounts}) => {
             { showEditAccountModal && (
                 <AccountModal
                     setShowAccountModal={setShowEditAccountModal}
-                    showConfirmationModal={showConfirmationModal}
-                    setShowConfirmationModal={setShowConfirmationModal}
+                    incomeCategories={incomesBudget}
+                    accounts={userAccounts}
                     currentAccount={currentAccount}
                     setCurrentAccount={setCurrentAccount}
                     setAccounts={setUserAccounts}
@@ -94,12 +93,12 @@ const AccountsTable: React.FC<AccountsTableProps> = ({accounts}) => {
             { showAddAccountModal && (
                 <AccountModal
                     setShowAccountModal={setShowAddAccountModal}
-                    showConfirmationModal={showConfirmationModal}
-                    setShowConfirmationModal={setShowConfirmationModal}
+                    incomeCategories={incomesBudget}
+                    accounts={userAccounts}
                     currentAccount={currentAccount}
                     setCurrentAccount={setCurrentAccount}
                     setAccounts={setUserAccounts}
-                    type={'add'}
+                    type={'create'}
             />
             )}
         </>
