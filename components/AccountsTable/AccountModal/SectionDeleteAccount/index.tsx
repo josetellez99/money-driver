@@ -10,7 +10,6 @@ interface SectionDeleteAccountProps {
     accounts: UserAccount[]
     adjustmentTransferInfo: Transaction,
     setAdjustmentTransferInfo: React.Dispatch<React.SetStateAction<Transaction>>
-    setShowDeleteSection: React.Dispatch<React.SetStateAction<boolean>>
     setActionType: React.Dispatch<React.SetStateAction<'create' | 'edit' | 'delete'>>
 }
 
@@ -19,7 +18,6 @@ const SectionDeleteAccount: React.FC<SectionDeleteAccountProps> = ({
     accounts,
     adjustmentTransferInfo,
     setAdjustmentTransferInfo,
-    setShowDeleteSection,
     setActionType,
 }) => {
 
@@ -66,7 +64,6 @@ const SectionDeleteAccount: React.FC<SectionDeleteAccountProps> = ({
                     title='Editar cuenta'
                     type='edit'
                     onClick={() => {
-                        setShowDeleteSection(false)
                         setActionType('edit')
                     }}
                 />

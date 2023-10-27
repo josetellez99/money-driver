@@ -9,16 +9,10 @@ import TitleFieldset from "@/components/FormRegister/TitleFieldset"
 import AmountFieldset from "@/components/FormRegister/AmountFieldset"
 import SubmitButton from "@/components/FormRegister/SubmitButton"
 import ActionButton from "@/components/ActionButton"
-import RegularButtonList from "@/components/RegularButtonList"
-import RegularButton from "@/components/RegularButton"
-import AccountsFieldsets from "@/components/FormRegister/AccountsFieldsets"
-import UserAccountButton from "@/components/FormRegister/UserAccountButton"
-import HighLightedContainer from "@/components/HighLightedContainer"
 
 import SectionDeleteAccount from "@/components/AccountsTable/AccountModal/SectionDeleteAccount"
 import SectionCreateAccount from "@/components/AccountsTable/AccountModal/SectionCreateAccount"
-
-import formatMoney from "@/utils/formatMoney"
+import SectionEditAccount from "@/components/AccountsTable/AccountModal/SectionEditAccount"
 
 interface AccountModalProps {
     setShowAccountModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -52,8 +46,6 @@ const AccountModal: React.FC<AccountModalProps> = ({
         description: undefined,
     });
 
-    const[showDeleteSection, setShowDeleteSection] = React.useState<boolean>(false);
-    const[showHighLigtedMessage, setShowHighLigtedMessage] = React.useState<boolean>(false);
     const[actionType, setActionType] = React.useState<'create' | 'edit' | 'delete'>(type);
 
     // This state is to show a message when the user is editing an account and the amount is different from the original amount
@@ -163,7 +155,6 @@ const AccountModal: React.FC<AccountModalProps> = ({
     }
 
     const deleteAccountHandleClick = () => {
-        setShowDeleteSection(true);
         setActionType('delete');
     }
 
@@ -189,7 +180,6 @@ const AccountModal: React.FC<AccountModalProps> = ({
             ...adjustmentTransferInfo,
             accountFrom: item.title,
         })
-        setShowHighLigtedMessage(true);
     }
 
     return (
@@ -209,110 +199,35 @@ const AccountModal: React.FC<AccountModalProps> = ({
                                 title={currentAccount?.title}
                                 onChange={titleAccountHandleOnChange}
                             />
-                            { !showDeleteSection &&
+                            { actionType === 'create' || actionType === 'edit' &&
                                 <AmountFieldset
                                     amount={currentAccount?.amount}
                                     onChange={amountAccountHandleOnChange}
                                 />
                             }
-                            { accountEditedInformation.oldValue !== accountEditedInformation.newValue && (
+                            { actionType === 'edit' && ( 
+                                <ActionButton 
+                                title='Eliminar esta cuenta'
+                                type='delete'
+                                onClick={deleteAccountHandleClick}
+                                />
+                                )}
+                            { actionType === 'edit' && accountEditedInformation.oldValue !== accountEditedInformation.newValue && (
+
+                                // When oldValue and newValue are differents is because of the user changed the amount of the account
                                 <>
-                                <div className="mb-4">
-                                    <p className="text-sm">
-                                        <span>{`Antiguo valor `}</span> 
-                                        <span className="text-greenYellow font-bold">{formatMoney(accountEditedInformation.oldValue)}</span>
-                                    </p>
-                                    <p className="text-sm">
-                                        <span>{`La diferencia es `}</span>
-                                        <span className="text-greenYellow font-bold">{formatMoney(difference)}</span>
-                                    </p>
-                                </div>
-                                    { difference > 0 && (
-                                        <>
-                                            <p className="mb-4">{`¿De donde viene la cantidad extra de ${formatMoney(difference)}?`}</p>
-                                            <AccountsFieldsets>
-                                                { incomeCategories.map( income => {
-                                                        return (
-                                                            <UserAccountButton
-                                                                buttonData={income}
-                                                                onClick={() => setAccountOrCategoryAsAccountFromTrasnferInfo(income)}
-                                                                isActive={income.title === adjustmentTransferInfo?.accountFrom}
-                                                            />
-                                                        )
-                                                    })}
-                                                <UserAccountButton
-                                                    buttonData={{id: 234, title: 'Ajuste de cuenta', amount: undefined}}
-                                                    onClick={() => {
-                                                        setAdjustmentTransferInfo({
-                                                            ...adjustmentTransferInfo,
-                                                            accountFrom: 'Ajuste de cuenta',
-                                                        })
-                                                        setShowHighLigtedMessage(true);
-                                                    }}
-                                                    isActive={adjustmentTransferInfo?.accountFrom === 'Ajuste de cuenta'}
-                                                />
-                                            </AccountsFieldsets>
-                                                <HighLightedContainer>
-                                                <p className="text-black p-1 text-justify">
-                                                    {`Se cambiará el valor de la cuenta `}
-                                                    <span className="font-bold">{currentAccount?.title}</span>
-                                                    {` y se registrará un ingreso desde `}
-                                                    <span className="font-bold">{adjustmentTransferInfo?.accountFrom}</span>
-                                                    {` por valor de `}
-                                                    <span className="font-bold">{formatMoney(adjustmentTransferInfo?.amount)}</span>
-                                                    {`. Para continuar, pulsa `}
-                                                    <span className="font-bold">"Guardar"</span>
-                                                </p>
-                                            </HighLightedContainer>
-                                        </>
-                                    )}
-                                    { difference < 0 && (
-                                        <>
-                                            <p className="mb-4">{`¿A dónde va la cantidad extra de ${formatMoney(difference)}?`}</p>
-                                            <AccountsFieldsets>
-                                                <UserAccountButton
-                                                    buttonData={{id: 234, title: 'Ajuste de cuenta'}}
-                                                    onClick={() => {
-                                                        setAdjustmentTransferInfo({
-                                                            ...adjustmentTransferInfo,
-                                                            accountTo: 'Ajuste de cuenta',
-                                                        })
-                                                        setShowHighLigtedMessage(true);
-                                                    }}
-                                                    isActive={adjustmentTransferInfo?.accountTo === 'Ajuste de cuenta'}
-                                                />
-                                            </AccountsFieldsets>
-                                                <HighLightedContainer>
-                                                <p className="text-black p-1 text-justify">
-                                                    {`Se cambiará el valor de la cuenta `}
-                                                    <span className="font-bold">{currentAccount?.title}</span>
-                                                    {` y se registrará un egreso hacia `}
-                                                    <span className="font-bold">{adjustmentTransferInfo?.accountTo}</span>
-                                                    {` por valor de `}
-                                                    <span className="font-bold">{formatMoney(adjustmentTransferInfo?.amount)}</span>
-                                                    {`. Para continuar, pulsa `}
-                                                    <span className="font-bold">"Guardar"</span>
-                                                </p>
-                                            </HighLightedContainer>
-                                        </>
-                                    )}
+                                    <SectionEditAccount 
+                                        
+                                    />
                                 </>
                             )}
-                            { type === 'edit' && !showDeleteSection && 
-                                <ActionButton 
-                                    title='Eliminar esta cuenta'
-                                    type='delete'
-                                    onClick={deleteAccountHandleClick}
-                                />
-                            }
-                            { showDeleteSection && (
+                            { actionType === 'delete' && (
                                 <>
                                     <SectionDeleteAccount
                                         currentAccount={currentAccount}
                                         accounts={accounts}
                                         adjustmentTransferInfo={adjustmentTransferInfo}
                                         setAdjustmentTransferInfo={setAdjustmentTransferInfo}
-                                        setShowDeleteSection={setShowDeleteSection}
                                         setActionType={setActionType}
                                     />
                                 </>
