@@ -9,7 +9,7 @@ type ButtonData = {
 type UserAccount = {
     title: string,
     id: number
-    amount: number | undefined,
+    amount: number,
     UrlIcon?: string,
 }
 

@@ -13,10 +13,8 @@ interface TitleFieldsetProps {
 
 const TitleFieldset: React.FC<TitleFieldsetProps> = ({className, title, onChange}) => {
     
-    const handleChange = (event: React.ChangeEventHandler<HTMLInputElement>) => {
-
-            const {value} = event.target;
-            onChange(value)
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+            onChange(event)
     };
 
     return (

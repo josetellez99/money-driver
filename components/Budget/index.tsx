@@ -22,27 +22,33 @@ interface BudgetProps {
 
 const Budget: React.FC<BudgetProps> = ({userBudget, title, type}) => {
 
-    const[showEditCategoryModal, setShowEditCategoryModal] = React.useState<boolean>(false)
-    const[showNewCategoryModal, setShowNewCategoryModal] = React.useState<boolean>(false)
+    const[showCategoryModal, setShowCategoryModal] = React.useState<boolean>(false)
     const[showConfirmationModal, setShowConfirmationModal] = React.useState<boolean>(false)
+    const[typeOfModal, setTypeOfModal] = React.useState<'Create' | 'Edit'>('Edit')
 
     const[budgetData, setBudgetData] = React.useState<BudgetItem[]>(userBudget)
     const[currentCategory, setCurrentCategory] = React.useState<BudgetItem | undefined>(undefined)
     
     const [totalAmount, totalUsed, totalRemaining] = calculateBudgetTotals(budgetData)
 
+    console.log('budgetData', budgetData)
+
     const budgetRowHandleClick = (category: BudgetItem) => {
         setCurrentCategory(category)
-        setShowEditCategoryModal(true)
+        setShowCategoryModal(true)
+        setTypeOfModal('Edit')
     }
 
     const budgetRowAddNewCategoryHandleClick = () => {
-        setShowNewCategoryModal(true)
+        setShowCategoryModal(true)
+        setTypeOfModal('Create')
         setCurrentCategory((currentCategory) => {
-            return {...currentCategory, 
+            return {
+                title: '',
+                amount: undefined,
                 id: Math.floor(Math.random() * (1300 - 1000 + 1)) + 1000, 
-                used: 0, 
-                remaining: 0}
+                used: undefined, 
+                remaining: undefined}
         })
     }
 
@@ -66,35 +72,23 @@ const Budget: React.FC<BudgetProps> = ({userBudget, title, type}) => {
                                     subcategories={category.subcategories}
                                     onClick={() => budgetRowHandleClick(category)}
                                 />
-                                    { showEditCategoryModal && (
-                                        <CategoryModal
-                                            setShowCategoryModal={setShowEditCategoryModal}
-                                            showConfirmationModal={showConfirmationModal}
-                                            setShowConfirmationModal={setShowConfirmationModal}
-                                            currentCategory={currentCategory}
-                                            setCurrentCategory={setCurrentCategory}
-                                            setBudgetData={setBudgetData}
-                                            type='Edit'
-                                        />                                         
-                                    )}
                             </>
                         ))
                     }
                         <BudgetRowAddNewCategory
                             onClick={budgetRowAddNewCategoryHandleClick}
-                            >
-                            { showNewCategoryModal && (
-                                <CategoryModal
-                                setShowCategoryModal={setShowNewCategoryModal}
-                                showConfirmationModal={showConfirmationModal}
-                                setShowConfirmationModal={setShowConfirmationModal}
-                                currentCategory={currentCategory}
-                                setCurrentCategory={setCurrentCategory}
-                                setBudgetData={setBudgetData}
-                                type='Create'
-                                /> 
-                                )}
-                        </BudgetRowAddNewCategory>
+                        />
+                        { showCategoryModal && (
+                            <CategoryModal
+                            setShowCategoryModal={setShowCategoryModal}
+                            showConfirmationModal={showConfirmationModal}
+                            setShowConfirmationModal={setShowConfirmationModal}
+                            currentCategory={currentCategory}
+                            setCurrentCategory={setCurrentCategory}
+                            setBudgetData={setBudgetData}
+                            actionType={typeOfModal}
+                            /> 
+                        )}
                     </tbody>
                     <tfoot>
                         <BudgetRowFooter

@@ -3,11 +3,10 @@ import styles from '@/components/Budget/Budget.module.css'
 import CreateNewCategoryModal from '@/components/Budget/CreateNewCategoryModal'
 
 interface BudgetRowAddNewCategoryProps {
-    children: React.ReactNode;
     onClick: React.MouseEventHandler<HTMLTableRowElement>;
 }
 
-const BudgetRowAddNewCategory: React.FC<BudgetRowAddNewCategoryProps> = ({children, onClick}) => {
+const BudgetRowAddNewCategory: React.FC<BudgetRowAddNewCategoryProps> = ({onClick}) => {
 
     const handleClick = (event: React.MouseEvent<HTMLTableRowElement>) => {
         onClick(event)
@@ -21,7 +20,6 @@ const BudgetRowAddNewCategory: React.FC<BudgetRowAddNewCategoryProps> = ({childr
             >
                 <td className='border-greenYellow px-2 font-bold'>Añadir nueva categoria...</td>
             </tr>
-            {children}
         </>
     )
 }

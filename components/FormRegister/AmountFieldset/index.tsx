@@ -9,7 +9,7 @@ interface AmountFieldsetProps {
     className?: string,
     titleElement?: string,
     amount: number | undefined
-    onChange?: React.ChangeEventHandler<HTMLInputElement>,
+    onChange?: (value: number) => void,
     readOnly?: boolean
 }
 
@@ -17,8 +17,8 @@ const AmountFieldset: React.FC<AmountFieldsetProps> = ({className, titleElement 
     
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         const {value} = event.target;
-        const inputValue = extractNumberFromString(value); // Extract the number from the formated string input value
-        onChange && onChange(inputValue)
+        const valueAsNumber = extractNumberFromString(value); // Extract the number from the formated string input value
+        onChange && onChange(valueAsNumber)
     };
 
     return(

@@ -11,24 +11,24 @@ import AccountModal from '@/components/AccountsTable/AccountModal';
 interface AccountsTableProps {
     accounts: UserAccount[]
     incomesBudget: BudgetItem[],
-    expensesBudget: BudgetItem[],
 }
 
-const AccountsTable: React.FC<AccountsTableProps> = ({accounts, incomesBudget, expensesBudget}) => {
+const AccountsTable: React.FC<AccountsTableProps> = ({accounts, incomesBudget}) => {
 
-    const[showEditAccountModal, setShowEditAccountModal] = React.useState<boolean>(false);
-    const[showAddAccountModal, setShowAddAccountModal] = React.useState<boolean>(false);
-
+    const[showAccountModal, setShowAccountModal] = React.useState<boolean>(false);
+    const[typeOfAccountModal, setTypeOfAccountModal] = React.useState<'create' | 'edit' | 'delete'>('create');
+    
     const[userAccounts, setUserAccounts] = React.useState<UserAccount[]>(accounts);
-    const[currentAccount, setCurrentAccount] = React.useState<UserAccount | undefined>();
+    const[currentAccount, setCurrentAccount] = React.useState<UserAccount>();
 
     const accountRowHandleClick = (account: UserAccount) => {
-        setShowEditAccountModal(true);
+        setShowAccountModal(true);
         setCurrentAccount(account);
+        setTypeOfAccountModal('edit');
     }
 
     const addAccountHandleClick = () => {
-        setShowAddAccountModal(true);
+        setShowAccountModal(true);
         setCurrentAccount( prevAccount => {
             return {
                 ...prevAccount,
@@ -36,8 +36,8 @@ const AccountsTable: React.FC<AccountsTableProps> = ({accounts, incomesBudget, e
                 title: '',
                 amount: 0
             }
-        
         });
+        setTypeOfAccountModal('create');
     }
 
 
@@ -79,27 +79,16 @@ const AccountsTable: React.FC<AccountsTableProps> = ({accounts, incomesBudget, e
                             <TitleValuePair title={'Disponible'} textColor={'text-black'} value={totalsAccounts} />
                         </HighLightedContainer>
             </table>
-            { showEditAccountModal && (
+            { showAccountModal && (
                 <AccountModal
-                    setShowAccountModal={setShowEditAccountModal}
+                    setShowAccountModal={setShowAccountModal}
                     incomeCategories={incomesBudget}
                     accounts={userAccounts}
                     currentAccount={currentAccount}
                     setCurrentAccount={setCurrentAccount}
                     setAccounts={setUserAccounts}
-                    type={'edit'}
+                    typeOfAccountModal={typeOfAccountModal}
                 />
-            )}
-            { showAddAccountModal && (
-                <AccountModal
-                    setShowAccountModal={setShowAddAccountModal}
-                    incomeCategories={incomesBudget}
-                    accounts={userAccounts}
-                    currentAccount={currentAccount}
-                    setCurrentAccount={setCurrentAccount}
-                    setAccounts={setUserAccounts}
-                    type={'create'}
-            />
             )}
         </>
     )

@@ -5,46 +5,37 @@ import UserAccountButton from '@/components/FormRegister/UserAccountButton';
 import HighLightedContainer from '@/components/HighLightedContainer';
 
 interface SectionEditAccountProps {
-    accountEditedInformation: {
-        oldValue: number;
-        newValue: number;
-    };
-    currentAccount: {
-        id: number;
-        title: string;
-        amount: number;
-    };
-    incomeCategories: {
-        id: number;
-        title: string;
-        amount: number;
-    }[];
-    adjustmentTransferInfo: {
-        accountFrom: string;
-        accountTo: string;
-        amount: number;
-    };
+    difference: number;
+    currentAccount: UserAccount;
+    currentAccountOldValue: number;
+    incomeCategories: BudgetItem[];
+    adjustmentTransferInfo: Transaction;
     setAdjustmentTransferInfo: (value: any) => void;
-    setShowHighLigtedMessage: (value: boolean) => void;
-    setAccountOrCategoryAsAccountFromTrasnferInfo: (value: any) => void;    
 }
 
 const SectionEditAccount: React.FC<SectionEditAccountProps> = ({
-    accountEditedInformation,
+    difference,
     currentAccount,
+    currentAccountOldValue,
     incomeCategories,
     adjustmentTransferInfo,
     setAdjustmentTransferInfo,
-    setShowHighLigtedMessage,
-    setAccountOrCategoryAsAccountFromTrasnferInfo,
 
 }) => {
+
+    const setAccountOrCategoryAsAccountFromTrasnferInfo = (item: BudgetItem | UserAccount) => {
+        setAdjustmentTransferInfo({
+            ...adjustmentTransferInfo,
+            accountFrom: item.title,
+        })
+    }
+
     return (
         <>
             <div className="mb-4">
                 <p className="text-sm">
                     <span>{`Antiguo valor `}</span> 
-                    <span className="text-greenYellow font-bold">{formatMoney(accountEditedInformation.oldValue)}</span>
+                    <span className="text-greenYellow font-bold">{formatMoney(currentAccountOldValue)}</span>
                 </p>
                 <p className="text-sm">
                     <span>{`La diferencia es `}</span>
@@ -65,13 +56,12 @@ const SectionEditAccount: React.FC<SectionEditAccountProps> = ({
                                     )
                                 })}
                             <UserAccountButton
-                                buttonData={{id: 234, title: 'Ajuste de cuenta', amount: undefined}}
+                                buttonData={{id: 234, title: 'Ajuste de cuenta', amount: undefined!}}
                                 onClick={() => {
                                     setAdjustmentTransferInfo({
                                         ...adjustmentTransferInfo,
                                         accountFrom: 'Ajuste de cuenta',
                                     })
-                                    setShowHighLigtedMessage(true);
                                 }}
                                 isActive={adjustmentTransferInfo?.accountFrom === 'Ajuste de cuenta'}
                             />
@@ -95,13 +85,12 @@ const SectionEditAccount: React.FC<SectionEditAccountProps> = ({
                         <p className="mb-4">{`¿A dónde va la cantidad extra de ${formatMoney(difference)}?`}</p>
                         <AccountsFieldsets>
                             <UserAccountButton
-                                buttonData={{id: 234, title: 'Ajuste de cuenta'}}
+                                buttonData={{id: 234, title: 'Ajuste de cuenta', amount: undefined!}}
                                 onClick={() => {
                                     setAdjustmentTransferInfo({
                                         ...adjustmentTransferInfo,
                                         accountTo: 'Ajuste de cuenta',
                                     })
-                                    setShowHighLigtedMessage(true);
                                 }}
                                 isActive={adjustmentTransferInfo?.accountTo === 'Ajuste de cuenta'}
                             />

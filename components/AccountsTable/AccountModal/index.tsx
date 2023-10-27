@@ -1,8 +1,7 @@
-import React from "react"
+import React, { ChangeEvent } from "react"
 
 import PopUpLayer from "@/components/PopupLayer"
 import BorderDiv from "@/components/BorderDiv"
-import ConfirmationModal from "@/components/ConfirmationModal"
 
 import ElementTitle from "@/components/ElementTitle"
 import TitleFieldset from "@/components/FormRegister/TitleFieldset"
@@ -16,12 +15,12 @@ import SectionEditAccount from "@/components/AccountsTable/AccountModal/SectionE
 
 interface AccountModalProps {
     setShowAccountModal: React.Dispatch<React.SetStateAction<boolean>>;
-    currentAccount: UserAccount;
+    currentAccount: UserAccount | undefined;
     setCurrentAccount: React.Dispatch<React.SetStateAction<UserAccount | undefined>>;
     incomeCategories: BudgetItem[];
     accounts: UserAccount[];
     setAccounts: React.Dispatch<React.SetStateAction<UserAccount[]>>;
-    type: 'create' | 'edit' | 'delete';
+    typeOfAccountModal: 'create' | 'edit' | 'delete';
 }
 
 const AccountModal: React.FC<AccountModalProps> = ({
@@ -31,7 +30,7 @@ const AccountModal: React.FC<AccountModalProps> = ({
     incomeCategories,
     accounts,
     setAccounts,
-    type
+    typeOfAccountModal
 }) => {
 
     // In this modal you can create, edit or delete an account. In all cases you need to create a transaction to adjust the amounts of the involved accounts
@@ -46,43 +45,18 @@ const AccountModal: React.FC<AccountModalProps> = ({
         description: undefined,
     });
 
-    const[actionType, setActionType] = React.useState<'create' | 'edit' | 'delete'>(type);
+    // This state hold the type of the action to be executed, create, edit or delete
+    // This state is used to render the correct section of the modal
+    const[actionType, setActionType] = React.useState<'create' | 'edit' | 'delete'>(typeOfAccountModal);
 
-    // This state is to show a message when the user is editing an account and the amount is different from the original amount
-    // oldValue and newValue start as the same value, but when the user changes the amount, newValue changes and the message is shown
-    const[accountEditedInformation, setAccountEditedInformation] = React.useState({
-        oldValue: currentAccount.amount, 
-        newValue: currentAccount.amount,
-    });
+    // This state hold the difference between the old value of the currentAccount.amount and the new value of the currentAccount.amount
+    // Is useful for the 'edi' case to make comparisons and validations
+    const[difference, setDifference] = React.useState<number>(0);
 
-    // This state is to show the difference between the old value and the new value when you edit the amount of the account
-    const difference = accountEditedInformation.newValue - accountEditedInformation.oldValue;
+    // This state hold the initial value of the currentAccount, when currentAccount.amount change this state reamins the same
+    // We never update this state, we only use it to compare the old value of the currentAccount.amount
+    const[currentAccountOldValue, setCurrentAccountOldValue] = React.useState<number>(currentAccount!.amount);
 
-    // Difference depends on the accountEditedInformation state, so we need to wait for the re render to have the information updated
-    // This use effect wait for the re render to have the information updated and then we can use the difference to make the validation below
-    // difference will determine if the transaction to adjust the amount of the accounts is an income or an expense
-    React.useEffect(() => {
-        if(difference > 0) {
-            setAdjustmentTransferInfo({
-                ...adjustmentTransferInfo,
-                type: 'income',
-                accountFrom: 'Ajuste de cuenta',
-                accountTo: currentAccount?.title,
-                amount: difference,
-                description: `Ajuste de cuenta positivo a: ${currentAccount?.title}`,
-            })
-        }
-        if(difference < 0) {
-            setAdjustmentTransferInfo({
-                ...adjustmentTransferInfo,
-                type: 'expense',
-                accountFrom: currentAccount?.title,
-                accountTo: 'Ajuste de cuenta',
-                amount: Math.abs(difference), // converting the negative number to positive
-                description: `Ajuste de cuenta negativo a: ${currentAccount?.title}`,
-            })
-        }
-    }, [currentAccount?.amount])
 
     // Submits for create, edit and delete
 
@@ -124,7 +98,7 @@ const AccountModal: React.FC<AccountModalProps> = ({
             const accountsWithoutDeletedAccount = prevAccounts.filter((account) => account.id !== currentAccount?.id);
             const stateSumAmountToAccountTo = accountsWithoutDeletedAccount.map((account) => {
                 if (account.title === adjustmentTransferInfo?.accountTo) {
-                    return { ...account, amount: account.amount + adjustmentTransferInfo!.amount };
+                    return { ...account, amount: account.amount + adjustmentTransferInfo.amount!};
                 }
                 return account;
             });
@@ -158,7 +132,8 @@ const AccountModal: React.FC<AccountModalProps> = ({
         setActionType('delete');
     }
 
-    const titleAccountHandleOnChange = (value: string) => {
+    const titleAccountHandleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const {value} = event.target
         setCurrentAccount({...currentAccount, title: value});
     }
 
@@ -169,17 +144,27 @@ const AccountModal: React.FC<AccountModalProps> = ({
             amount: value,
         })
         if(actionType === 'edit') {
-            setAccountEditedInformation({...accountEditedInformation, newValue: value})
+            setDifference(value - currentAccountOldValue)
+            if(value < currentAccountOldValue) {
+                setAdjustmentTransferInfo({
+                    ...adjustmentTransferInfo,
+                    type: 'expense',
+                    accountFrom: currentAccount?.title,
+                    accountTo: 'Ajuste de cuenta',
+                    amount: Math.abs(value - currentAccountOldValue), // converting the negative number to positive
+                    description: `Ajuste de cuenta negativo a: ${currentAccount?.title}`,
+                })
+            } else if (value > currentAccountOldValue) {
+                setAdjustmentTransferInfo({
+                    ...adjustmentTransferInfo,
+                    type: 'income',
+                    accountFrom: 'Ajuste de cuenta',
+                    accountTo: currentAccount?.title,
+                    amount: value - currentAccountOldValue,
+                    description: `Ajuste de cuenta positivo a: ${currentAccount?.title}`,
+                })
+            }
         }      
-    }
-
-    
-
-    const setAccountOrCategoryAsAccountFromTrasnferInfo = (item: BudgetItem | UserAccount) => {
-        setAdjustmentTransferInfo({
-            ...adjustmentTransferInfo,
-            accountFrom: item.title,
-        })
     }
 
     return (
@@ -193,13 +178,13 @@ const AccountModal: React.FC<AccountModalProps> = ({
                             className="bg-backgroundBlue w-full py-2"
                         >
                             <ElementTitle 
-                                title={type === 'create' ? 'Crear cuenta' : 'Editar cuenta'} />
+                                title={typeOfAccountModal === 'create' ? 'Crear cuenta' : 'Editar cuenta'} />
 
                             <TitleFieldset
                                 title={currentAccount?.title}
                                 onChange={titleAccountHandleOnChange}
                             />
-                            { actionType === 'create' || actionType === 'edit' &&
+                            { (actionType === 'create' || actionType === 'edit') &&
                                 <AmountFieldset
                                     amount={currentAccount?.amount}
                                     onChange={amountAccountHandleOnChange}
@@ -212,12 +197,18 @@ const AccountModal: React.FC<AccountModalProps> = ({
                                 onClick={deleteAccountHandleClick}
                                 />
                                 )}
-                            { actionType === 'edit' && accountEditedInformation.oldValue !== accountEditedInformation.newValue && (
+                            { actionType === 'edit' && difference !== 0 && (
 
-                                // When oldValue and newValue are differents is because of the user changed the amount of the account
+                                // When difference is not "0" is cause by the user changing the currentAccount.amount
                                 <>
-                                    <SectionEditAccount 
-                                        
+                                    <SectionEditAccount
+                                        difference={difference}
+                                        currentAccount={currentAccount!}
+                                        currentAccountOldValue={currentAccountOldValue}
+                                        incomeCategories={incomeCategories}
+                                        adjustmentTransferInfo={adjustmentTransferInfo}
+                                        setAdjustmentTransferInfo={setAdjustmentTransferInfo}
+
                                     />
                                 </>
                             )}
