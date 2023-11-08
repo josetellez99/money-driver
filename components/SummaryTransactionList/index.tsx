@@ -8,7 +8,7 @@ interface SummaryTransactionListProps {
 const SummaryTransactionList: React.FC<SummaryTransactionListProps> = ({children}) => {
     return (
         <>
-            <ul className="flex flex-col gap-2">
+            <ul className="flex flex-col gap-2 my-2">
                 {children}
             </ul>
         </>

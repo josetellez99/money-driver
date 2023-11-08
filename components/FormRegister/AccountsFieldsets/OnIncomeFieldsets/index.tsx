@@ -7,43 +7,54 @@ import FieldsetTitle from "@/components/FormRegister/FieldsetTitle";
 interface OnIncomeFieldsetsProps {
     userAccounts: UserAccount[],
     incomesCategories: UserAccount[],
-    accountFrom: string | undefined,
-    setAccountFrom: React.Dispatch<React.SetStateAction<string | undefined>>,
-    accountTo: string | undefined,
-    setAccountTo: React.Dispatch<React.SetStateAction<string | undefined>>
+    currentTransaction: Transaction,
+    setCurrentTransaction: React.Dispatch<React.SetStateAction<Transaction>>,
 
 }
 
 const OnIncomeFieldsets: React.FC<OnIncomeFieldsetsProps> = ({ 
         userAccounts, 
         incomesCategories, 
-        accountFrom, 
-        setAccountFrom, 
-        accountTo, 
-        setAccountTo
+        currentTransaction,
+        setCurrentTransaction
     }) => {
+
+        const onClickAccountFrom = (accountFrom: string) => {
+            setCurrentTransaction({
+                ...currentTransaction,
+                accountFrom: accountFrom
+            })
+        }
+
+        const onClickAccountTo = (accountTo: string) => {
+            setCurrentTransaction({
+                ...currentTransaction,
+                accountTo: accountTo
+            })
+        }
     
     return (
         <>
+            <FieldsetTitle title='¿De dónde viene este ingreso?' />
             <AccountsFieldsets>
-                <FieldsetTitle title='¿De dónde viene este ingreso?' />
-                {incomesCategories.map( (item: ButtonData) => (
+                {incomesCategories.map( (incomeCategory: ButtonData) => (
                     <UserAccountButton
-                        key={item.id}
-                        buttonsData={item}
-                        isActive={accountFrom === item.title}
-                        setAccount={setAccountFrom}
+                        key={incomeCategory.id}
+                        buttonData={incomeCategory}
+                        isActive={currentTransaction.accountFrom === incomeCategory.title}
+                        onClick={() => onClickAccountFrom(incomeCategory.title)}
                     />
                 ))}
             </AccountsFieldsets>
+
+            <FieldsetTitle title='¿A qué cuenta ingresó el dinero?' />
             <AccountsFieldsets>
-                <FieldsetTitle title='¿A qué cuenta ingresó el dinero?' />
-                {userAccounts.map( (item: ButtonData) => (
+                {userAccounts.map( (account: ButtonData) => (
                     <UserAccountButton
-                        key={item.id}
-                        buttonsData={item}
-                        isActive={accountTo === item.title}
-                        setAccount={setAccountTo}
+                        key={account.id}
+                        buttonData={account}
+                        isActive={currentTransaction.accountTo === account.title}
+                        onClick={() => onClickAccountTo(account.title)}
                     />
                 ))}
             </AccountsFieldsets>

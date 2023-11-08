@@ -6,42 +6,53 @@ import FieldsetTitle from "@/components/FormRegister/FieldsetTitle";
 
 interface OnMovementFieldsetsProps {
     userAccounts: UserAccount[],
-    accountFrom: string | undefined,
-    setAccountFrom: React.Dispatch<React.SetStateAction<string | undefined>>,
-    accountTo: string | undefined,
-    setAccountTo: React.Dispatch<React.SetStateAction<string | undefined>>
-
+    currentTransaction: Transaction,
+    setCurrentTransaction: React.Dispatch<React.SetStateAction<Transaction>>
 }
 
 const OnMovementFieldsets: React.FC<OnMovementFieldsetsProps> = ({ 
         userAccounts, 
-        accountFrom, 
-        setAccountFrom, 
-        accountTo, 
-        setAccountTo
+        currentTransaction,
+        setCurrentTransaction
     }) => {
+
+        const onClickAccountFrom = (accountFrom: string) => {
+            setCurrentTransaction({
+                ...currentTransaction,
+                accountFrom: accountFrom
+            })
+        }
+
+        const onClickAccountTo = (accountTo: string) => {
+            setCurrentTransaction({
+                ...currentTransaction,
+                accountTo: accountTo
+            })
+        }
     
     return (
         <>
+            <FieldsetTitle title='¿De donde salió el dinero?' />
             <AccountsFieldsets>
-                <FieldsetTitle title='¿De donde salió el dinero?' />
-                {userAccounts.map( (item: ButtonData) => (
+                {userAccounts.map( (account: ButtonData) => (
                     <UserAccountButton
-                        key={item.id}
-                        buttonsData={item}
-                        isActive={accountFrom === item.title}
-                        setAccount={setAccountFrom}
+                        key={account.id}
+                        buttonData={account}
+                        isActive={currentTransaction.accountFrom === account.title}
+                        onClick={() => onClickAccountFrom(account.title)}
+                        accountType={'accountFrom'}
                     />
                 ))}
             </AccountsFieldsets>
+            <FieldsetTitle title='¿A que cuenta entró el dinero?' />
             <AccountsFieldsets>
-                <FieldsetTitle title='¿A que cuenta entró el dinero?' />
-                {userAccounts.map( (item: ButtonData) => (
+                {userAccounts.map( (accountTo: ButtonData) => (
                     <UserAccountButton
-                        key={(item.id + 1000000)} // 100 are add to make difference that key prop from the key in the upper fieldset
-                        buttonsData={item}
-                        isActive={accountTo === item.title}
-                        setAccount={setAccountTo}
+                        key={(accountTo.id + 100000)} // 100 are add to make difference that key prop from the key in the upper fieldset
+                        buttonData={accountTo}
+                        isActive={currentTransaction.accountTo === accountTo.title}
+                        onClick={() => onClickAccountTo(accountTo.title)}
+                        accountType={'accountTo'}
                     />
                 ))}
             </AccountsFieldsets>

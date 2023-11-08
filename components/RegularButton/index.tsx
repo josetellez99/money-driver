@@ -13,9 +13,7 @@ const RegularButton: React.FC<RegularButtonProps> = ({buttonData, className, isA
 
     const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
         event.preventDefault()
-
         onClick && onClick(event)
-
     }
 
     const activeClass = isActive ? 'bg-greenYellow text-black' : 'bg-darkBlue text-white'

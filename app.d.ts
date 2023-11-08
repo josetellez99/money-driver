@@ -1,6 +1,6 @@
 type ButtonData = {
     title: string;
-    id: number,
+    id?: number,
     href?: string | undefined,
     iconURL?: string | undefined;
     onClick?: () => void;
@@ -9,7 +9,7 @@ type ButtonData = {
 type UserAccount = {
     title: string,
     id: number
-    amount: number,
+    amount?: number,
     UrlIcon?: string,
 }
 
@@ -22,7 +22,7 @@ type FormRegisterData = {
 
 type Transaction = {
     id: number,
-    type: string | undefined,
+    type: string,
     date: Date,
     accountFrom: string | undefined,
     accountTo: string | undefined,
@@ -32,7 +32,7 @@ type Transaction = {
 
 type Debt = {
     toPay: boolean,
-    debtID: number,
+    id: number,
     title: string,
     totalAmount: number,
     paidAmount?: number,
@@ -71,4 +71,11 @@ type BudgetItem = {
 type PairValue = {
     title: string;
     value: number;
+}
+
+type CreditCardData = {
+    id: number;
+    title: string;
+    transactionsThisCohorte?: Transaction[];
+    used: number;
 }

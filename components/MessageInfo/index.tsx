@@ -7,7 +7,7 @@ interface MessageInfoProps {
 const MessageInfo: React.FC<MessageInfoProps> = ({message}) => {
     return (
         <>
-            <div className='bg-green-400 rounded-lg p-1 mb-2 items-center w-full h-full'>
+            <div className='bg-green-400 rounded-lg p-1 mb-2 items-center w-full'>
                 <p className='text-center'>{message}</p>
             </div>
         </>

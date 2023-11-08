@@ -10,7 +10,7 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({title}) => {
             <input 
                 type="submit"
                 value={title}
-                className="w-full mt-2 h-[36px] rounded bg-greenYellow text-center font-bold text-black cursor-pointer"
+                className="w-full my-2 h-[36px] rounded bg-greenYellow text-center font-bold text-black cursor-pointer"
             />
         </>
     )

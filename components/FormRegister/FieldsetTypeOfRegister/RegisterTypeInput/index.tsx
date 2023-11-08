@@ -1,25 +1,27 @@
 import React from "react"
 
-interface RegisterOptionCheckboxProps {
+interface RegisterTypeInputProps {
     buttonData: ButtonData,
-    setActiveRegisterOption: any,
     isActive: boolean
+    onClick?: (title: string) => void
 }
 
-const RegisterOptionCheckbox: React.FC<RegisterOptionCheckboxProps> = ({ buttonData, setActiveRegisterOption, isActive }) => {
+const RegisterTypeInput: React.FC<RegisterTypeInputProps> = ({ 
+    buttonData, 
+    isActive,
+    onClick
+}) => {
 
     const handleChange = (title: string) => {
-        setActiveRegisterOption(title)
+        onClick && onClick(title)
     }
-
-    //onClick={(event) => handleClick(event, data.title)}
 
     const bgColor = isActive ? 'bg-greenYellow' : 'bg-mainGray';
     const textColor = isActive ? 'text-black' : ''
 
     return (
         <>
-            <label htmlFor={`register-option-${buttonData.title}`} className={`${bgColor} ${textColor} flex justify-center items-center max-w-min px-2 h-8 rounded cursor-pointer`}>
+            <label htmlFor={`register-option-${buttonData.title}`} className={`${bgColor} ${textColor} flex justify-center items-center px-1 h-8 rounded cursor-pointer`}>
                 <p>{buttonData.title}</p>
                 {
                     isActive ? (
@@ -47,4 +49,4 @@ const RegisterOptionCheckbox: React.FC<RegisterOptionCheckboxProps> = ({ buttonD
     )
 }
 
-export default RegisterOptionCheckbox
+export default RegisterTypeInput

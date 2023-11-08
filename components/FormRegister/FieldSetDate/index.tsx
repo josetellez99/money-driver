@@ -1,26 +1,30 @@
 import React from 'react'
 import { forwardRef } from 'react';
+import FieldsetBase from '@/components/FormRegister/FieldsetBase';
 import FieldsetTitle from '@/components/FormRegister/FieldsetTitle';
 import {getDateSpanishFormat} from '@/utils/getDateSpanishFormat';
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-interface DateFieldSetProps {
-    date: Date,
-    setDate: React.Dispatch<React.SetStateAction<Date>>,
-}
-
 interface CustomInputDateProps {
     onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
-const DateFieldSet: React.FC<DateFieldSetProps> = ({date, setDate}) => {
+
+
+
+
+interface DateFieldSetProps {
+    currentTransaction: Transaction,
+    setCurrentTransaction: React.Dispatch<React.SetStateAction<Transaction>>,
+}
+
+
+const DateFieldSet: React.FC<DateFieldSetProps> = ({currentTransaction, setCurrentTransaction}) => {
     
     const CustomInputDate: React.FC<CustomInputDateProps> = forwardRef(({ onClick }, ref) => {
-
-        const dateSpanishFormat = getDateSpanishFormat(date)
-
+        const dateSpanishFormat = getDateSpanishFormat(currentTransaction.date)
         return (
             <>     
                 <div className=" p-2 px-4 rounded border border-greenYellow cursor-pointer" onClick={onClick} ref={ref} >
@@ -28,24 +32,28 @@ const DateFieldSet: React.FC<DateFieldSetProps> = ({date, setDate}) => {
                 </div>
             </>
         )
-});
+    });
 
     const onChangeHandle = (currentDate: Date) => {
-        setDate(currentDate)
+        setCurrentTransaction({
+            ...currentTransaction,
+            date: currentDate
+        })
     }
 
     return (
         <>
-            <fieldset className='flex justify-between icons-middle items-center my-5 w-full'>
+        <FieldsetBase
+            className='justify-between my-5'
+        >
                 <FieldsetTitle title='Seleccion una fecha' />
-
                 <DatePicker
-                    selected={date}
+                    selected={currentTransaction.date}
                     todayButton="Hoy"
                     onChange={onChangeHandle}
                     customInput={<CustomInputDate />}
-                    />
-            </fieldset>
+                />
+        </FieldsetBase>
         </>
     );
 }

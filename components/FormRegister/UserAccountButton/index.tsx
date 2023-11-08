@@ -6,12 +6,12 @@ interface UserAccountButtonProps {
     buttonData: UserAccount,
     isActive: boolean,
     onClick?: React.MouseEventHandler<HTMLInputElement>
+    accountType?: string
 }
 
-const UserAccountButton: React.FC<UserAccountButtonProps> = ({buttonData, isActive, onClick}) => {
+const UserAccountButton: React.FC<UserAccountButtonProps> = ({buttonData, isActive, onClick, accountType}) => {
 
     const handleClick = (event: React.MouseEvent<HTMLInputElement>) => {
-        console.log('clicked')
         onClick && onClick(event)
     }
 
@@ -19,32 +19,33 @@ const UserAccountButton: React.FC<UserAccountButtonProps> = ({buttonData, isActi
 
     return (
         <>
-            <label htmlFor={`account-${buttonData.title}`} className={`flex items-center flex-col cursor-pointer`}>
+            <label htmlFor={`${accountType}-${buttonData.title}`} className={`flex items-center flex-col min-w-min cursor-pointer`}>
                 <figure className={`h-[50px] w-[50px]  ${activeStyles}  border border-white rounded-full`}>
                 </figure>
                 <p className="text-center text-sm mb-1">{buttonData.title}</p>
-                <p className="text-sm">{formatMoney(buttonData.amount)}</p>
-                {
-                    isActive ? (
-                        <input 
-                            type="checkbox" 
-                            checked
-                            hidden
-                            onClick={handleClick}
-                            name="user-accounts" 
-                            id={`account-${buttonData.title}`} 
-                        />
-                    ) : (
-                        <input 
-                            type="checkbox" 
-                            checked={false}
-                            hidden
-                            onClick={handleClick}
-                            name="user-accounts" 
-                            id={`account-${buttonData.title}`} 
-                        />
-                    )
-                }
+
+                {/* This validation is to show the amount just for the account instead budget categories */}
+                { buttonData.amount && <p className="text-sm">{formatMoney(buttonData.amount)}</p>}
+                
+                { isActive ? (
+                    <input 
+                        type="checkbox" 
+                        checked
+                        hidden
+                        onClick={handleClick}
+                        name={accountType} 
+                        id={`${accountType}-${buttonData.title}`} 
+                    />
+                ) : (
+                    <input 
+                        type="checkbox" 
+                        checked={false}
+                        hidden
+                        onClick={handleClick}
+                        name={accountType} 
+                        id={`${accountType}-${buttonData.title}`} 
+                    />
+                )}
             </label>
         </>
     )

@@ -2,7 +2,7 @@ import React from 'react';
 import AccountsTable from '@/components/AccountsTable';
 import Budget from '@/components/Budget';
 import MainDefault from '@/components/MainDefault';
-import SummaryCreditCard from '@/components/SummaryCreditCard';
+import CreditCardTable from '@/components/CreditCardTable';
 
 interface BudgetAccountPageProps {
 
@@ -144,40 +144,46 @@ const expenseBudget = [
     },
 ]
 
+const rappicardTransactions = [
+    {
+        type: 'Egreso',
+        date: '03 / 10 / 2023',
+        accountFrom: 'Tarjeta de credito: Rappicard',
+        accountTo: 'Bancolombia',
+        amount: 2000000,
+        description: 'Esta es la primera quincena del mes y me encanta este trabajo'
+    },
+    {
+        type: 'Egreso',
+        date: '03 / 10 / 2023',
+        accountFrom: 'Tarjeta de credito: Rappicard',
+        accountTo: 'Otros',
+        amount: 480000,
+        description: 'Bueno, toca pagar por donde vivir'
+      },
+      {
+        type: 'Egreso',
+        date: '03 / 10 / 2023',
+        accountFrom: 'Tarjeta de credito: Rappicard',
+        accountTo: 'Comida',
+        amount: 30000,
+        description: 'Vamos a hacer almuerzo'
+      },
+]
+
 const creditCardsData = [
     {
-        CreditCardName: 'Rappicard',
-        usedThisMonth: {
-            title: 'Usado este mes',
-            amount: 1785400, // This data about pay could came from the transaction list filtering and calculating it
-        },
-        toPayThisMonth: {
-            title: 'Por pagar este mes',
-            amount: 1785400,
-        }
+        id: 1,
+        title: 'Rappicard',
+        transactionsThisCohorte: rappicardTransactions,
+        used: 400000
     },
     {
-        CreditCardName: 'Bancolombia platino',
-        usedThisMonth: {
-            title: 'Usado este mes',
-            amount: 200000,
-        },
-        toPayThisMonth: {
-            title: 'Por pagar este mes',
-            amount: 200000,
-        }
-    },
-    {
-        CreditCardName: 'Davivienda zero',
-        usedThisMonth: {
-            title: 'Usado este mes',
-            amount: 50000,
-        },
-        toPayThisMonth: {
-            title: 'Por pagar este mes',
-            amount: 50000,
-        }
-    },
+        id: 2,
+        title: 'Mastercard',
+        transactionsThisCohorte: rappicardTransactions,
+        used: 300000
+    }
 ]
 
 const BudgetAccountPage: React.FC<BudgetAccountPageProps> = () => {
@@ -200,8 +206,8 @@ const BudgetAccountPage: React.FC<BudgetAccountPageProps> = () => {
                     title={'Presupuesto de gastos'}
                     type='expenses'
                 />
-                <SummaryCreditCard 
-                    creditCardsData={creditCardsData}
+                <CreditCardTable 
+                    userCreditsCards={creditCardsData}
                 />
             </MainDefault>
         </>

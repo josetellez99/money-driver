@@ -10,10 +10,10 @@ import PopUpLayer from "@/components/PopupLayer"
 interface UserDebtProps {
     userDebtData: Debt,
     isActive: boolean,
-    setActive: React.Dispatch<React.SetStateAction<number | undefined>>
+    onClick?: React.MouseEventHandler<HTMLDivElement>,
 }
 
-const UserDebt: React.FC<UserDebtProps> = ({userDebtData, isActive, setActive}) => {
+const UserDebt: React.FC<UserDebtProps> = ({userDebtData, isActive, onClick}) => {
 
     const [openPopUp, setOpenPopUp] = React.useState<boolean>(false)
 
@@ -27,8 +27,8 @@ const UserDebt: React.FC<UserDebtProps> = ({userDebtData, isActive, setActive}) 
     }
 
 
-    const handleClickMainElement = () => {
-        setActive(userDebtData.debtID)
+    const handleClickMainElement = (event: React.MouseEvent<HTMLDivElement>) => {
+        onClick && onClick(event)
     }
 
 

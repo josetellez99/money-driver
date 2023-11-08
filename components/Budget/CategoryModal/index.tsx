@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ChangeEvent } from 'react'
 
 import ActionButton from '@/components/ActionButton'
 import PopUpLayer from '@/components/PopupLayer'
@@ -126,7 +126,8 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
     }
 
 
-    const TitleFieldsetOnChange = (value: string) => {
+    const TitleFieldsetOnChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const { value } = event.target;
             setCurrentCategory((currentCategory) => {
                 return {
                     ...currentCategory,

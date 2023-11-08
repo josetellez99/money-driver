@@ -7,6 +7,7 @@ import TitleValuePair from '@/components/TitleValuePair';
 import HighLightedContainer from '@/components/HighLightedContainer';
 import formatMoney from '@/utils/formatMoney';
 import AccountModal from '@/components/AccountsTable/AccountModal';
+import AddNewAccountRow from '@/components/AccountsTable/AddNewAccountRow';
 
 interface AccountsTableProps {
     accounts: UserAccount[]
@@ -69,11 +70,10 @@ const AccountsTable: React.FC<AccountsTableProps> = ({accounts, incomesBudget}) 
                             )
                         })
                     }
-                    <tr 
-                        onClick={() => addAccountHandleClick()}
-                        className='flex justify-between border-2 border-greenYellow rounded-lg p-1 px-2 mb-2 w-full cursor-pointer'>
-                        <td className='font-bold'>Añadir nueva cuenta...</td>
-                    </tr>
+                    <AddNewAccountRow 
+                        onClick={addAccountHandleClick}
+                    />
+                    
                 </tbody>
                         <HighLightedContainer>
                             <TitleValuePair title={'Disponible'} textColor={'text-black'} value={totalsAccounts} />
@@ -95,3 +95,4 @@ const AccountsTable: React.FC<AccountsTableProps> = ({accounts, incomesBudget}) 
 }
 
 export default AccountsTable
+

@@ -47,8 +47,8 @@ const Budget: React.FC<BudgetProps> = ({userBudget, title, type}) => {
                 title: '',
                 amount: undefined,
                 id: Math.floor(Math.random() * (1300 - 1000 + 1)) + 1000, 
-                used: undefined, 
-                remaining: undefined}
+                used: 0, 
+                remaining: 0}
         })
     }
 

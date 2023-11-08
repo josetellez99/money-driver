@@ -2,16 +2,17 @@ import React, { ChangeEvent } from "react";
 
 import FieldsetTitle from "@/components/FormRegister/FieldsetTitle";
 import styles from './DescriptionFieldset.module.css'
+
 interface descriptionFieldsetProps {
-    description: string,
-    setDescription: React.Dispatch<React.SetStateAction<string>>
+    description: string | undefined,
+    onChange?: (value: string) => void,
 }
 
-const DescriptionFieldset: React.FC<descriptionFieldsetProps> = ({description, setDescription}) => {
+const DescriptionFieldset: React.FC<descriptionFieldsetProps> = ({description, onChange}) => {
     
     const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-        const inputValue = event.target.value;
-        setDescription(inputValue)
+        const {value} = event.target;
+        onChange && onChange(value);
     };
 
     return(
