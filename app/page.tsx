@@ -7,6 +7,8 @@ import ListOfLinksToPage from '@/components/ListOfLinksToPages'
 import SummaryTransactionList from '@/components/SummaryTransactionList'
 import Summarytransaction from '@/components/SummaryTransaction'
 
+import { exampleFetch, deleteTransactions, createuser, getUser } from '@/utils/fetch'
+
 const buttonsData = [
   {title: 'Presupuesto y cuentas', href: '/presupuesto-cuentas', iconURL: 'budget-icon.svg'},
   {title: 'Registro', href: '/registro', iconURL: '/register-icon.svg'},
@@ -74,6 +76,7 @@ const transactions = [
 ]
 
 export default function Home() {
+
   return (
     <>
       <MainDefault>

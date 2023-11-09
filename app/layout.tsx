@@ -23,6 +23,8 @@ const dataTest = [
   {title: 'Tarjeta de credito', href: 'registrar/Tarjeta-de-credito', id: 6}
 ]
 
+const myUserId = '4f968b8e-0790-488f-8ee9-4ed06509954e'
+
 export default function RootLayout({
   children,
 }: {

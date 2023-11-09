@@ -8,91 +8,6 @@ interface BudgetAccountPageProps {
 
 }
 
-// Where this "cuentas" should came from?
-const accounts = [
-    {
-        id: 1,
-        title: 'Nequi',
-        amount: 2000500,
-    },
-    {
-        id: 2,
-        title: 'Efectivo',
-        amount: 150500,
-    },
-    {
-        id: 3,
-        title: 'Daviplata',
-        amount: 687500,
-    },
-    {
-        id: 4,
-        title: 'RappiPay',
-        amount: 750000,
-    }
-]
-
-const incomeBudget = [
-    {
-        id: 1,
-        title: 'Salary',
-        amount: 3000000,
-        used: 1500000,
-        remaining: 1500000,
-        subcategories: undefined
-    },
-    {
-        id: 2,
-        title: 'Freelance Work',
-        amount: 2000000,
-        used: 500000,
-        remaining: 1500000,
-        subcategories: [
-            {
-                id: 1001,
-                title: 'Upwork',
-                amount: 1000000,
-                used: 500000,
-                remaining: 500000
-            },
-            {
-                id: 1002,
-                title: 'Fiverr',
-                amount: 1000000,
-                used: 0,
-                remaining: 1000000
-            }
-        ]
-    },
-    {
-        id: 3,
-        title: 'Investments',
-        amount: 1000000,
-        used: 0,
-        remaining: 1000000,
-        subcategories: undefined
-
-    },
-    {
-        id: 4,
-        title: 'Rentals',
-        amount: 500000,
-        used: 250000,
-        remaining: 250000,
-        subcategories: undefined
-
-    },
-    {
-        id: 5,
-        title: 'Other Income',
-        amount: 1000000,
-        used: 500000,
-        remaining: 500000,
-        subcategories: undefined
-
-    }
-]
-
 const expenseBudget = [
     {
         id: 6,
@@ -186,17 +101,14 @@ const creditCardsData = [
     }
 ]
 
-const BudgetAccountPage: React.FC<BudgetAccountPageProps> = () => {
+
+const BudgetAccountPage: React.FC<BudgetAccountPageProps> = async () => {
 
     return (
         <>
             <MainDefault>
-                <AccountsTable
-                    accounts={accounts}
-                    incomesBudget={incomeBudget}
-                    expensesBudget={expenseBudget}
-                />
-                <Budget
+                <AccountsTable />
+                {/* <Budget
                     userBudget={incomeBudget}
                     title={'Presupuesto de ingresos'}
                     type='incomes'
@@ -208,7 +120,7 @@ const BudgetAccountPage: React.FC<BudgetAccountPageProps> = () => {
                 />
                 <CreditCardTable 
                     userCreditsCards={creditCardsData}
-                />
+                /> */}
             </MainDefault>
         </>
     );

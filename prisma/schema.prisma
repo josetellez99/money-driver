@@ -1,47 +1,65 @@
-// Change this schema and run `npx prisma migrate dev` to create your database tables.
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
-model customers {
-  id        String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  name      String @db.VarChar(255)
-  email     String @db.VarChar(255)
-  image_url String @db.VarChar(255)
-}
-
-model invoices {
-  id          String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  customer_id String   @db.Uuid
-  amount      Int
-  status      String   @db.VarChar(255)
-  date        DateTime @db.Date
-}
-
-model revenue {
-  month   String @unique @db.VarChar(4)
-  revenue Int
-}
-
-model users {
-  id       String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  name     String @db.VarChar(255)
-  email    String @unique
-  password String
+model User {
+  id           String         @id @default(uuid())
+  email        String         @unique
+  name         String
+  lastname     String
+  password     String
+  rol         String
+  signupDate   DateTime       @default(now())
+  profileImage String?
+  transactions Transaction[]
+  accounts     account[]
+  budgetCategories BudgetCategory[]
 }
 
 model Transaction {
-  id        Int      @id @default(autoincrement())
-  type     String
-  date    DateTime
+  id          String   @id @default(uuid())
+  type        String
+  date        DateTime
   accountFrom String
-  accountTo String
-  amount Float
-  description String
+  accountTo   String
+  amount      Int
+  description String?
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model account {
+  id        String      @id @default(uuid())
+  title     String
+  amount   Int
+  icon String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model BudgetCategory {
+  id                  String      @id @default(uuid())
+  type                String
+  title               String
+  amount              Int
+  userId              String
+  user      User     @relation(fields: [userId], references: [id])
+  budgetSubcategories BudgetSubcategory[]
+}
+
+model BudgetSubcategory {
+  id                  String      @id @default(uuid())
+  type                String
+  title               String
+  amount              Int
+  budgetCategoryId    String
+  budgetCategory      BudgetCategory     @relation(fields: [budgetCategoryId], references: [id])
 }
