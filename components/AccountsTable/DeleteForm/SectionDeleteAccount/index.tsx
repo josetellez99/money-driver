@@ -59,7 +59,7 @@ const SectionDeleteAccount: React.FC<SectionDeleteAccountProps> = ({
                     isActive={adjustmentTransferInfo?.accountTo === 'Ajuste de cuenta'}
                 />
             </AccountsFieldsets>
-            <div className="flex justify-end">
+            {/* <div className="flex justify-end">
                 <ActionButton 
                     title='Editar cuenta'
                     type='edit'
@@ -67,7 +67,7 @@ const SectionDeleteAccount: React.FC<SectionDeleteAccountProps> = ({
                         setActionType('edit')
                     }}
                 />
-            </div>
+            </div> */}
             { showHighLigtedMessage && (
                 <HighLightedContainer>
                     <p className="text-black p-1 text-justify">

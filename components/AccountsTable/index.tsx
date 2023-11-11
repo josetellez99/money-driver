@@ -4,7 +4,6 @@ import ElementTitle from '@/components/ElementTitle';
 import TitleValuePair from '@/components/TitleValuePair';
 import HighLightedContainer from '@/components/HighLightedContainer';
 import formatMoney from '@/utils/formatMoney';
-import AccountModal from '@/components/AccountsTable/AccountModal';
 import AddNewAccountRow from '@/components/AccountsTable/AddNewAccountRow';
 import { fetchUserAccounts, fetchUserBudgetIncome } from '@/app/lib/action';
 import Link from 'next/link';
@@ -43,9 +42,9 @@ const AccountsTable: React.FC = async () => {
     // }
 
 
-    // const totalsAccounts = userAccounts.reduce((acc, account) => {
-    //     return acc + account.amount;
-    // }, 0);
+    const totalsAccounts = userAccounts.reduce((acc, account) => {
+        return acc + account.amount;
+    }, 0);
 
     return (
         <>
@@ -81,21 +80,10 @@ const AccountsTable: React.FC = async () => {
                     /> */}
                     
                 </tbody>
-                        {/* <HighLightedContainer>
+                        <HighLightedContainer>
                             <TitleValuePair title={'Disponible'} textColor={'text-black'} value={totalsAccounts} />
-                        </HighLightedContainer> */}
+                        </HighLightedContainer>
             </table>
-            {/* { showAccountModal && (
-                <AccountModal
-                    setShowAccountModal={setShowAccountModal}
-                    incomeCategories={incomesBudget}
-                    accounts={userAccounts}
-                    currentAccount={currentAccount}
-                    setCurrentAccount={setCurrentAccount}
-                    setAccounts={setUserAccounts}
-                    typeOfAccountModal={typeOfAccountModal}
-                />
-            )} */}
         </>
     )
 }

@@ -1,6 +1,6 @@
-import { fetchUserAccounts, fetchUserBudgetIncome } from '@/app/lib/action';
+import { fetchSingleUserAccount, fetchUserAccounts } from '@/app/lib/action';
 
-import EditForm from '@/components/AccountsTable/EditForm';
+import DeleteForm from '@/components/AccountsTable/DeleteForm';
 import MainDefault from '@/components/MainDefault';
 import BackButton from '@/components/BackButton';
 
@@ -11,18 +11,17 @@ const EditAccountPage = async ({params} : {params : {
 }}) => {
 
     const { accountID } = params;
-
-    const [userAccounts, incomeBudget] = await Promise.all([
-        fetchUserAccounts(myUserId),
-        fetchUserBudgetIncome(myUserId)
-    ]);
+    const userAccount = await fetchSingleUserAccount(accountID)
+    const userAccounts = await fetchUserAccounts()
 
     return (
         <MainDefault>
             <div className="flex flex-col w-full">
-                <BackButton href='/presupuesto-cuentas' />
-                <EditForm
-                    incomeCategories={incomeBudget}
+                <div className='max-w-min'>
+                    <BackButton href='/presupuesto-cuentas' />
+                </div>
+                <DeleteForm
+                    userAccount={userAccount}
                     userAccounts={userAccounts}
                     currentAccountID={accountID}
                 />
