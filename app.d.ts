@@ -8,7 +8,7 @@ type ButtonData = {
 
 type UserAccount = {
     title: string,
-    id: string,
+    id?: string,
     amount: number,
     UrlIcon?: string,
 }
@@ -60,11 +60,15 @@ type DebtPaymentRecord = {
 }
 
 type BudgetItem = {
-    id: number;
+    id?: string;
     title: string;
+    type: string;
     amount: number;
     used: number;
     remaining: number;
+    month: string;
+    userId?: string;
+    budgetCategoryId?: string;
     subcategories?: BudgetItem[];
 }
 

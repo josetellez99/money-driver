@@ -4,8 +4,6 @@ import DeleteForm from '@/components/AccountsTable/DeleteForm';
 import MainDefault from '@/components/MainDefault';
 import BackButton from '@/components/BackButton';
 
-const myUserId = '4f968b8e-0790-488f-8ee9-4ed06509954e'
-
 const EditAccountPage = async ({params} : {params : {
     accountID: string
 }}) => {

@@ -1,4 +1,4 @@
-import { fetchUserAccounts, fetchUserBudgetIncome } from '@/app/lib/action';
+import { fetchUserAccounts, fetchUserBudgetIncomes } from '@/app/lib/action';
 
 import EditForm from '@/components/AccountsTable/EditForm';
 import MainDefault from '@/components/MainDefault';
@@ -13,8 +13,8 @@ const EditAccountPage = async ({params} : {params : {
     const { accountID } = params;
 
     const [userAccounts, incomeBudget] = await Promise.all([
-        fetchUserAccounts(myUserId),
-        fetchUserBudgetIncome(myUserId)
+        fetchUserAccounts(),
+        fetchUserBudgetIncomes()
     ]);
 
     return (

@@ -2,183 +2,207 @@
 
 import React, { ChangeEvent } from "react"
 
-import MainDefault from "@/components/MainDefault"
-
 import ElementTitle from "@/components/ElementTitle"
 import TitleFieldset from "@/components/FormRegister/TitleFieldset"
 import AmountFieldset from "@/components/FormRegister/AmountFieldset"
 import SubmitButton from "@/components/FormRegister/SubmitButton"
-import ActionButton from "@/components/ActionButton"
 
-import SectionDeleteAccount from "@/components/AccountsTable/AccountModal/SectionDeleteAccount"
-import SectionCreateAccount from "@/components/AccountsTable/AccountModal/SectionCreateAccount"
-import SectionEditAccount from "@/components/AccountsTable/AccountModal/SectionEditAccount"
+import { createUserAccount } from "@/app/lib/action"
 
-import BackButton from "@/components/BackButton"
-import { useDebouncedCallback } from 'use-debounce';
-
-
-import { usePathname } from "next/navigation"
-
-interface AccountModalProps {
-    incomeCategories: BudgetItem[];
+interface CreateFormProps {
     userAccounts: UserAccount[];
-    currentAccountID: string;
+    incomeCategories: BudgetItem[];
 }
 
-const AccountModal: React.FC<AccountModalProps> = ({
-    incomeCategories,
+const CreateForm: React.FC<CreateFormProps> = ({
     userAccounts,
-    currentAccountID
+    incomeCategories,
 }) => {
 
     // In this modal you can create, edit or delete an account. In all cases you need to create a transaction to adjust the amounts of the involved accounts
     // This state is to save the information of the transaction to adjust the amount of the accounts
     const[adjustmentTransferInfo, setAdjustmentTransferInfo] = React.useState<Transaction>({
-        type: undefined,
+        type: '',
         date: new Date(),
-        accountFrom: undefined,
-        accountTo: undefined,
-        amount: undefined,
-        description: undefined,
+        accountFrom: '',
+        accountTo: '',
+        amount: 0,
+        description: '',
     });
 
-    const[currentAccount, setCurrentAccount] = React.useState<UserAccount>(userAccounts.find((account) => account.id === currentAccountID));
-
-    const pathname = usePathname()
-    const isEditPath = pathname.includes('edit');
-
-    // This state hold the type of the action to be executed, create, edit or delete
-    const[actionType, setActionType] = React.useState<'create' | 'edit' | 'delete'>(isEditPath ? 'edit' : 'create');
-
-    // This state hold the difference between the old value of the currentAccount.amount and the new value of the currentAccount.amount
-    // Is useful for the 'edi' case to make comparisons and validations
-    const[difference, setDifference] = React.useState<number>(0);
-
-    // This state hold the initial value of the currentAccount, when currentAccount.amount change this state reamins the same
-    // We never update this state, we only use it to compare the old value of the currentAccount.amount
-    const[currentAccountOldValue, setCurrentAccountOldValue] = React.useState<number>(currentAccount.amount);
-
-
-    
-
-    const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
-        event.preventDefault()
-    }
-
-    const createNewTransaction = (transactionInfo: Transaction) => {
-        // Here is the logic to create the transaction to adjust the edit, create or deleted account
-    }
-
-
-    const deleteAccountHandleClick = () => {
-
-    }
+    const[newAccount, setNewAccount] = React.useState<UserAccount>({
+        title: '',
+        amount: 0,
+    });
 
     const titleAccountHandleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
         const {value} = event.target
-        setCurrentAccount({...currentAccount, title: value});
+        setNewAccount({...newAccount, title: value});
+        setAdjustmentTransferInfo({
+            ...adjustmentTransferInfo,
+            accountTo: value,
+        })
     }
 
     const amountAccountHandleOnChange = (value: number) => {
-        setCurrentAccount({...currentAccount, amount: value});
+        setNewAccount({...newAccount, amount: value});
         setAdjustmentTransferInfo({
             ...adjustmentTransferInfo,
             amount: value,
-        })
-        if(actionType === 'edit') {
-            setDifference(value - currentAccountOldValue)
-            
-            if(value < currentAccountOldValue) {
-                setAdjustmentTransferInfo({
-                    ...adjustmentTransferInfo,
-                    type: 'expense',
-                    accountFrom: currentAccount?.title,
-                    accountTo: 'Ajuste de cuenta',
-                    amount: Math.abs(value - currentAccountOldValue), // converting the negative number to positive
-                    description: `Ajuste de cuenta negativo a: ${currentAccount?.title}`,
-                })
-            } else if (value > currentAccountOldValue) {
-                setAdjustmentTransferInfo({
-                    ...adjustmentTransferInfo,
-                    type: 'income',
-                    accountFrom: 'Ajuste de cuenta',
-                    accountTo: currentAccount?.title,
-                    amount: value - currentAccountOldValue,
-                    description: `Ajuste de cuenta positivo a: ${currentAccount?.title}`,
-                })
-            }
-        }      
+        })    
     }
+
+    const accountFrom = userAccounts.find( account => account.title === adjustmentTransferInfo.accountFrom)
 
     return (
         <>
-        <MainDefault>
-            <div className="flex flex-col w-full">
-                <BackButton href='/presupuesto-cuentas' />
-                <form action="" onSubmit={handleSubmit}>
-                        <ElementTitle 
-                            title={actionType === 'create' ? 'Crear cuenta' : 'Editar cuenta'} />
-                        <div className="my-8" />
-                        <TitleFieldset
-                            title={currentAccount?.title}
-                            onChange={titleAccountHandleOnChange}
-                        />
-                        { (actionType === 'create' || actionType === 'edit') &&
-                            <AmountFieldset
-                                amount={currentAccount?.amount}
-                                onChange={amountAccountHandleOnChange}
+            <form action={() => createUserAccount(newAccount, adjustmentTransferInfo, accountFrom?.id!)}>
+                    <ElementTitle 
+                        title={'Crear nueva cuenta'} />
+                    <div className="my-8" />
+                    <TitleFieldset
+                        title={newAccount?.title}
+                        onChange={titleAccountHandleOnChange}
+                    />
+                    <AmountFieldset
+                        amount={newAccount?.amount}
+                        onChange={amountAccountHandleOnChange}
+                    />
+                    
+                        <>
+                            <SectionCreateAccount 
+                                newAccount={newAccount}
+                                incomeCategories={incomeCategories}
+                                accounts={userAccounts}
+                                adjustmentTransferInfo={adjustmentTransferInfo}
+                                setAdjustmentTransferInfo={setAdjustmentTransferInfo}
                             />
-                        }
-                        { actionType === 'edit' && ( 
-                            <ActionButton 
-                            title='Eliminar esta cuenta'
-                            type='delete'
-                            onClick={deleteAccountHandleClick}
-                            />
-                            )}
-                        { actionType === 'edit' && difference !== 0 && (
-
-                            // When difference is not "0" is cause by the user changing the currentAccount.amount
-                            <>
-                                <SectionEditAccount
-                                    difference={difference}
-                                    currentAccount={currentAccount!}
-                                    currentAccountOldValue={currentAccountOldValue}
-                                    incomeCategories={incomeCategories}
-                                    adjustmentTransferInfo={adjustmentTransferInfo}
-                                    setAdjustmentTransferInfo={setAdjustmentTransferInfo}
-
-                                />
-                            </>
-                        )}
-                        { actionType === 'delete' && (
-                            <>
-                                <SectionDeleteAccount
-                                    currentAccount={currentAccount}
-                                    accounts={userAccounts}
-                                    adjustmentTransferInfo={adjustmentTransferInfo}
-                                    setAdjustmentTransferInfo={setAdjustmentTransferInfo}
-                                    setActionType={setActionType}
-                                />
-                            </>
-                        )}
-                        { actionType === 'create' &&  (
-                            <>
-                                <SectionCreateAccount 
-                                    currentAccount={currentAccount}
-                                    incomeCategories={incomeCategories}
-                                    accounts={userAccounts}
-                                    adjustmentTransferInfo={adjustmentTransferInfo}
-                                    setAdjustmentTransferInfo={setAdjustmentTransferInfo}
-                                />
-                            </>
-                        )}
-                        <SubmitButton title='Guardar' />
-                </form>
-            </div>
-        </MainDefault>
+                        </>
+                    <SubmitButton title='Guardar' />
+            </form>
         </>
     )
 }
-export default AccountModal
+
+
+export default CreateForm
+
+import AccountsFieldsets from '@/components/FormRegister/AccountsFieldsets';
+import UserAccountButton from '@/components/FormRegister/UserAccountButton';
+import RegularButtonList from '@/components/RegularButtonList';
+import RegularButton from '@/components/RegularButton';
+import HighLightedContainer from '@/components/HighLightedContainer';
+import formatMoney from '@/utils/formatMoney';
+
+interface SectionCreateAccountProps {
+    newAccount: UserAccount | undefined
+    accounts: UserAccount[]
+    incomeCategories: BudgetItem[],
+    adjustmentTransferInfo: Transaction,
+    setAdjustmentTransferInfo: React.Dispatch<React.SetStateAction<Transaction>>
+}
+
+const SectionCreateAccount: React.FC<SectionCreateAccountProps> = ({
+    accounts,
+    incomeCategories,
+    newAccount,
+    adjustmentTransferInfo,
+    setAdjustmentTransferInfo,
+
+    }) => {
+
+    const[showHighLigtedMessage, setShowHighLigtedMessage] = React.useState<boolean>(false)
+    const[whereMoneyCameFrom, setWhereMoneyCameFrom] = React.useState<string | undefined>(undefined)
+
+    const moneyFromOptions = [
+        {
+            title: 'Otra cuenta',
+            id: 1
+        },
+        {
+            title: 'Es un ingreso',
+            id: 2
+        }
+    ]
+
+    const setTransferInfoAccountFrom = (item: BudgetItem | UserAccount, type: string) => {
+        setAdjustmentTransferInfo({
+            ...adjustmentTransferInfo,
+            type: type,
+            accountFrom: item.title,
+            description: `Creacion de la cuenta ${newAccount?.title}, el dinero vino desde ${item.title}`,
+        })
+        setShowHighLigtedMessage(true);
+    }
+
+
+
+    return (
+        <>
+            <div className="mb-4">
+                <p className="mb-2">¿De donde viene el dinero de esta cuenta nueva?</p>
+                <RegularButtonList
+                    className="flex gap-2"
+                    >
+                    {moneyFromOptions.map( option => {
+                        return (
+                            <RegularButton
+                                buttonData={option}
+                                onClick={() => setWhereMoneyCameFrom(option.title)}
+                                isActive={option.title === whereMoneyCameFrom}
+                            />
+                            )
+                        })}
+                </RegularButtonList>
+            </div>
+
+                { whereMoneyCameFrom === 'Otra cuenta' && (
+                    <>
+                        <p className="mb-2">¿De qué cuenta viene el dinero?</p>
+                        <AccountsFieldsets>
+                            {accounts.map( account => {
+                                return (
+                                    <UserAccountButton
+                                        buttonData={account}
+                                        onClick={() => setTransferInfoAccountFrom(account, 'movement')}
+                                        isActive={account.title === adjustmentTransferInfo?.accountFrom}
+                                    />
+                                )
+                            })}
+                        </AccountsFieldsets>
+                    </>
+                )}
+
+                { whereMoneyCameFrom === 'Es un ingreso' && (
+                    <>
+                        <p className="mb-2">¿De qué ingreso viene el dinero?</p>
+                        <AccountsFieldsets>
+                            {incomeCategories.map( income => {
+                                return (
+                                    <UserAccountButton
+                                        buttonData={income}
+                                        onClick={() => setTransferInfoAccountFrom(income, 'income')}
+                                        isActive={income.title === adjustmentTransferInfo?.accountFrom}
+                                    />
+                                    )
+                                })}
+                        </AccountsFieldsets>
+                    </>
+                )}    
+        { showHighLigtedMessage && (
+            <HighLightedContainer>
+                <p className="text-black p-1 text-justify">
+                    {`Se creará la cuenta `}
+                    <span className="font-bold">{newAccount?.title}</span>
+                    {` y se registrará un movimiento desde `}
+                    <span className="font-bold">{adjustmentTransferInfo?.accountFrom}</span>
+                    {` por valor de `}
+                    <span className="font-bold">{formatMoney(adjustmentTransferInfo?.amount)}</span>
+                    {`. Para continuar, pulsa `}
+                    <span className="font-bold">"Guardar"</span>
+                </p>
+            </HighLightedContainer>
+        )}
+        </>
+    );
+}

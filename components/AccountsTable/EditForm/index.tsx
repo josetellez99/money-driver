@@ -37,8 +37,6 @@ const EditForm: React.FC<EditFormProps> = ({
         description: '',
     });
 
-    console.log("adjustmentTransferInfo", adjustmentTransferInfo);
-
     const[currentAccount, setCurrentAccount] = React.useState<UserAccount>(userAccounts.find((account) => account.id === currentAccountID));
 
     // This state hold the difference between the currentAccount.amount old value and the currentAccount.amount new value

@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import setMonthForBudgetItem from '@/utils/setMonthForBudgetItem'
 
 const prisma = new PrismaClient()
 
@@ -83,40 +84,58 @@ export async function seedUSerAccounts () {
 }
 
 export async function seedUserBudgetIncome () {
-    await prisma.budgetCategory.create({
+    await prisma.budgetItem.create({
         data: {
             type: 'income',
             title: 'Salario',
             amount: 1500000,
+            used: 0,
+            remaining: 1500000,
+            month: setMonthForBudgetItem(),
             userId: '4f968b8e-0790-488f-8ee9-4ed06509954e',
         },
     })
-    await prisma.budgetCategory.create({
+    await prisma.budgetItem.create({
         data: {
             type: 'income',
             title: 'Inversiones',
             amount: 8000000,
-            userId: '4f968b8e-0790-488f-8ee9-4ed06509954e',
-        },
-    })
-    await prisma.budgetCategory.create({
-        data: {
-            type: 'income',
-            title: 'Rentas',
-            amount: 500000,
-            userId: '4f968b8e-0790-488f-8ee9-4ed06509954e',
-        },
-    })
-    await prisma.budgetCategory.create({
-        data: {
-            type: 'income',
-            title: 'Frelancer',
-            amount: 500000,
+            used: 0,
+            remaining: 8000000,
+            month: setMonthForBudgetItem(),
             userId: '4f968b8e-0790-488f-8ee9-4ed06509954e',
         },
     })
 }
 
+export async function seedUserBudgetIncomeSubcategories () {
+    await prisma.budgetSubcategory.create({
+        data: {
+            title: 'Fiverr',
+            type: 'income',
+            amount: 1500000,
+            used: 0,
+            remaining: 1500000,
+            budgetCategoryId: 'ab6d7ff8-f2d3-4214-829b-b1312ace079f',
+            userId: '4f968b8e-0790-488f-8ee9-4ed06509954e',
+        },
+    })
+    await prisma.budgetSubcategory.create({
+        data: {
+            title: 'MarketPlace',
+            type: 'income',
+            amount: 700000,
+            used: 0,
+            remaining: 700000,
+            budgetCategoryId: 'ab6d7ff8-f2d3-4214-829b-b1312ace079f',
+            userId: '4f968b8e-0790-488f-8ee9-4ed06509954e',
+        },
+    })
+}
+
+export async function deleteAllBudgetCategories () {
+    await prisma.budgetCategory.deleteMany()
+}
 
 
 export async function deleteAccountByUserId (userId: string) {

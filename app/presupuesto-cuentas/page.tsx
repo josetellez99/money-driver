@@ -3,7 +3,7 @@ import AccountsTable from '@/components/AccountsTable';
 import Budget from '@/components/Budget';
 import MainDefault from '@/components/MainDefault';
 import CreditCardTable from '@/components/CreditCardTable';
-
+import {seedUserBudgetIncome} from '@/utils/fetch'
 interface BudgetAccountPageProps {
 
 }
@@ -108,17 +108,15 @@ const BudgetAccountPage: React.FC<BudgetAccountPageProps> = async () => {
         <>
             <MainDefault>
                 <AccountsTable />
-                {/* <Budget
-                    userBudget={incomeBudget}
+                <Budget
                     title={'Presupuesto de ingresos'}
-                    type='incomes'
+                    type='income'
                 />
                 <Budget
-                    userBudget={expenseBudget}
                     title={'Presupuesto de gastos'}
-                    type='expenses'
+                    type='expense'
                 />
-                <CreditCardTable 
+                {/* <CreditCardTable 
                     userCreditsCards={creditCardsData}
                 /> */}
             </MainDefault>

@@ -21,7 +21,8 @@ model User {
   profileImage String?
   transactions Transaction[]
   accounts     account[]
-  budgetCategories BudgetCategory[]
+  budgetCategories BudgetItem[]
+  budgetSubcategories BudgetItemSubcategory[]
 }
 
 model Transaction {
@@ -45,21 +46,28 @@ model account {
   user      User     @relation(fields: [userId], references: [id])
 }
 
-model BudgetCategory {
-  id                  String      @id @default(uuid())
-  type                String
-  title               String
-  amount              Int
-  userId              String
-  user      User     @relation(fields: [userId], references: [id])
-  budgetSubcategories BudgetSubcategory[]
-}
-
-model BudgetSubcategory {
-  id                  String      @id @default(uuid())
-  type                String
-  title               String
-  amount              Int
-  budgetCategoryId    String
-  budgetCategory      BudgetCategory     @relation(fields: [budgetCategoryId], references: [id])
-}
+model BudgetItem {
+    id                  String      @id @default(uuid())
+    type                String
+    title               String
+    amount              Int
+    used                Int
+    remaining           Int
+    month               String
+    userId              String
+    user      User     @relation(fields: [userId], references: [id])
+    budgetSubcategories BudgetItemSubcategory[]
+  }
+  
+  model BudgetItemSubcategory {
+    id                  String      @id @default(uuid())
+    type                String
+    title               String
+    amount              Int 
+    used                Int         @default(0)
+    remaining           Int         @default(0)
+    budgetCategoryId    String
+    userId              String
+    user                User        @relation(fields: [userId], references: [id])
+    budgetCategory      BudgetItem     @relation(fields: [budgetCategoryId], references: [id])
+  }

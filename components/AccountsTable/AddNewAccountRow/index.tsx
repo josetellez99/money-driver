@@ -1,19 +1,23 @@
+'use client'
+
+import Link from "next/link"
+
 interface AddNewAccountRowProps {
-    onClick: () => void
+    href: string,
 }
 
-const AddNewAccountRow: React.FC<AddNewAccountRowProps> = ({onClick}) => {
-
-    const handleClick = () => {
-        onClick();
-    }
+const AddNewAccountRow: React.FC<AddNewAccountRowProps> = ({href}) => {
 
     return(
         <>
             <tr 
-                onClick={handleClick}
-                className='flex justify-between border-2 border-greenYellow rounded-lg p-1 px-2 mb-2 w-full cursor-pointer'>
-                <td className='font-bold'>Añadir nueva cuenta...</td>
+                className='flex justify-between border-2 border-greenYellow rounded-lg p-1 px-2 mb-2 w-full cursor-pointer'
+            >
+                <Link
+                    href={href}
+                >
+                    <td className='font-bold'>Añadir nueva cuenta...</td>
+                </Link>
             </tr>
         </>
     )

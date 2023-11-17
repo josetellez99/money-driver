@@ -1,6 +1,6 @@
 'use client'
 
-import React, { ChangeEvent } from "react"
+import React from "react"
 
 import ElementTitle from "@/components/ElementTitle"
 import TitleFieldset from "@/components/FormRegister/TitleFieldset"
@@ -34,7 +34,6 @@ const DeleteForm: React.FC<DeleteFormProps> = ({
         description: '',
     });
 
-    console.log(userAccounts)
     const accountTo = userAccounts.find( account => account.title === adjustmentTransferInfo.accountTo)
 
     return (
