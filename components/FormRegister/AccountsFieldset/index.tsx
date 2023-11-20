@@ -15,12 +15,12 @@ const AccountsSection: React.FC<AccountsSectionProps> = ({typeOfRegister, onInco
     return (
         <>
             <section className='my-6'>
-                {typeOfRegister == 'Ingreso' && onIncome && onIncome()}
-                {typeOfRegister == 'Egreso' && onExpense && onExpense()}
-                {typeOfRegister == 'Movimiento' && onMovement && onMovement()}
-                {typeOfRegister == 'Deuda' && onDebt && onDebt()}
-                {/* {typeOfRegister == 'Ahorro' && onSave && onSave()} */}
-                {typeOfRegister == 'Tarjeta de credito' && onCreditCard && onCreditCard()}
+                {typeOfRegister == 'income' && onIncome && onIncome()}
+                {typeOfRegister == 'expense' && onExpense && onExpense()}
+                {typeOfRegister == 'movement' && onMovement && onMovement()}
+                {typeOfRegister == 'debt' && onDebt && onDebt()}
+                {/* {typeOfRegister == 'saving' && onSave && onSave()} */}
+                {typeOfRegister == 'creditCard' && onCreditCard && onCreditCard()}
             </section>
         </>
     )

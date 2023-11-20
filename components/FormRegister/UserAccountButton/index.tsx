@@ -20,12 +20,12 @@ const UserAccountButton: React.FC<UserAccountButtonProps> = ({buttonData, isActi
     return (
         <>
             <label htmlFor={`${accountType}-${buttonData.title}`} className={`flex items-center flex-col min-w-min cursor-pointer`}>
-                <figure className={`h-[50px] w-[50px]  ${activeStyles}  border border-white rounded-full`}>
+                <figure className={`flex justify-center items-center h-[50px] w-[50px]  ${activeStyles}  border border-white rounded-full`}>
                 </figure>
                 <p className="text-center text-sm mb-1">{buttonData.title}</p>
 
                 {/* This validation is to show the amount just for the account instead budget categories */}
-                { buttonData.amount && <p className="text-sm">{formatMoney(buttonData.amount)}</p>}
+                {/* { buttonData.amount && <p className="text-sm">{formatMoney(buttonData.amount)}</p>} */}
                 
                 { isActive ? (
                     <input 

@@ -11,15 +11,10 @@ interface CustomInputDateProps {
     onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
-
-
-
-
 interface DateFieldSetProps {
     currentTransaction: Transaction,
     setCurrentTransaction: React.Dispatch<React.SetStateAction<Transaction>>,
 }
-
 
 const DateFieldSet: React.FC<DateFieldSetProps> = ({currentTransaction, setCurrentTransaction}) => {
     

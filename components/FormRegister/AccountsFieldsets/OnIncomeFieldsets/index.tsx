@@ -5,56 +5,115 @@ import AccountsFieldsets from "@/components/FormRegister/AccountsFieldsets";
 import FieldsetTitle from "@/components/FormRegister/FieldsetTitle";
 
 interface OnIncomeFieldsetsProps {
-    userAccounts: UserAccount[],
-    incomesCategories: UserAccount[],
+    accounts: UserAccount[],
+    incomesCategories: BudgetItem[],
     currentTransaction: Transaction,
     setCurrentTransaction: React.Dispatch<React.SetStateAction<Transaction>>,
 
 }
 
 const OnIncomeFieldsets: React.FC<OnIncomeFieldsetsProps> = ({ 
-        userAccounts, 
+        accounts, 
         incomesCategories, 
         currentTransaction,
         setCurrentTransaction
     }) => {
 
-        const onClickAccountFrom = (accountFrom: string) => {
+        const onClickAccountFrom = (accountFrom: string, accountFromId: string) => {
             setCurrentTransaction({
                 ...currentTransaction,
-                accountFrom: accountFrom
+                accountFrom: accountFrom,
+                accountFromId: accountFromId
             })
         }
 
-        const onClickAccountTo = (accountTo: string) => {
+        const onClicksubcategoryFrom = (subcategoryFrom: string, subcategoryFromId: string) => {
             setCurrentTransaction({
                 ...currentTransaction,
-                accountTo: accountTo
+                subcategoryFrom: subcategoryFrom,
+                subcategoryFromId: subcategoryFromId
             })
         }
-    
+
+        const onClickAccountTo = (accountTo: string, accountToId: string) => {
+            setCurrentTransaction({
+                ...currentTransaction,
+                accountTo: accountTo,
+                accountToId: accountToId
+            })
+        }
+
+        // This is necesarry to valide if the selected category has subcategories
+        const currentCategory = incomesCategories.find(category => category.id === currentTransaction.accountFromId);
+
+        const showAllcategories = () => {
+            setCurrentTransaction({
+                ...currentTransaction,
+                accountFrom: '',
+                accountFromId: ''
+            })
+        }
+
     return (
         <>
             <FieldsetTitle title='¿De dónde viene este ingreso?' />
-            <AccountsFieldsets>
-                {incomesCategories.map( (incomeCategory: ButtonData) => (
-                    <UserAccountButton
-                        key={incomeCategory.id}
-                        buttonData={incomeCategory}
-                        isActive={currentTransaction.accountFrom === incomeCategory.title}
-                        onClick={() => onClickAccountFrom(incomeCategory.title)}
-                    />
-                ))}
-            </AccountsFieldsets>
+
+            {/* When the selected category doesn't have subcategories, show this*/}
+                {!currentCategory?.subcategories && (
+                    <AccountsFieldsets>
+                        {incomesCategories.map( (incomeCategory) => (
+                            <UserAccountButton
+                                key={incomeCategory.id}
+                                buttonData={incomeCategory}
+                                isActive={currentTransaction.accountFromId === incomeCategory.id}
+                                onClick={() => onClickAccountFrom(incomeCategory.title, incomeCategory.id!)}
+                            />
+                        ))}
+                    </AccountsFieldsets>
+                )}
+
+            {/* When the selected category do have subcategories, show this*/}
+
+            { currentCategory?.subcategories && currentCategory.subcategories!.length > 0 && (
+                <>
+                    <AccountsFieldsets
+                        className='mb-0'
+                    >
+                        <UserAccountButton
+                            buttonData={currentCategory}
+                            isActive={currentTransaction.accountFromId === currentCategory.id}
+                            onClick={() => onClickAccountFrom(currentCategory.title, currentCategory.id!)}
+                        />
+                        <UserAccountButton 
+                            buttonData={{
+                                title: 'Ver todas las categorias',
+                            }}
+                            isActive={false}
+                            onClick={showAllcategories}
+                        />
+                    </AccountsFieldsets>
+                    <p className="mb-2">Subcategorias</p>
+                    <AccountsFieldsets>
+                        {currentCategory.subcategories!.map(subcategory => (
+                            <UserAccountButton
+                                key={subcategory.id}
+                                buttonData={subcategory}
+                                isActive={currentTransaction.subcategoryFromId === subcategory.id}
+                                onClick={() => onClicksubcategoryFrom(subcategory.title, subcategory.id!)}
+                            />
+                        ))}
+                    </AccountsFieldsets>
+                </>
+            )}
 
             <FieldsetTitle title='¿A qué cuenta ingresó el dinero?' />
             <AccountsFieldsets>
-                {userAccounts.map( (account: ButtonData) => (
+                {accounts.map( (account) => (
                     <UserAccountButton
                         key={account.id}
                         buttonData={account}
-                        isActive={currentTransaction.accountTo === account.title}
-                        onClick={() => onClickAccountTo(account.title)}
+                        isActive={currentTransaction.accountToId === account.id}
+                        onClick={() => onClickAccountTo(account.title, account.id!)}
                     />
                 ))}
             </AccountsFieldsets>

@@ -4,10 +4,13 @@ import { PrismaClient } from '@prisma/client'
 import { unstable_noStore as noStore } from 'next/cache';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { incomeCase } from '@/app/lib/createTransactionCases';
 
 const prisma = new PrismaClient()
 
 const myUserId = '4f968b8e-0790-488f-8ee9-4ed06509954e'
+
+// accounts actions
 
 export async function fetchUserAccounts() {
     noStore()
@@ -41,8 +44,90 @@ export async function fetchSingleUserAccount(accountID: string) {
     }
 }
 
+export async function updateUserAccount(currentAccount: UserAccount, adjustmentTransferInfo: Transaction) {
+    noStore()
+
+    await prisma.account.update({
+        where: { id: currentAccount.id },
+        data: {
+            ...currentAccount
+        },
+    });
+    
+    await prisma.transaction.create({
+        data: {
+            ...adjustmentTransferInfo,
+            userId: myUserId,
+        }
+    });
+
+    revalidatePath('/presupuesto-cuentas'); // This make a new request to the server to get the latest data
+    redirect('/presupuesto-cuentas'); // This redirects the user to the invoices page
+}
+
+export async function deleteUserAccount(accountId: string, adjustmentTransferInfo: Transaction, accountToId: string) {
+    noStore()
+
+    await prisma.account.delete({
+        where: { id: accountId },
+    });
+
+    await prisma.transaction.create({
+        data: {
+            ...adjustmentTransferInfo,
+            userId: myUserId,
+        }
+    });
+
+    await prisma.account.update({
+        where: { id: accountToId },
+        data: {
+            amount: {
+                increment: adjustmentTransferInfo.amount,
+            }
+        },
+    })
+
+    revalidatePath('/presupuesto-cuentas'); // This make a new request to the server to get the latest data
+    redirect('/presupuesto-cuentas'); // This redirects the user to the invoices page
+}
+
+export async function createUserAccount(newAccount: UserAccount, adjustmentTransferInfo: Transaction, accountFromId: string) {
+    noStore()
+
+    await prisma.account.create({
+        data: {
+            ...newAccount,
+            userId: myUserId,
+        }
+    });
+
+    await prisma.transaction.create({
+        data: {
+            ...adjustmentTransferInfo,
+            userId: myUserId,
+        }
+    });
+
+    if(adjustmentTransferInfo.type === 'movement') {
+        await prisma.account.update({
+            where: { id: accountFromId },
+            data: {
+                amount: {
+                    decrement: adjustmentTransferInfo.amount,
+                }
+            },
+        })
+    }
+
+    revalidatePath('/presupuesto-cuentas'); // This make a new request to the server to get the latest data
+    redirect('/presupuesto-cuentas'); // This redirects the user to the invoices page
+}
 
 
+
+
+// budgets actions
 
 export async function fetchUserBudget (type: 'income' | 'expense') {
     noStore()
@@ -95,6 +180,21 @@ export async function fetchUserBudgetWithSubcategories (type: 'income' | 'expens
     return budgetData
 }
 
+export async function fetchBudgetcategory(budgetID: string) {
+    noStore()
+    try {
+        const budgetCategory = await prisma.budgetItem.findUnique({
+            where: {
+                id: budgetID,
+            }
+        });
+        return budgetCategory;
+    } catch (error) {
+        console.error("Error fetching user budget income:", error);
+        throw error;
+    }
+}
+
 export async function fetchBudgetSubcategoriesbyParentID (budgetCategoryId: string) {
     noStore()
     try {
@@ -109,21 +209,6 @@ export async function fetchBudgetSubcategoriesbyParentID (budgetCategoryId: stri
         throw error;
     }
 
-}
-
-export async function fetchBudgetcategory(budgetID: string) {
-    noStore()
-    try {
-        const budgetCategory = await prisma.budgetItem.findUnique({
-            where: {
-                id: budgetID,
-            }
-        });
-        return budgetCategory;
-    } catch (error) {
-        console.error("Error fetching user budget income:", error);
-        throw error;
-    }
 }
 
 export async function fetchSingleBudgetCategoryWithSubcategories (budgetID: string) {
@@ -248,84 +333,34 @@ async function createBudgetSubcategories(subcategoriesToCreate: BudgetItem[], pa
     redirect('/presupuesto-cuentas')
 }
 
-// Accounts actions
+// transactions actions
 
-export async function updateUserAccount(currentAccount: UserAccount, adjustmentTransferInfo: Transaction) {
+// Hacer la logica completa de cuando se registra una transacción para los diferentes casos: ingreso, egreso y movimiento
+// Make the modifications to update the "used" property of the budget category and subcategory
+
+//Necesito confirmaciones de todo antes de confirmar que todo estuvo bien, de todos los pasos, la transaccion y la modificación del used and remaining
+// Si puedes mostrar un componente de SummaryTransaction que aparezca debajo del form y que sea la confirmación y que se pueda editar o eliminar desde ahí
+
+export async function createNewTransaction (newTransaction: Transaction) {
     noStore()
 
-    await prisma.account.update({
-        where: { id: currentAccount.id },
+    console.log(newTransaction)
+
+    const transaction = await prisma.transaction.create({
         data: {
-            ...currentAccount
-        },
+            ...newTransaction,
+            userId: myUserId,
+        }
     });
+
+    console.log(transaction)    
+    transaction.type === 'income' ? incomeCase(newTransaction) : null
+
+
     
-    await prisma.transaction.create({
-        data: {
-            ...adjustmentTransferInfo,
-            userId: myUserId,
-        }
-    });
-
-    revalidatePath('/presupuesto-cuentas'); // This make a new request to the server to get the latest data
-    redirect('/presupuesto-cuentas'); // This redirects the user to the invoices page
+    // revalidatePath(`/registrar/${newTransaction.type}`)
+    // redirect(`/registrar/${newTransaction.type}`)
+    
+    return transaction
 }
 
-export async function deleteUserAccount(accountId: string, adjustmentTransferInfo: Transaction, accountToId: string) {
-    noStore()
-
-    await prisma.account.delete({
-        where: { id: accountId },
-    });
-
-    await prisma.transaction.create({
-        data: {
-            ...adjustmentTransferInfo,
-            userId: myUserId,
-        }
-    });
-
-    await prisma.account.update({
-        where: { id: accountToId },
-        data: {
-            amount: {
-                increment: adjustmentTransferInfo.amount,
-            }
-        },
-    })
-
-    revalidatePath('/presupuesto-cuentas'); // This make a new request to the server to get the latest data
-    redirect('/presupuesto-cuentas'); // This redirects the user to the invoices page
-}
-
-export async function createUserAccount(newAccount: UserAccount, adjustmentTransferInfo: Transaction, accountFromId: string) {
-    noStore()
-
-    await prisma.account.create({
-        data: {
-            ...newAccount,
-            userId: myUserId,
-        }
-    });
-
-    await prisma.transaction.create({
-        data: {
-            ...adjustmentTransferInfo,
-            userId: myUserId,
-        }
-    });
-
-    if(adjustmentTransferInfo.type === 'movement') {
-        await prisma.account.update({
-            where: { id: accountFromId },
-            data: {
-                amount: {
-                    decrement: adjustmentTransferInfo.amount,
-                }
-            },
-        })
-    }
-
-    revalidatePath('/presupuesto-cuentas'); // This make a new request to the server to get the latest data
-    redirect('/presupuesto-cuentas'); // This redirects the user to the invoices page
-}

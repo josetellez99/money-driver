@@ -1,81 +1,9 @@
 import React from "react"
 import FormRegister from "@/components/FormRegister"
 import MainDefault from "@/components/MainDefault"
-import useNavigation from "next/navigation"
-
-const registerOptions = [
-    { title: 'Ingreso', id: 1},
-    { title: 'Egreso', id: 2},
-    { title: 'Movimiento', id: 3},
-    // { title: 'Ahorro', id: 4},
-    { title: 'Deuda', id: 5},
-    { title: 'Tarjeta de credito', id: 6},
-]
+import {fetchUserAccounts, fetchUserBudgetWithSubcategories} from "@/app/lib/action";
 
 const user = {
-    accounts: [
-        {
-            title: 'Efectivo',
-            id: 1
-            
-        },
-        {
-            title: 'Daviplata',
-            id: 2
-        },
-        {
-            title: 'Nequi',
-            id: 3
-        }
-    ],
-    incomesCategories: [
-        {
-            title: 'Sueldo en Rappi',
-            id: 1
-        },
-        {
-            title: 'Pagos de freelancer',
-            id: 2
-        },
-        {
-            title: 'Apto en arriendo',
-            id: 3
-        }
-    ],
-    expensesCategories : [
-        {
-            title: 'Arriendo',
-            id: 1
-        },
-        {
-            title: 'Comida',
-            id: 2
-        },
-        {
-            title: 'Ayuda a la familia',
-            id: 3
-        },
-        {
-            title: 'Personales',
-            id: 4
-        },
-        {
-            title: 'Moto',
-            id: 5
-        },
-        {
-            title: 'Otros',
-            id: 6
-        },
-        {
-            title: 'Trabajo',
-            id: 7
-        },
-        {
-            title: 'Dulces',
-            id: 8
-        }
-    ],
     debts: [
         {
             toPay: true,
@@ -218,15 +146,37 @@ interface RegisterPageProps {
     }
 }
 
-const RegisterPage: React.FC<RegisterPageProps> = ( {params} ) => {
+const RegisterPage: React.FC<RegisterPageProps> = async ( {params} ) => {
+
+    const [accounts, incomesCategories, expensesCategories] = await Promise.all([
+        fetchUserAccounts(),
+        fetchUserBudgetWithSubcategories('income'),
+        fetchUserBudgetWithSubcategories('expense'),
+    ])
+
+    // We need to translate the slug to the type of register that the server expects in english
+    
+    const optionsMap = {
+        'Ingreso': 'income',
+        'Egreso': 'expense',
+        'Movimiento': 'movement',
+        'Deuda': 'debt',
+        'Tarjeta de credito': 'creditCard'
+    };
+
+    const option = optionsMap[params.slug] || '';
 
     return (
         <>
         <MainDefault>
             <FormRegister
-                registerOptions={registerOptions}
-                activeRegisterOption={params.slug} 
-                userData={user}
+                activeRegisterOption={option}
+                accounts={accounts}
+                incomesCategories={incomesCategories}
+                expensesCategories={expensesCategories}
+                // debts={debts}
+                // saves={saves},
+                // creditCards={creditCards}
             />
         </MainDefault>
         </>

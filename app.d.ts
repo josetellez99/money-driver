@@ -9,7 +9,7 @@ type ButtonData = {
 type UserAccount = {
     title: string,
     id?: string,
-    amount: number,
+    amount?: number,
     UrlIcon?: string,
 }
 
@@ -25,7 +25,13 @@ type Transaction = {
     type: string,
     date: Date,
     accountFrom: string,
+    accountFromId: string,
+    subcategoryFrom?: string,
+    subcategoryFromId?: string,
     accountTo: string,
+    accountToId: string,
+    subcategoryTo?: string,
+    subcategoryToId?: string,
     amount: number,
     description?: string,
 }

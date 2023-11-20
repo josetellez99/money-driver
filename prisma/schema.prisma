@@ -26,14 +26,20 @@ model User {
 }
 
 model Transaction {
-  id          String   @id @default(uuid())
-  type        String
-  date        DateTime
-  accountFrom String
-  accountTo   String
-  amount      Int
-  description String?
-  userId      String
+  id                      String   @id @default(uuid())
+  type                    String
+  date                    DateTime
+  accountFrom             String
+  accountFromId           String
+  subcategoryFrom         String?
+  subcategoryFromId       String?
+  accountTo               String
+  accountToId             String
+  subcategoryTo           String?
+  subcategoryToId         String?
+  amount                  Int
+  description             String?
+  userId                  String
   user        User     @relation(fields: [userId], references: [id])
 }
 

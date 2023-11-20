@@ -16,17 +16,19 @@ const OnMovementFieldsets: React.FC<OnMovementFieldsetsProps> = ({
         setCurrentTransaction
     }) => {
 
-        const onClickAccountFrom = (accountFrom: string) => {
+        const onClickAccountFrom = (accountFrom: string, accountFromId: string) => {
             setCurrentTransaction({
                 ...currentTransaction,
-                accountFrom: accountFrom
+                accountFrom: accountFrom,
+                accountFromId: accountFromId
             })
         }
 
-        const onClickAccountTo = (accountTo: string) => {
+        const onClickAccountTo = (accountTo: string, accountToId: string) => {
             setCurrentTransaction({
                 ...currentTransaction,
-                accountTo: accountTo
+                accountTo: accountTo,
+                accountToId: accountToId
             })
         }
     
@@ -34,24 +36,24 @@ const OnMovementFieldsets: React.FC<OnMovementFieldsetsProps> = ({
         <>
             <FieldsetTitle title='¿De donde salió el dinero?' />
             <AccountsFieldsets>
-                {userAccounts.map( (account: ButtonData) => (
+                {userAccounts.map( (account) => (
                     <UserAccountButton
                         key={account.id}
                         buttonData={account}
                         isActive={currentTransaction.accountFrom === account.title}
-                        onClick={() => onClickAccountFrom(account.title)}
+                        onClick={() => onClickAccountFrom(account.title, account.id!)}
                         accountType={'accountFrom'}
                     />
                 ))}
             </AccountsFieldsets>
             <FieldsetTitle title='¿A que cuenta entró el dinero?' />
             <AccountsFieldsets>
-                {userAccounts.map( (accountTo: ButtonData) => (
+                {userAccounts.map( (accountTo) => (
                     <UserAccountButton
-                        key={(accountTo.id + 100000)} // 100 are add to make difference that key prop from the key in the upper fieldset
+                        key={(accountTo.id! + 100)} // 100 are add to make difference that key prop from the key in the upper fieldset
                         buttonData={accountTo}
                         isActive={currentTransaction.accountTo === accountTo.title}
-                        onClick={() => onClickAccountTo(accountTo.title)}
+                        onClick={() => onClickAccountTo(accountTo.title, accountTo.id!)}
                         accountType={'accountTo'}
                     />
                 ))}

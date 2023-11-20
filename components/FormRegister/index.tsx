@@ -5,7 +5,7 @@ import React from "react"
 import FieldsetTypeOfRegister from "@/components/FormRegister/FieldsetTypeOfRegister"
 import FieldSetDate from "@/components/FormRegister/FieldSetDate"
 
-import AccountsSection from "@/components/FormRegister/AccountsSection"
+import AccountsFieldset from "@/components/FormRegister/AccountsFieldset"
 import OnIncomeFieldsets from "@/components/FormRegister/AccountsFieldsets/OnIncomeFieldsets"
 import OnExpenseFieldsets from "@/components/FormRegister/AccountsFieldsets/OnExpensesFieldsets"
 import OnMovementFieldsets from "@/components/FormRegister/AccountsFieldsets/OnMovementFieldsets"
@@ -13,35 +13,56 @@ import OnDebtFieldset from "@/components/FormRegister/AccountsFieldsets/OnDebtFi
 import AmountFieldset from "@/components/FormRegister/AmountFieldset"
 import DescriptionFieldset from "@/components/FormRegister/DescriptionFieldset"
 import SubmitButton from "@/components/FormRegister/SubmitButton"
-import ToggleButtonsFieldset from "@/components/FormRegister/AccountsFieldsets/ToggleButtonsFieldset"
 
+import {createNewTransaction} from "@/app/lib/action"
 
 interface FormRegisterProps {
-    registerOptions: ButtonData[]
     activeRegisterOption: string
-    userData: any
+    accounts: UserAccount[],
+    incomesCategories: BudgetItem[],
+    expensesCategories: BudgetItem[],
+    // debts: Debt[],
+    // saves: Save[],
+    // creditCards: CreditCard[],
 }
 
 const FormRegister: React.FC<FormRegisterProps> = ({
-    registerOptions,
     activeRegisterOption,
-    userData
+    accounts,
+    incomesCategories,
+    expensesCategories,
+    // debts,
+    // saves,
+    // creditCards,
 }) => {
 
+    // Transforming the activeRegisterOption to the type of register that the server expects in english
+
+    console.log('activeRegisterOption', activeRegisterOption)
+
+
     const[currentTransaction, setCurrentTransaction] = React.useState<Transaction>({
-        id: Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000,
         type: activeRegisterOption,
         date: new Date(),
         accountFrom: '',
+        accountFromId: '',
         accountTo: '',
+        accountToId: '',
         amount: 0,
         description: '',
     })
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
-        console.log('Submit event')
-    }
+    // console.log('currentTransaction', currentTransaction)
+
+    // La animación de ponerlo y quitarlo debe ser hecha con css 
+    // El problema es que necesito confirmación de que la transacción se hizo correctamente y con base a eso mostrar un mensaje u otro
+    // Enviarla desde el server es la unica opción, evidentemente, y necesito consumirla en este formulario para hacer validaciones
+
+    const [confirmationMessage, setConfirmationMessage] = React.useState({
+        show: false,
+        isSuccessful: false,
+        message: ''
+    })
 
     const amountFieldsetOnChangehandle = (value: number) => {
         setCurrentTransaction({
@@ -57,11 +78,48 @@ const FormRegister: React.FC<FormRegisterProps> = ({
         })
     }
 
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        const response = await fetch('/api/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(currentTransaction),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            setConfirmationMessage({
+                show: true,
+                isSuccessful: true,
+                message: data,
+            });
+        } else {
+            setConfirmationMessage({
+                show: true,
+                isSuccessful: false,
+                message: 'Hubo un problema al registrar la transacción, intenta de nuevo',
+            });
+        }
+
+        setCurrentTransaction({
+            type: currentTransaction.type,
+            date: new Date(),
+            accountFrom: '',
+            accountFromId: '',
+            accountTo: '',
+            accountToId: '',
+            amount: 0,
+            description: '',
+        });
+    }
+
     return (
         <>
-            <form onSubmit={handleSubmit} className="border py-4 p-2 border-white rounded-md" action="">
+            <form onSubmit={handleSubmit} className="border py-4 p-2 border-white rounded-md">
                 <FieldsetTypeOfRegister
-                    typesOfRegister={registerOptions}
                     currentTransaction={currentTransaction}
                     setCurrentTransaction={setCurrentTransaction}
                 />
@@ -69,35 +127,35 @@ const FormRegister: React.FC<FormRegisterProps> = ({
                     currentTransaction={currentTransaction}
                     setCurrentTransaction={setCurrentTransaction}
                 />
-                <AccountsSection
+                <AccountsFieldset
                     typeOfRegister={currentTransaction.type}
                     onIncome={() => 
                         <OnIncomeFieldsets 
-                            incomesCategories={userData.incomesCategories}
-                            userAccounts={userData.accounts}
+                            incomesCategories={incomesCategories}
+                            accounts={accounts}
                             currentTransaction={currentTransaction}
                             setCurrentTransaction={setCurrentTransaction}
                         />}
                     onExpense={() => 
                         <OnExpenseFieldsets 
-                            expensesCategories={userData.expensesCategories}
-                            userAccounts={userData.accounts}
+                            expensesCategories={expensesCategories}
+                            userAccounts={accounts}
                             currentTransaction={currentTransaction}
                             setCurrentTransaction={setCurrentTransaction}
                         />}   
                     onMovement={() => 
                         <OnMovementFieldsets 
-                            userAccounts={userData.accounts}
+                            userAccounts={accounts}
                             currentTransaction={currentTransaction}
                             setCurrentTransaction={setCurrentTransaction}
                         />}                    
-                    onDebt={() =>
-                        <OnDebtFieldset
-                            userAccounts={userData.accounts}
-                            currentTransaction={currentTransaction}
-                            setCurrentTransaction={setCurrentTransaction}
-                            userDebts={userData.debts}
-                        />}
+                    // onDebt={() =>
+                    //     <OnDebtFieldset
+                    //         userAccounts={accounts}
+                    //         currentTransaction={currentTransaction}
+                    //         setCurrentTransaction={setCurrentTransaction}
+                    //         userDebts={debts}
+                    //     />}
                     // onSave={}
                     // onCreditCard={}
                 />
