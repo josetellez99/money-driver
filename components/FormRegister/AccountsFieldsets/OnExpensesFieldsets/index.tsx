@@ -26,11 +26,11 @@ const OnExpenseFieldsets: React.FC<OnExpenseFieldsetsProps> = ({
             })
         }
 
-        const onClicksubcategoryFrom = (subcategoryFrom: string, subcategoryFromId: string) => {
+        const onClicksubcategoryTo = (subcategoryTo: string, subcategoryToId: string) => {
             setCurrentTransaction({
                 ...currentTransaction,
-                subcategoryFrom: subcategoryFrom,
-                subcategoryFromId: subcategoryFromId
+                subcategoryTo: subcategoryTo,
+                subcategoryToId: subcategoryToId
             })
         }
 
@@ -42,13 +42,13 @@ const OnExpenseFieldsets: React.FC<OnExpenseFieldsetsProps> = ({
             })
         }
 
-        const currentCategory = expensesCategories.find(category => category.id === currentTransaction.accountFromId);
+        const currentCategory = expensesCategories.find(category => category.id === currentTransaction.accountToId);
 
         const showAllcategories = () => {
             setCurrentTransaction({
                 ...currentTransaction,
-                accountFrom: '',
-                accountFromId: ''
+                accountTo: '',
+                accountToId: ''
             })
         }
     
@@ -61,8 +61,8 @@ const OnExpenseFieldsets: React.FC<OnExpenseFieldsetsProps> = ({
                         <UserAccountButton
                             key={expenseCategory.id}
                             buttonData={expenseCategory}
-                            isActive={currentTransaction.accountFrom === expenseCategory.title}
-                            onClick={() => onClickAccountFrom(expenseCategory.title, expenseCategory.id!)}
+                            isActive={currentTransaction.accountToId === expenseCategory.id}
+                            onClick={() => onClickAccountTo(expenseCategory.title, expenseCategory.id!)}
                         />
                     ))}
                 </AccountsFieldsets>
@@ -75,8 +75,8 @@ const OnExpenseFieldsets: React.FC<OnExpenseFieldsetsProps> = ({
                     >
                         <UserAccountButton
                             buttonData={currentCategory}
-                            isActive={currentTransaction.accountFromId === currentCategory.id}
-                            onClick={() => onClickAccountFrom(currentCategory.title, currentCategory.id!)}
+                            isActive={currentTransaction.accountToId === currentCategory.id}
+                            onClick={() => onClickAccountTo(currentCategory.title, currentCategory.id!)}
                         />
                         <UserAccountButton 
                             buttonData={{
@@ -92,22 +92,22 @@ const OnExpenseFieldsets: React.FC<OnExpenseFieldsetsProps> = ({
                             <UserAccountButton
                                 key={subcategory.id}
                                 buttonData={subcategory}
-                                isActive={currentTransaction.subcategoryFromId === subcategory.id}
-                                onClick={() => onClicksubcategoryFrom(subcategory.title, subcategory.id!)}
+                                isActive={currentTransaction.subcategoryToId === subcategory.id}
+                                onClick={() => onClicksubcategoryTo(subcategory.title, subcategory.id!)}
                             />
                         ))}
                     </AccountsFieldsets>
                 </>
             )}
 
-            <FieldsetTitle title='¿De donde salió el dinero?' />
+            <FieldsetTitle title='¿Con qué cuenta pagaste?' />
             <AccountsFieldsets>
                 {userAccounts.map( (account) => (
                     <UserAccountButton
                         key={account.id}
                         buttonData={account}
-                        isActive={currentTransaction.accountTo === account.title}
-                        onClick={() => onClickAccountTo(account.title, account.id!)}
+                        isActive={currentTransaction.accountFromId === account.id}
+                        onClick={() => onClickAccountFrom(account.title, account.id!)}
                     />
                 ))}
             </AccountsFieldsets>

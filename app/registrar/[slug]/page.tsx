@@ -1,6 +1,7 @@
 import React from "react"
 import FormRegister from "@/components/FormRegister"
 import MainDefault from "@/components/MainDefault"
+import Link from "next/link";
 import {fetchUserAccounts, fetchUserBudgetWithSubcategories} from "@/app/lib/action";
 
 const user = {
@@ -169,6 +170,9 @@ const RegisterPage: React.FC<RegisterPageProps> = async ( {params} ) => {
     return (
         <>
         <MainDefault>
+            <Link href='/presupuesto-cuentas'>
+                Ir a presupuesto y cuentas
+            </Link>
             <FormRegister
                 activeRegisterOption={option}
                 accounts={accounts}

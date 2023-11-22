@@ -7,8 +7,10 @@ import formatMoney from '@/utils/formatMoney';
 import AddNewAccountRow from '@/components/AccountsTable/AddNewAccountRow';
 import { fetchUserAccounts } from '@/app/lib/action';
 import Link from 'next/link';
+import { unstable_noStore as noStore } from 'next/cache';
 
 const AccountsTable: React.FC = async () => {
+    noStore();
 
     const userAccounts = await fetchUserAccounts()
 

@@ -10,16 +10,15 @@ import BudgetRow from '@/components/Budget/BudgetRow'
 import BudgetRowAddNewCategory from '@/components/Budget/BudgetRowAddNewCategory'
 import BudgetRowFooter from '@/components/Budget/BudgetRowFooter'
 import { fetchUserBudgetWithSubcategories } from '@/app/lib/action'
+import { unstable_noStore as noStore } from 'next/cache';
 
 interface BudgetProps {
     title: string;
     type: 'income' | 'expense';
 }
 
-// Hay que arreglar el tema de los totales en el row cuando la categoria tiene subcategorias, eso debe setearse en la base de datos, esa especifica informacion no se debe calcular en el cliente
-// Ese tema debe actualizarse cuando modificas los inputs de las subcategorias, allí debe actualizarse el amount y el remaining
 const Budget: React.FC<BudgetProps> = async ({title, type}) => {
-
+    noStore()
     const budgetData: BudgetItem[] = await fetchUserBudgetWithSubcategories(type)
 
     const [totalAmount, totalUsed, totalRemaining] = calculateBudgetTotals(budgetData)

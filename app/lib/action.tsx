@@ -4,7 +4,7 @@ import { PrismaClient } from '@prisma/client'
 import { unstable_noStore as noStore } from 'next/cache';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { incomeCase } from '@/app/lib/createTransactionCases';
+import { incomeCase, expenseCase } from '@/app/lib/createTransactionCases';
 
 const prisma = new PrismaClient()
 
@@ -36,7 +36,6 @@ export async function fetchSingleUserAccount(accountID: string) {
                 userId: myUserId,
             }
         });
-        console.log(userAccount)
         return userAccount;
     } catch (error) {
         console.error("Error fetching user accounts:", error);
@@ -162,6 +161,7 @@ export async function fetchUserBudgetSubcategories (type: 'income' | 'expense') 
 }
 
 export async function fetchUserBudgetWithSubcategories (type: 'income' | 'expense') {
+    noStore()
     const [budgetData, subcategoriesBudgetData] = await Promise.all([
         fetchUserBudget(type),
         fetchUserBudgetSubcategories(type)
@@ -335,32 +335,29 @@ async function createBudgetSubcategories(subcategoriesToCreate: BudgetItem[], pa
 
 // transactions actions
 
-// Hacer la logica completa de cuando se registra una transacción para los diferentes casos: ingreso, egreso y movimiento
-// Make the modifications to update the "used" property of the budget category and subcategory
+// Necesito confirmaciones de que todo salió bien para lso diferentes cases "incomeCase" y luego de que obtengo todas esas confirmaciones, allí si retornar la transacción
 
 //Necesito confirmaciones de todo antes de confirmar que todo estuvo bien, de todos los pasos, la transaccion y la modificación del used and remaining
 // Si puedes mostrar un componente de SummaryTransaction que aparezca debajo del form y que sea la confirmación y que se pueda editar o eliminar desde ahí
 
 export async function createNewTransaction (newTransaction: Transaction) {
     noStore()
-
-    console.log(newTransaction)
-
-    const transaction = await prisma.transaction.create({
-        data: {
-            ...newTransaction,
-            userId: myUserId,
-        }
-    });
-
-    console.log(transaction)    
-    transaction.type === 'income' ? incomeCase(newTransaction) : null
-
-
     
-    // revalidatePath(`/registrar/${newTransaction.type}`)
-    // redirect(`/registrar/${newTransaction.type}`)
-    
-    return transaction
+    try {
+        const transaction = await prisma.transaction.create({
+            data: {
+                ...newTransaction,
+                userId: myUserId,
+            }
+        });
+        
+        newTransaction.type === 'income' ? await incomeCase(transaction as Transaction) : null;
+        newTransaction.type === 'expense' ? await expenseCase(transaction as Transaction) : null;
+        
+        return transaction
+        
+    } catch (error) {
+        return null
+    }
 }
 

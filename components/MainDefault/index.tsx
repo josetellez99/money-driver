@@ -6,7 +6,7 @@ interface MainDefaultProps {
 const MainDefault: React.FC<MainDefaultProps> = ({children}) => {
     return (
         <>
-            <main className="px-3 pb-2">
+            <main className="relative px-3 pb-2">
                 {children}
             </main>
         </>

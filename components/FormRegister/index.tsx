@@ -13,8 +13,7 @@ import OnDebtFieldset from "@/components/FormRegister/AccountsFieldsets/OnDebtFi
 import AmountFieldset from "@/components/FormRegister/AmountFieldset"
 import DescriptionFieldset from "@/components/FormRegister/DescriptionFieldset"
 import SubmitButton from "@/components/FormRegister/SubmitButton"
-
-import {createNewTransaction} from "@/app/lib/action"
+import ConfirmationMessage from "@/components/ConfirmationMessage"
 
 interface FormRegisterProps {
     activeRegisterOption: string
@@ -36,11 +35,6 @@ const FormRegister: React.FC<FormRegisterProps> = ({
     // creditCards,
 }) => {
 
-    // Transforming the activeRegisterOption to the type of register that the server expects in english
-
-    console.log('activeRegisterOption', activeRegisterOption)
-
-
     const[currentTransaction, setCurrentTransaction] = React.useState<Transaction>({
         type: activeRegisterOption,
         date: new Date(),
@@ -52,15 +46,9 @@ const FormRegister: React.FC<FormRegisterProps> = ({
         description: '',
     })
 
-    // console.log('currentTransaction', currentTransaction)
-
-    // La animación de ponerlo y quitarlo debe ser hecha con css 
-    // El problema es que necesito confirmación de que la transacción se hizo correctamente y con base a eso mostrar un mensaje u otro
-    // Enviarla desde el server es la unica opción, evidentemente, y necesito consumirla en este formulario para hacer validaciones
-
     const [confirmationMessage, setConfirmationMessage] = React.useState({
         show: false,
-        isSuccessful: false,
+        type: '',
         message: ''
     })
 
@@ -90,16 +78,15 @@ const FormRegister: React.FC<FormRegisterProps> = ({
         });
 
         if (response.ok) {
-            const data = await response.json();
             setConfirmationMessage({
                 show: true,
-                isSuccessful: true,
-                message: data,
+                type: 'success',
+                message: 'Tu transacción se ha registrado correctamente',
             });
         } else {
             setConfirmationMessage({
                 show: true,
-                isSuccessful: false,
+                type: 'error',
                 message: 'Hubo un problema al registrar la transacción, intenta de nuevo',
             });
         }
@@ -118,6 +105,13 @@ const FormRegister: React.FC<FormRegisterProps> = ({
 
     return (
         <>
+            {confirmationMessage.show && (
+                <ConfirmationMessage 
+                    message={confirmationMessage.message}
+                    type={confirmationMessage.type}
+                    setConfirmationMessage={setConfirmationMessage}
+                />
+            )}
             <form onSubmit={handleSubmit} className="border py-4 p-2 border-white rounded-md">
                 <FieldsetTypeOfRegister
                     currentTransaction={currentTransaction}

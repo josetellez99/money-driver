@@ -34,6 +34,7 @@ type Transaction = {
     subcategoryToId?: string,
     amount: number,
     description?: string,
+    userId?: string,
 }
 
 type Debt = {
