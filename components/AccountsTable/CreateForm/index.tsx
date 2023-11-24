@@ -14,18 +14,23 @@ interface CreateFormProps {
     incomeCategories: BudgetItem[];
 }
 
+
+// Okey con la estrategia de cookies no se pudo porque estamos hablando de un componente del lado del servidor, ahora vamos con la estrategia de la url
+
 const CreateForm: React.FC<CreateFormProps> = ({
     userAccounts,
     incomeCategories,
 }) => {
 
-    // In this modal you can create, edit or delete an account. In all cases you need to create a transaction to adjust the amounts of the involved accounts
+    // In this modal you can create an account. You need to create a transaction to adjust the amounts of the involved accounts
     // This state is to save the information of the transaction to adjust the amount of the accounts
     const[adjustmentTransferInfo, setAdjustmentTransferInfo] = React.useState<Transaction>({
         type: '',
         date: new Date(),
         accountFrom: '',
+        accountFromId: '',
         accountTo: '',
+        accountToId: '',
         amount: 0,
         description: '',
     });
@@ -130,6 +135,7 @@ const SectionCreateAccount: React.FC<SectionCreateAccountProps> = ({
             ...adjustmentTransferInfo,
             type: type,
             accountFrom: item.title,
+            accountFromId: item.id!,
             description: `Creacion de la cuenta ${newAccount?.title}, el dinero vino desde ${item.title}`,
         })
         setShowHighLigtedMessage(true);

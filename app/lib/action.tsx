@@ -4,11 +4,27 @@ import { PrismaClient } from '@prisma/client'
 import { unstable_noStore as noStore } from 'next/cache';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { incomeCase, expenseCase } from '@/app/lib/createTransactionCases';
+import { incomeCase, expenseCase, movementCase } from '@/app/lib/createTransactionCases';
+import { cookies } from 'next/headers'
 
 const prisma = new PrismaClient()
 
 const myUserId = '4f968b8e-0790-488f-8ee9-4ed06509954e'
+
+// SOME DOCS
+
+//cookies().set('showConfirmationMessage', 'whatever message', { expires: 4 / (24 * 60 * 60) });
+// This set a cookie which is used to show a confirmation message in the frontend and desappear after 4 seconds
+
+// await prisma.$transaction([createTransaction, updateAccount]);
+// This is an example of how to use transactions in prisma, where you can update two or more tables at the same time and if one of them fails, the other one is not updated
+// This is always inside a try and catch to handle errors, set the correct cookies
+
+
+
+
+
+
 
 // accounts actions
 
@@ -43,49 +59,76 @@ export async function fetchSingleUserAccount(accountID: string) {
     }
 }
 
+
 export async function updateUserAccount(currentAccount: UserAccount, adjustmentTransferInfo: Transaction) {
     noStore()
 
-    await prisma.account.update({
-        where: { id: currentAccount.id },
-        data: {
-            ...currentAccount
-        },
-    });
-    
-    await prisma.transaction.create({
-        data: {
-            ...adjustmentTransferInfo,
-            userId: myUserId,
-        }
-    });
+    try {
+        const updateAccount = prisma.account.update({
+            where: { id: currentAccount.id },
+            data: {
+                ...currentAccount,
+            },
+        });
 
-    revalidatePath('/presupuesto-cuentas'); // This make a new request to the server to get the latest data
-    redirect('/presupuesto-cuentas'); // This redirects the user to the invoices page
+        if(adjustmentTransferInfo.type === 'movement') {
+            const createTransaction = prisma.transaction.create({
+                data: {
+                    ...adjustmentTransferInfo,
+                    userId: myUserId,
+                }
+            });
+        
+            await prisma.$transaction([createTransaction, updateAccount]);
+        } else {
+            await prisma.$transaction([updateAccount]);
+        }
+
+        cookies().set('showConfirmationMessage', 'La cuenta se ha actualizado correctamente', { expires: 4 / (24 * 60 * 60) });
+    } catch (error) {
+
+        cookies().set('showConfirmationMessage', 'Error', { expires: 4 / (24 * 60 * 60) });
+    }
+        
+        revalidatePath('/presupuesto-cuentas');
+        redirect('/presupuesto-cuentas')
 }
 
-export async function deleteUserAccount(accountId: string, adjustmentTransferInfo: Transaction, accountToId: string) {
+
+export async function deleteUserAccount( adjustmentTransferInfo: Transaction, accountToId: string) {
     noStore()
 
-    await prisma.account.delete({
-        where: { id: accountId },
-    });
+    try {
+        const deleteAccount = prisma.account.delete({
+            where: { id: adjustmentTransferInfo.accountFromId },
+        });
 
-    await prisma.transaction.create({
-        data: {
-            ...adjustmentTransferInfo,
-            userId: myUserId,
-        }
-    });
-
-    await prisma.account.update({
-        where: { id: accountToId },
-        data: {
-            amount: {
-                increment: adjustmentTransferInfo.amount,
+        const createTransaction = prisma.transaction.create({
+            data: {
+                ...adjustmentTransferInfo,
+                userId: myUserId,
             }
-        },
-    })
+        });
+
+        // When accountToId is 'ajuste de cuenta' we don't need to update that account because it doesn't exist as account in the database.
+        if(adjustmentTransferInfo.accountTo !== 'Ajuste de cuenta') {
+            const updateAccount = prisma.account.update({
+                where: { id: adjustmentTransferInfo.accountToId },
+                data: {
+                    amount: {
+                        increment: adjustmentTransferInfo.amount,
+                    }
+                },
+            })
+            await prisma.$transaction([createTransaction, updateAccount, deleteAccount]);
+        } else {
+            await prisma.$transaction([createTransaction, deleteAccount]);
+        }
+
+        cookies().set('showConfirmationMessage', 'La cuenta se ha eliminado correctamente', { expires: 4 / (24 * 60 * 60) });
+    } catch (error) {
+        cookies().set('showConfirmationMessage', 'Error', { expires: 4 / (24 * 60 * 60) });
+    }
 
     revalidatePath('/presupuesto-cuentas'); // This make a new request to the server to get the latest data
     redirect('/presupuesto-cuentas'); // This redirects the user to the invoices page
@@ -94,34 +137,60 @@ export async function deleteUserAccount(accountId: string, adjustmentTransferInf
 export async function createUserAccount(newAccount: UserAccount, adjustmentTransferInfo: Transaction, accountFromId: string) {
     noStore()
 
-    await prisma.account.create({
+    //If there an error in the following code, the completly app will crash. No account will be created
+    const createdAccount = await prisma.account.create({
         data: {
             ...newAccount,
             userId: myUserId,
         }
     });
-
-    await prisma.transaction.create({
-        data: {
-            ...adjustmentTransferInfo,
-            userId: myUserId,
-        }
-    });
-
-    if(adjustmentTransferInfo.type === 'movement') {
-        await prisma.account.update({
-            where: { id: accountFromId },
+    
+    // The try and catch is needed to delete the account if there's an error in the following code
+    try {
+        const createTransaction =  prisma.transaction.create({
             data: {
-                amount: {
-                    decrement: adjustmentTransferInfo.amount,
-                }
-            },
-        })
+                ...adjustmentTransferInfo,
+                userId: myUserId,
+                accountTo: createdAccount.title,
+                accountToId: createdAccount.id,
+            }
+        });
+    
+        if(adjustmentTransferInfo.type === 'movement') {
+            const updateAccount =  prisma.account.update({
+                where: { id: accountFromId },
+                data: {
+                    amount: {
+                        decrement: adjustmentTransferInfo.amount,
+                    }
+                },
+            })
+            await prisma.$transaction([createTransaction, updateAccount]);
+        }
+    
+        await prisma.$transaction([createTransaction]);
+        
+        cookies().set('showConfirmationMessage', 'La cuenta se ha creado correctamente', { expires: 4 / (24 * 60 * 60) });
+
+    } catch (error) {
+
+        await prisma.account.delete({
+            where: { id: createdAccount.id },
+        });
+
+        cookies().set('showConfirmationMessage', 'Error', { expires: 4 / (24 * 60 * 60) });
     }
 
     revalidatePath('/presupuesto-cuentas'); // This make a new request to the server to get the latest data
     redirect('/presupuesto-cuentas'); // This redirects the user to the invoices page
 }
+
+
+
+
+
+
+
 
 
 
@@ -333,28 +402,27 @@ async function createBudgetSubcategories(subcategoriesToCreate: BudgetItem[], pa
     redirect('/presupuesto-cuentas')
 }
 
+
+
+
+
+
+
 // transactions actions
-
-// Necesito confirmaciones de que todo salió bien para lso diferentes cases "incomeCase" y luego de que obtengo todas esas confirmaciones, allí si retornar la transacción
-
-//Necesito confirmaciones de todo antes de confirmar que todo estuvo bien, de todos los pasos, la transaccion y la modificación del used and remaining
-// Si puedes mostrar un componente de SummaryTransaction que aparezca debajo del form y que sea la confirmación y que se pueda editar o eliminar desde ahí
 
 export async function createNewTransaction (newTransaction: Transaction) {
     noStore()
     
     try {
-        const transaction = await prisma.transaction.create({
-            data: {
-                ...newTransaction,
-                userId: myUserId,
-            }
-        });
+
+        // Into the following funcitons, the databse is modify and the transaction is created. 
+        // If there's an error, it throw the error, catch is triggered and return null, transaction and any change is made
+
+        newTransaction.type === 'income' ? await incomeCase(newTransaction as Transaction, myUserId) : null;
+        newTransaction.type === 'expense' ? await expenseCase(newTransaction as Transaction, myUserId) : null;
+        newTransaction.type === 'movement' ? await movementCase(newTransaction as Transaction, myUserId) : null;
         
-        newTransaction.type === 'income' ? await incomeCase(transaction as Transaction) : null;
-        newTransaction.type === 'expense' ? await expenseCase(transaction as Transaction) : null;
-        
-        return transaction
+        return newTransaction
         
     } catch (error) {
         return null

@@ -8,6 +8,8 @@ import AmountFieldset from "@/components/FormRegister/AmountFieldset"
 import SubmitButton from "@/components/FormRegister/SubmitButton"
 import ActionButton from "@/components/ActionButton"
 import { useRouter } from 'next/navigation'
+import { revalidatePath } from 'next/cache';
+
 
 import { updateUserAccount } from "@/app/lib/action"
 
@@ -32,7 +34,9 @@ const EditForm: React.FC<EditFormProps> = ({
         type: '',
         date: new Date(),
         accountFrom: '',
+        accountFromId: '',
         accountTo: '',
+        accountToId: '',
         amount: 0,
         description: '',
     });
@@ -45,7 +49,7 @@ const EditForm: React.FC<EditFormProps> = ({
 
     // This state hold the initial value of the currentAccount, when currentAccount.amount change this state reamins the same
     // We never update this state, we only use it to compare the old value of the currentAccount.amount
-    const[currentAccountOldValue, setCurrentAccountOldValue] = React.useState<number>(currentAccount.amount);
+    const[currentAccountOldValue, setCurrentAccountOldValue] = React.useState<number>(currentAccount.amount!);
 
     const deteleAccountRedirect = () => {
         router.push(`/presupuesto-cuentas/delete-account/${currentAccountID}`, { scroll: false })
@@ -67,26 +71,26 @@ const EditForm: React.FC<EditFormProps> = ({
     }
 
     React.useEffect(() => {
-
-        console.log(difference)
-        // Difference is a negative number
+        // Difference is a negative number, the money is going out of the account
         if(difference < 0) {
             setAdjustmentTransferInfo({
                 ...adjustmentTransferInfo,
                 type: 'expense',
-                accountFrom: currentAccount?.title,
+                accountFrom: currentAccount.title,
+                accountFromId: currentAccount.id!,
                 amount: Math.abs(difference), // converting the negative number to positive
-                description: `Ajuste de cuenta negativo a: ${currentAccount?.title}`,
+                description: `Ajuste de cuenta negativo a: ${currentAccount.title}`,
             })
         }
-        // Difference is a positive number
+        // Difference is a positive number, the money is going in to the account
         if(difference > 0) {
             setAdjustmentTransferInfo({
                 ...adjustmentTransferInfo,
                 type: 'income',
-                accountTo: currentAccount?.title,
+                accountTo: currentAccount.title,
+                accountToId: currentAccount.id!,
                 amount: difference,
-                description: `Ajuste de cuenta positivo a: ${currentAccount?.title}`,
+                description: `Ajuste de cuenta positivo a: ${currentAccount.title}`,
             })
         }
     }, [difference])

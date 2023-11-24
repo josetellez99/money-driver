@@ -1,19 +1,15 @@
-import { fetchUserBudgetIncomes, fetchUserAccounts } from '@/app/lib/action';
+import { fetchUserBudget, fetchUserAccounts } from '@/app/lib/action';
 
 import MainDefault from '@/components/MainDefault';
 import BackButton from '@/components/BackButton';
 
 import CreateForm from '@/components/AccountsTable/CreateForm';
 
-const myUserId = '4f968b8e-0790-488f-8ee9-4ed06509954e'
-
 const CreateAccountPage = async () => {
-
-
 
     const [userAccounts, userBudgetIncome] = await Promise.all([
         fetchUserAccounts(),
-        fetchUserBudgetIncomes()
+        fetchUserBudget('income'),
     ]);
 
     return (

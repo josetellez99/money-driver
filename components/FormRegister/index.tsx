@@ -69,7 +69,7 @@ const FormRegister: React.FC<FormRegisterProps> = ({
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        const response = await fetch('/api/create', {
+        const response = await fetch('/api/create-transaction', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -7,29 +7,28 @@ import TitleFieldset from "@/components/FormRegister/TitleFieldset"
 import AmountFieldset from "@/components/FormRegister/AmountFieldset"
 import SubmitButton from "@/components/FormRegister/SubmitButton"
 
-
 import { deleteUserAccount } from "@/app/lib/action"
 
 
 interface DeleteFormProps {
     userAccount : UserAccount,
     userAccounts: UserAccount[],
-    currentAccountID: string,
 }
 
 const DeleteForm: React.FC<DeleteFormProps> = ({
     userAccount,
     userAccounts,
-    currentAccountID,
 }) => {
 
     // In this Form you can create, edit or delete an account. In all cases you need to create a transaction to adjust the amounts of the involved accounts
     // This state is to save the information of the transaction to adjust the amount of the accounts
     const[adjustmentTransferInfo, setAdjustmentTransferInfo] = React.useState<Transaction>({
-        type: '',
+        type: 'movement',
         date: new Date(),
-        accountFrom: '',
+        accountFrom: userAccount.title,
+        accountFromId: userAccount.id!,
         accountTo: '',
+        accountToId: '',
         amount: 0,
         description: '',
     });
@@ -38,7 +37,7 @@ const DeleteForm: React.FC<DeleteFormProps> = ({
 
     return (
         <>
-            <form action={() => deleteUserAccount(currentAccountID, adjustmentTransferInfo, accountTo?.id!)} >
+            <form action={() => deleteUserAccount(adjustmentTransferInfo, accountTo?.id!)} >
                     <ElementTitle 
                         title={'Eliminar cuenta'} />
                     <div className="my-8" />
@@ -87,14 +86,13 @@ const SectionDeleteAccount: React.FC<SectionDeleteAccountProps> = ({
 
     const[showHighLigtedMessage, setShowHighLigtedMessage] = React.useState<boolean>(true)
 
-    const setAccountToForAdjusmentTransfer = (accountName: string) => {
+    const setAccountToForAdjusmentTransfer = (accountToName: string, accountToId: string) => {
         setAdjustmentTransferInfo({
             ...adjustmentTransferInfo,
-            type: 'movement',
-            accountFrom: userAccount.title,
-            accountTo: accountName,
-            amount: userAccount.amount,
-            description: `Ajuste de cuenta desde ${userAccount.title}, hacia ${accountName}`,
+            accountTo: accountToName,
+            accountToId: accountToId,
+            amount: userAccount.amount!,
+            description: `Ajuste de cuenta desde ${userAccount.title}, hacia ${accountToName}`,
         })
         setShowHighLigtedMessage(true);
     }
@@ -113,14 +111,14 @@ const SectionDeleteAccount: React.FC<SectionDeleteAccountProps> = ({
                     return (
                         <UserAccountButton
                             buttonData={account}
-                            onClick={() => setAccountToForAdjusmentTransfer(account.title)}
+                            onClick={() => setAccountToForAdjusmentTransfer(account.title, account.id!)}
                             isActive={account.title === adjustmentTransferInfo?.accountTo}
                         />
                     )
                 })}
                 <UserAccountButton
                     buttonData={{id: 'ajuste-de-cuenta', title: 'Ajuste de cuenta', amount: 0}}
-                    onClick={() => setAccountToForAdjusmentTransfer('Ajuste de cuenta')}
+                    onClick={() => setAccountToForAdjusmentTransfer('Ajuste de cuenta', 'ajuste-de-cuenta')}
                     isActive={adjustmentTransferInfo?.accountTo === 'Ajuste de cuenta'}
                 />
             </AccountsFieldsets>

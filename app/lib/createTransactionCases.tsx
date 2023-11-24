@@ -1,13 +1,18 @@
 import { PrismaClient } from '@prisma/client'
-import { revalidatePath } from 'next/cache'
 
 const prisma = new PrismaClient()
 
-export async function incomeCase (newTransaction: Transaction) {
-
+export async function incomeCase (newTransaction: Transaction, myUserId: string) {
     try {
+        // Creating the transaction
+        const createTransaction = prisma.transaction.create({
+            data: {
+                ...newTransaction,
+                userId: myUserId,
+            }
+        });
         // Updating the category
-        await prisma.budgetItem.update({
+        const updateCategory = prisma.budgetItem.update({
             where: { id: newTransaction.accountFromId },
             data: {
                 used: {
@@ -17,11 +22,19 @@ export async function incomeCase (newTransaction: Transaction) {
                     decrement: newTransaction.amount,
                 }
             },
-        })
-
-        // Updating the subcategory if it exists
+        });
+        // Updating the account
+        const updateAccount = prisma.account.update({
+            where: { id: newTransaction.accountToId },
+            data: {
+                amount: {
+                    increment: newTransaction.amount,
+                }
+            },
+        });
+        // If there is a subcategory, update it and then make the complete databse transaction to store all items
         if(newTransaction.subcategoryFromId) {
-            await prisma.budgetItemSubcategory.update({
+            const updateSubcategory = prisma.budgetItemSubcategory.update({
                 where: { id: newTransaction.subcategoryFromId },
                 data: {
                     used: {
@@ -32,27 +45,27 @@ export async function incomeCase (newTransaction: Transaction) {
                     }
                 },
             })
+            await prisma.$transaction([createTransaction, updateCategory, updateSubcategory, updateAccount]);
+        } else {
+            await prisma.$transaction([createTransaction, updateCategory, updateAccount]);
         }
 
-        // Updating the account
-        await prisma.account.update({
-            where: { id: newTransaction.accountToId },
-            data: {
-                amount: {
-                    increment: newTransaction.amount,
-                }
-            },
-        })
-
     } catch (error) {
-        throw error
+        throw error;
     }
 }
 
-export async function expenseCase(newTransaction: Transaction) {
+export async function expenseCase(newTransaction: Transaction, myUserId: string) {
     try {
+          // Creating the transaction
+        const createTransaction = prisma.transaction.create({
+            data: {
+                ...newTransaction,
+                userId: myUserId,
+            }
+        });
         // Updating the category
-        await prisma.budgetItem.update({
+        const updateCategory = prisma.budgetItem.update({
             where: { id: newTransaction.accountToId },
             data: {
                 used: {
@@ -63,10 +76,18 @@ export async function expenseCase(newTransaction: Transaction) {
                 }
             },
         })
-
-        // Updating the subcategory if it exists
+        // Updating the account
+        const updateAccount = prisma.account.update({
+            where: { id: newTransaction.accountFromId },
+            data: {
+                amount: {
+                    decrement: newTransaction.amount,
+                }
+            },
+        })
+        // If there is a subcategory, update it and then make the complete databse transaction to store all items
         if(newTransaction.subcategoryToId) {
-            await prisma.budgetItemSubcategory.update({
+            const updateSubcategory = prisma.budgetItemSubcategory.update({
                 where: { id: newTransaction.subcategoryToId },
                 data: {
                     used: {
@@ -77,11 +98,28 @@ export async function expenseCase(newTransaction: Transaction) {
                     }
                 },
             })
+            await prisma.$transaction([createTransaction, updateCategory, updateSubcategory, updateAccount]);
+        } else {
+            await prisma.$transaction([createTransaction, updateCategory, updateAccount]);
         }
 
-        // Updating the account
-        await prisma.account.update({
-            // where: { id: newTransaction.accountFromId }, this is throwing an error
+    } catch (error) {
+        console.log(error)
+        throw error
+    }
+}
+
+export async function movementCase(newTransaction: Transaction, myUserId: string) {
+    try {
+        // Creating the transaction
+        const createTransaction = prisma.transaction.create({
+            data: {
+                ...newTransaction,
+                userId: myUserId,
+            }
+        });
+        // Updating the account from
+        const updateAccountFrom = prisma.account.update({
             where: { id: newTransaction.accountFromId },
             data: {
                 amount: {
@@ -89,9 +127,20 @@ export async function expenseCase(newTransaction: Transaction) {
                 }
             },
         })
+        // Updating the account to
+        const updateAccountTo = prisma.account.update({
+            where: { id: newTransaction.accountToId },
+            data: {
+                amount: {
+                    increment: newTransaction.amount,
+                }
+            },
+        })
+
+        await prisma.$transaction([createTransaction, updateAccountFrom, updateAccountTo]);
+        
 
     } catch (error) {
-        console.log(error)
         throw error
     }
 }

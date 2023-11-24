@@ -9,8 +9,11 @@ const EditAccountPage = async ({params} : {params : {
 }}) => {
 
     const { accountID } = params;
-    const userAccount = await fetchSingleUserAccount(accountID)
-    const userAccounts = await fetchUserAccounts()
+
+    const [userAccount, userAccounts] = await Promise.all([
+        fetchSingleUserAccount(accountID),
+        fetchUserAccounts()
+    ]);
 
     return (
         <MainDefault>
@@ -21,7 +24,6 @@ const EditAccountPage = async ({params} : {params : {
                 <DeleteForm
                     userAccount={userAccount}
                     userAccounts={userAccounts}
-                    currentAccountID={accountID}
                 />
             </div>
         </MainDefault>
