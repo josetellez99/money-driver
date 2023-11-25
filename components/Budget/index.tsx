@@ -19,8 +19,8 @@ interface BudgetProps {
 
 const Budget: React.FC<BudgetProps> = async ({title, type}) => {
     noStore()
+    
     const budgetData: BudgetItem[] = await fetchUserBudgetWithSubcategories(type)
-
     const [totalAmount, totalUsed, totalRemaining] = calculateBudgetTotals(budgetData)
 
     return (

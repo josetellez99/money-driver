@@ -257,7 +257,7 @@ export async function fetchBudgetcategory(budgetID: string) {
                 id: budgetID,
             }
         });
-        return budgetCategory;
+        return budgetCategory as BudgetItem;
     } catch (error) {
         console.error("Error fetching user budget income:", error);
         throw error;
@@ -292,69 +292,112 @@ export async function fetchSingleBudgetCategoryWithSubcategories (budgetID: stri
     return budgetData
 }
 
+
 export async function updateUSerBudgetCategory(currentCategory: BudgetItem) {
     noStore()
 
+    try {
+        
     // Our table in the database is not expecting "subcategories" so we need to remove it before updating the database
-
     const { subcategories, ...categoryWithoutSucategories } = currentCategory;
 
-    // Update the .amount and .remaining of the parent category based on the subcategories
+    // we need to updated the .amount and .remaining of the parent category based on there exits subcategories or not
+    if(subcategories!.length > 0) {
+        // Update the .amount and .remaining of the parent category based on the subcategories
+        const newAmount = subcategories?.reduce((acc, subcategory) => acc + subcategory.amount!, 0)
+        const totalUsed = subcategories?.reduce((acc, subcategory) => acc + subcategory.used!, 0)
+        const newRemaining =  newAmount! - totalUsed!
+    
+        categoryWithoutSucategories.amount = newAmount!
+        categoryWithoutSucategories.remaining = newRemaining
+    } else {
+        // If there's no subcategories, the .amount is the same and .remaining is .amount - .used
+        categoryWithoutSucategories.remaining = currentCategory.amount - currentCategory.used
+    }
 
-    const newAmount = subcategories?.reduce((acc, subcategory) => acc + subcategory.amount!, 0)
-    const totalUsed = subcategories?.reduce((acc, subcategory) => acc + subcategory.used!, 0)
-    const newRemaining =  newAmount! - totalUsed!
+    console.log(categoryWithoutSucategories)
+    // No estoy entendiendo por qué no se actualiza el .amount de la categoria padre si en el console.log de arriba si está actualizada
 
-    categoryWithoutSucategories.amount = newAmount!
-    categoryWithoutSucategories.remaining = newRemaining
-
-    // Modify the database with all the information updated
-
-    await prisma.budgetItem.update({
+    // Modify the parent category table with all the information updated
+    const updateCategory = prisma.budgetItem.update({
         where: { id: categoryWithoutSucategories.id },
         data: { ...categoryWithoutSucategories },
     });
 
     // We need to separate the subcategories that are already in the database from the new ones that the user created when editing the budget category
     // The subcategories that are already in the database have an id that is longer than 7 characters
-    // The subcategories that are new have an id created in the frontend to handle them in the frontend, but they don't have an id in the database yet
-
     const subcategoriesToUpdate = subcategories!.filter(subcategory => subcategory.id!.length > 7)
     const subcategoriesToCreate = subcategories!.filter(subcategory => subcategory.id!.length < 7)
 
     if(subcategoriesToUpdate.length > 0) {
-        for (const subcategory of subcategoriesToUpdate) {
+        const updateSubcategoryPromises = subcategoriesToUpdate.map(subcategory => {
             // We need to update the .remaining of the subcategory based on the .amount and .used
             const newRemaining = subcategory.amount! - subcategory.used!
-            await prisma.budgetItemSubcategory.update({
+            return prisma.budgetItemSubcategory.update({
                 where: { id: subcategory.id },
                 data: {
                     ...subcategory,
                     remaining: newRemaining,
                 }
             });
-        }
-        createBudgetSubcategories(subcategoriesToCreate, currentCategory)
+        });
+
+        const createSubcategoryPromises = subcategoriesToCreate!.map(subcategory => 
+            prisma.budgetItemSubcategory.create({
+                data: {
+                    type: currentCategory.type,
+                    title: subcategory.title,
+                    amount: subcategory.amount,
+                    used: 0,
+                    remaining: subcategory.amount,
+                    budgetCategoryId: currentCategory.id!,
+                    userId: myUserId,
+                }
+            })
+        );
+
+        await prisma.$transaction([updateCategory, ...updateSubcategoryPromises, ...createSubcategoryPromises]);
+    } else {
+        await prisma.$transaction([updateCategory]);
+    }
+
+        cookies().set('showConfirmationMessage', 'La categoria se ha actualizado correctamente', { expires: 4 / (24 * 60 * 60) });
+    } catch (error) {
+        cookies().set('showConfirmationMessage', 'Error', { expires: 4 / (24 * 60 * 60) });
     }
 
     revalidatePath('/presupuesto-cuentas');
     redirect('/presupuesto-cuentas')
 }
 
+
 export async function deleteBudgetCategory(currentCategory: BudgetItem) {
     noStore()
-    
-    if(currentCategory.subcategories!.length > 0) {
-        await prisma.budgetItemSubcategory.deleteMany({
-            where: {
-                budgetCategoryId: currentCategory.id,
-            }
-        });
-    }
 
-    await prisma.budgetItem.delete({
-        where: { id: currentCategory.id },
-    });
+    try {
+        
+        if(currentCategory.subcategories!.length > 0) {
+            const deleteSubcategories = prisma.budgetItemSubcategory.deleteMany({
+                where: {
+                    budgetCategoryId: currentCategory.id,
+                }
+            });
+            const deleteCategory = prisma.budgetItem.delete({
+                where: { id: currentCategory.id },
+            });
+            await prisma.$transaction([deleteSubcategories, deleteCategory]);
+        } else {   
+            await prisma.budgetItem.delete({
+                where: { id: currentCategory.id },
+            });
+        }
+
+        cookies().set('showConfirmationMessage', 'La categoria se ha eliminado correctamente', { expires: 4 / (24 * 60 * 60) });
+    } catch (error) {
+        console.error("Error deleting budget category:", error);
+        cookies().set('showConfirmationMessage', 'Error', { expires: 4 / (24 * 60 * 60) });
+    }
+    
 
     revalidatePath('/presupuesto-cuentas');
     redirect('/presupuesto-cuentas')
@@ -363,8 +406,9 @@ export async function deleteBudgetCategory(currentCategory: BudgetItem) {
 export async function createBudgetCategory(newCategory: BudgetItem) {
     noStore()
 
+    
     const { subcategories, ...categoryWithoutSucategories } = newCategory;
-
+    
     const createdCategory = await prisma.budgetItem.create({
         data: {
             ...categoryWithoutSucategories,
@@ -372,10 +416,18 @@ export async function createBudgetCategory(newCategory: BudgetItem) {
         }
     });
 
-    if(subcategories!.length > 0) {
-        createBudgetSubcategories(subcategories!, createdCategory)
+    try {
+        if(subcategories!.length > 0) {
+            createBudgetSubcategories(subcategories!, createdCategory)
+        }
+        cookies().set('showConfirmationMessage', 'Categoria creada correctamente', { expires: 4 / (24 * 60 * 60) });
+    } catch (error) {
+        await prisma.budgetItem.delete({
+            where: { id: createdCategory.id },
+        });
+        cookies().set('showConfirmationMessage', 'Error', { expires: 4 / (24 * 60 * 60) });
     }
-
+        
 
     revalidatePath('/presupuesto-cuentas');
     redirect('/presupuesto-cuentas')
@@ -384,7 +436,7 @@ export async function createBudgetCategory(newCategory: BudgetItem) {
 async function createBudgetSubcategories(subcategoriesToCreate: BudgetItem[], parentCategory: BudgetItem) {
     noStore()
 
-    await Promise.all(subcategoriesToCreate!.map( subcategory => 
+    const createSubcategoryPromises = subcategoriesToCreate!.map(subcategory => 
         prisma.budgetItemSubcategory.create({
             data: {
                 type: parentCategory.type,
@@ -396,10 +448,9 @@ async function createBudgetSubcategories(subcategoriesToCreate: BudgetItem[], pa
                 userId: myUserId,
             }
         })
-    ));
+    );
 
-    revalidatePath('/presupuesto-cuentas');
-    redirect('/presupuesto-cuentas')
+    await prisma.$transaction(createSubcategoryPromises);
 }
 
 
@@ -414,7 +465,6 @@ export async function createNewTransaction (newTransaction: Transaction) {
     noStore()
     
     try {
-
         // Into the following funcitons, the databse is modify and the transaction is created. 
         // If there's an error, it throw the error, catch is triggered and return null, transaction and any change is made
 

@@ -20,13 +20,10 @@ const DeleteForm: React.FC<DeleteFormProps> = ({
     currentCategory,
 }) => {
 
-    // This state hold the information for the budget category that is being edited
-    const [selectedCategory, setSelectedCategory] = React.useState<BudgetItem>(currentCategory)
-
     // The state of the fieldset that show the subcategories inputs
-    const [showSubcategoriesFieldset, setShowSubcategoriesFieldset] = React.useState<boolean>(selectedCategory?.subcategories?.length === 0 ? false : true)
+    const [showSubcategoriesFieldset, setShowSubcategoriesFieldset] = React.useState<boolean>(currentCategory?.subcategories?.length === 0 ? false : true)
 
-    const totalSubcategoriesAmount = selectedCategory?.subcategories?.reduce((acc, subcategory) => {
+    const totalSubcategoriesAmount = currentCategory?.subcategories?.reduce((acc, subcategory) => {
         return acc + subcategory.amount
     }, 0)
 
@@ -36,13 +33,13 @@ const DeleteForm: React.FC<DeleteFormProps> = ({
             <form action={() => deleteBudgetCategory(currentCategory)}>
                 <ElementTitle title='Editar categoria' />
                 <TitleFieldset 
-                    title={selectedCategory?.title}
+                    title={currentCategory?.title}
                     readOnly={true}
                 />
                 { !showSubcategoriesFieldset && (
                         <AmountFieldset
                             titleElement='Monto presupuestado'
-                            amount={selectedCategory.amount}
+                            amount={currentCategory.amount}
                             readOnly={true}
                         />
                 )}
@@ -69,7 +66,7 @@ const DeleteForm: React.FC<DeleteFormProps> = ({
                                 <h3>Titulo</h3>
                                 <h3>Monto presupuestado</h3>
                             </div>
-                            { selectedCategory?.subcategories?.map((subCategory) => (
+                            { currentCategory?.subcategories?.map((subCategory) => (
                                 <>
                                     <div className='flex justify-between items-center gap-4 mb-1'>
                                         <input

@@ -39,10 +39,12 @@ const CreateForm: React.FC<CreateFormProps> = ({type}) => {
     // The state of the fieldset that show the subcategories inputs
     const [showSubcategoriesFieldset, setShowSubcategoriesFieldset] = React.useState<boolean>(selectedCategory?.subcategories?.length === 0 ? false : true)
 
+    // This is the total amount of all the categories
     const totalSubcategoriesAmount = selectedCategory?.subcategories?.reduce((acc, subcategory) => {
         return acc + subcategory.amount
     }, 0)
-
+    
+    // This useEffect is to update the amount and remaining of the category when the user add or delete a subcategory
     React.useEffect(() => {
     setSelectedCategory((currentCategory) => {
         return {
@@ -53,10 +55,18 @@ const CreateForm: React.FC<CreateFormProps> = ({type}) => {
     })
     }, [totalSubcategoriesAmount])
 
-    const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // This useEffect is to hide the subcategories fieldset when the user delete all the subcategories
+    React.useEffect(() => {
+        if(selectedCategory?.subcategories?.length === 0) {
+            setShowSubcategoriesFieldset(false)
+        }
+    }, [selectedCategory?.subcategories?.length])
+
+
+    const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSelectedCategory({
             ...selectedCategory,
-            title: e.target.value
+            title: event.target.value
         })
     }
 
@@ -89,12 +99,7 @@ const CreateForm: React.FC<CreateFormProps> = ({type}) => {
     };
 
 
-    // This useEffect is to hide the subcategories fieldset when the user delete all the subcategories
-    React.useEffect(() => {
-        if(selectedCategory?.subcategories?.length === 0) {
-            setShowSubcategoriesFieldset(false)
-        }
-    }, [selectedCategory?.subcategories?.length])
+    
     
     const SubcategoryTitle = (event: React.ChangeEvent<HTMLInputElement>, subcategoryID: string) => {
         const { value } = event.target;

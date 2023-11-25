@@ -73,7 +73,7 @@ type BudgetItem = {
     amount: number;
     used: number;
     remaining: number;
-    month: string;
+    month?: string;
     userId?: string;
     budgetCategoryId?: string;
     subcategories?: BudgetItem[];
