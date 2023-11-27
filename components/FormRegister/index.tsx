@@ -15,6 +15,9 @@ import DescriptionFieldset from "@/components/FormRegister/DescriptionFieldset"
 import SubmitButton from "@/components/FormRegister/SubmitButton"
 import ConfirmationMessage from "@/components/ConfirmationMessage"
 
+import Summarytransaction from "@/components/SummaryTransaction"
+import SummaryTransactionList from "@/components/SummaryTransactionList"
+
 interface FormRegisterProps {
     activeRegisterOption: string
     accounts: UserAccount[],
@@ -52,6 +55,8 @@ const FormRegister: React.FC<FormRegisterProps> = ({
         message: ''
     })
 
+    const [createdTransactions, setCreatedTransactions] = React.useState<Transaction[]>([])
+
     const amountFieldsetOnChangehandle = (value: number) => {
         setCurrentTransaction({
             ...currentTransaction,
@@ -77,6 +82,8 @@ const FormRegister: React.FC<FormRegisterProps> = ({
             body: JSON.stringify(currentTransaction),
         });
 
+        const {transaction} = await response.json();
+
         if (response.ok) {
             setConfirmationMessage({
                 show: true,
@@ -101,6 +108,8 @@ const FormRegister: React.FC<FormRegisterProps> = ({
             amount: 0,
             description: '',
         });
+
+        setCreatedTransactions([...createdTransactions, transaction]);
     }
 
     return (
@@ -112,7 +121,7 @@ const FormRegister: React.FC<FormRegisterProps> = ({
                     setConfirmationMessage={setConfirmationMessage}
                 />
             )}
-            <form onSubmit={handleSubmit} className="border py-4 p-2 border-white rounded-md">
+            <form onSubmit={handleSubmit} className="border mb-4 py-4 p-2 border-white rounded-md">
                 <FieldsetTypeOfRegister
                     currentTransaction={currentTransaction}
                     setCurrentTransaction={setCurrentTransaction}
@@ -165,6 +174,12 @@ const FormRegister: React.FC<FormRegisterProps> = ({
                     title="Registrar"
                 />
             </form>
+            { createdTransactions.length > 0 && (
+                <SummaryTransactionList
+                    title="Transacciones registradas"
+                    transactions={createdTransactions}
+                />
+            )}
         </>
     )
 }

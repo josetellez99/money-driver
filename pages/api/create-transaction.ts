@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { revalidatePath } from "next/cache"
 
 type ResponseData = {
-    message: string
+    transaction: Transaction;
 }
 
 export default async function handler(
@@ -14,9 +14,7 @@ export default async function handler(
         const { body } = req;
         const response = await createNewTransaction(body);
         
-        if(response) res.status(200).json({ message: 'Transacción creada exitosamente' })
-        else res.status(500).json({ message: 'Error al crear la transacción' })
-
-        revalidatePath('/presupuesto-cuentas')
+        if(response) res.status(200).json({ transaction: response })
+        else res.status(500)
     }
 }

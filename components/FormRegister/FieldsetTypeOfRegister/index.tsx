@@ -1,7 +1,6 @@
 import React from "react"
 
 import FieldsetBase from "@/components/FormRegister/FieldsetBase"
-import { useRouter } from 'next/navigation'
 
 
 const registerOptions = [
@@ -23,10 +22,8 @@ const RegisterOptionFieldset: React.FC<FieldsetFormProps> = ({
     setCurrentTransaction,
 }) => {
 
-    const router = useRouter();
-
     const changeUrl = (newUrl: string) => {
-        router.push(newUrl, undefined);
+        window.history.pushState({}, '', newUrl);
     }
 
     const handleChange = (titleInEnglish: string, title: string) => {

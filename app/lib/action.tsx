@@ -468,14 +468,94 @@ export async function createNewTransaction (newTransaction: Transaction) {
         // Into the following funcitons, the databse is modify and the transaction is created. 
         // If there's an error, it throw the error, catch is triggered and return null, transaction and any change is made
 
-        newTransaction.type === 'income' ? await incomeCase(newTransaction as Transaction, myUserId) : null;
-        newTransaction.type === 'expense' ? await expenseCase(newTransaction as Transaction, myUserId) : null;
-        newTransaction.type === 'movement' ? await movementCase(newTransaction as Transaction, myUserId) : null;
-        
-        return newTransaction
+        if(newTransaction.type === 'income') {
+            const createdTransaction = await incomeCase(newTransaction as Transaction, myUserId)
+            return createdTransaction
+
+        } else if (newTransaction.type === 'expense') {
+            const createdTransaction = await expenseCase(newTransaction as Transaction, myUserId)
+            return createdTransaction
+
+        } else if (newTransaction.type === 'movement') {
+            const createdTransaction = await movementCase(newTransaction as Transaction, myUserId)
+            return createdTransaction
+
+        }        
         
     } catch (error) {
         return null
     }
 }
 
+export async function fetchUserTransactions (type: string, limit: number) {
+    noStore()
+
+    // if type is 'all' it will fetch all the transactions, if not, it will fetch only the transactions of the type specified
+    try {
+        const userTransactions = await prisma.transaction.findMany({
+            where: {
+                userId: myUserId,
+                ...(type !== 'all' && { type: type }),
+            },
+            take: limit,
+            orderBy: {
+                date: 'desc',
+            },
+        });
+        return userTransactions;
+    } catch (error) {
+        console.error("Error fetching user transactions:", error);
+        throw error;
+    }
+}
+
+
+
+
+// Other actions
+
+export async function calculateTotalAmountThisMonth(type: 'income' | 'expense') {
+    noStore()
+
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+
+    try {
+        const total = await prisma.transaction.aggregate({
+            _sum: {
+                amount: true,
+            },
+            where: {
+                type: type,
+                date: {
+                    gte: new Date(currentYear, currentMonth, 1),
+                    lt: new Date(currentYear, currentMonth + 1, 1),
+                },
+            },
+        });
+        return total._sum.amount;
+    } catch (error) {
+        console.error("Error calculating total amount:", error);
+        throw error;
+    }
+}
+
+export async function calculateTotalAmountInAccounts() {
+    noStore()
+
+    try {
+        const total = await prisma.account.aggregate({
+            _sum: {
+                amount: true,
+            },
+            where: {
+                userId: myUserId,
+            },
+        });
+
+        return total._sum.amount;
+    } catch (error) {
+        console.error("Error calculating total amount in account:", error);
+        throw error;
+    }
+}

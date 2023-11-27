@@ -17,6 +17,9 @@ interface DateFieldSetProps {
 }
 
 const DateFieldSet: React.FC<DateFieldSetProps> = ({currentTransaction, setCurrentTransaction}) => {
+
+    console.log('date input')
+    console.log(currentTransaction.date)
     
     const CustomInputDate: React.FC<CustomInputDateProps> = forwardRef(({ onClick }, ref) => {
         const dateSpanishFormat = getDateSpanishFormat(currentTransaction.date)

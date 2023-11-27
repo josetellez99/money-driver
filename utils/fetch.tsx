@@ -3,22 +3,6 @@ import setMonthForBudgetItem from '@/utils/setMonthForBudgetItem'
 
 const prisma = new PrismaClient()
 
-export async function exampleFetch () {
-
-    console.log('Fetching data from database...')
-
-    await prisma.transaction.create({
-        data: {
-            type: 'Egreso',
-            date: new Date(),
-            accountFrom: 'Caja',
-            accountTo: 'Banco',
-            amount: 1000,
-            description: 'Pago de nómina',
-        },
-    })
-}
-
 export async function deleteTransactions () {
     await prisma.transaction.deleteMany()
 }

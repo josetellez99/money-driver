@@ -23,15 +23,15 @@ type FormRegisterData = {
 type Transaction = {
     id?: string,
     type: string,
-    date: Date,
+    date: Date | string,
     accountFrom: string,
     accountFromId: string,
-    subcategoryFrom?: string,
-    subcategoryFromId?: string,
+    subcategoryFrom?: string | null,
+    subcategoryFromId?: string | null,
     accountTo: string,
     accountToId: string,
-    subcategoryTo?: string,
-    subcategoryToId?: string,
+    subcategoryTo?: string | null,
+    subcategoryToId?: string | null,
     amount: number,
     description?: string,
     userId?: string,
@@ -57,6 +57,31 @@ type Debt = {
     }
     paymentRecord: DebtPaymentRecord
 }
+
+// Example for debt element
+
+// {
+//     toPay: false,
+//     id: 5,
+//     title: 'Tarjeta de credito para pagar por todas las cosas que adquirí cuando me vine a vivir a esta hermosa ciudad',
+//     totalAmount: 40,
+//     paidAmount: 30,
+//     createdRecordDay: new Date(),
+//     debtStartDay: new Date(),
+//     description: 'Esta es una deuda inteligente para invertir Esta es una deuda inteligente para invertir Esta es una deuda inteligente para invertir Esta es una deuda inteligente para invertir Esta es una deuda inteligente para invertir Esta es una deuda inteligente para invertir',
+//     paymentPlan: {
+//         byMonths: true,
+//         byAmount: false,
+//         monthsToPay: 10,
+//         monthlyRate: false,
+//         yearlyRate: true,
+//         ratePercentage: 40,
+//         monthToStartToPay: new Date
+//     },
+//     paymentRecord : {
+        
+//     }
+// },
 
 type DebtPaymentRecord = {
     idTransaction: number;

@@ -45,9 +45,12 @@ export async function incomeCase (newTransaction: Transaction, myUserId: string)
                     }
                 },
             })
-            await prisma.$transaction([createTransaction, updateCategory, updateSubcategory, updateAccount]);
+            const transactionResult = await prisma.$transaction([createTransaction, updateCategory, updateSubcategory, updateAccount]);
+            // transactionResult[0] is the transaction created
+            return transactionResult[0];
         } else {
-            await prisma.$transaction([createTransaction, updateCategory, updateAccount]);
+            const transactionsResult = await prisma.$transaction([createTransaction, updateCategory, updateAccount]);
+            return transactionsResult[0];
         }
 
     } catch (error) {
@@ -98,9 +101,11 @@ export async function expenseCase(newTransaction: Transaction, myUserId: string)
                     }
                 },
             })
-            await prisma.$transaction([createTransaction, updateCategory, updateSubcategory, updateAccount]);
+            const transactionResult = await prisma.$transaction([createTransaction, updateCategory, updateSubcategory, updateAccount]);
+            return transactionResult[0];
         } else {
-            await prisma.$transaction([createTransaction, updateCategory, updateAccount]);
+            const transactionResult = await prisma.$transaction([createTransaction, updateCategory, updateAccount]);
+            return transactionResult[0];
         }
 
     } catch (error) {
@@ -137,8 +142,8 @@ export async function movementCase(newTransaction: Transaction, myUserId: string
             },
         })
 
-        await prisma.$transaction([createTransaction, updateAccountFrom, updateAccountTo]);
-        
+        const transactionResult = await prisma.$transaction([createTransaction, updateAccountFrom, updateAccountTo]);
+        return transactionResult[0];
 
     } catch (error) {
         throw error
