@@ -10,8 +10,8 @@ interface BudgetRowProps {
     href: string;
     categoryTitle: string;
     categoryAmount: number;
-    categoryUsed: number | undefined;
-    categoryRemaining: number | undefined;
+    categoryUsed: number | null;
+    categoryRemaining: number | null;
     subcategories: BudgetItem[] | undefined;
 }
 

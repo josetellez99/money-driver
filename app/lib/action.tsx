@@ -53,7 +53,7 @@ export async function fetchSingleUserAccount(accountID: string) {
                 userId: myUserId,
             }
         });
-        return userAccount;
+        return userAccount as UserAccount;
     } catch (error) {
         console.error("Error fetching user accounts:", error);
         throw error;
@@ -239,7 +239,7 @@ export async function fetchUserBudgetWithSubcategories (type: 'income' | 'expens
 
     // Inserting the subcategories into the corresponding parent category
     subcategoriesBudgetData?.map( subcategory => {
-        budgetData.map( parentCategory => {
+        budgetData.map( (parentCategory: BudgetItem) => {
             if (parentCategory.id === subcategory.budgetCategoryId) {
                 parentCategory.subcategories = parentCategory.subcategories || []
                 parentCategory.subcategories = [...parentCategory.subcategories, subcategory]
@@ -315,9 +315,6 @@ export async function updateUSerBudgetCategory(currentCategory: BudgetItem) {
         // If there's no subcategories, the .amount is the same and .remaining is .amount - .used
         categoryWithoutSucategories.remaining = currentCategory.amount - currentCategory.used
     }
-
-    console.log(categoryWithoutSucategories)
-    // No estoy entendiendo por qué no se actualiza el .amount de la categoria padre si en el console.log de arriba si está actualizada
 
     // Modify the parent category table with all the information updated
     const updateCategory = prisma.budgetItem.update({
@@ -404,10 +401,9 @@ export async function deleteBudgetCategory(currentCategory: BudgetItem) {
     redirect('/presupuesto-cuentas')
 }
 
-export async function createBudgetCategory(newCategory: BudgetItem) {
+export async function createBudgetCategory(newCategory: any) {
     noStore()
 
-    
     const { subcategories, ...categoryWithoutSucategories } = newCategory;
     
     const createdCategory = await prisma.budgetItem.create({
@@ -503,7 +499,7 @@ export async function fetchUserTransactions (type: string, limit: number) {
                 date: 'desc',
             },
         });
-        return userTransactions;
+        return userTransactions as Transaction[];
     } catch (error) {
         console.error("Error fetching user transactions:", error);
         throw error;

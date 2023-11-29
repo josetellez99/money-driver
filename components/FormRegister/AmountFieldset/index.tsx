@@ -8,7 +8,7 @@ import { extractNumberFromString } from "@/utils/formatMoney";
 interface AmountFieldsetProps {
     className?: string,
     titleElement?: string,
-    amount: number | undefined
+    amount: number | null
     onChange?: (value: number) => void,
     readOnly?: boolean
 }

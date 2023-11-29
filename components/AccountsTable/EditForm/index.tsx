@@ -8,8 +8,6 @@ import AmountFieldset from "@/components/FormRegister/AmountFieldset"
 import SubmitButton from "@/components/FormRegister/SubmitButton"
 import ActionButton from "@/components/ActionButton"
 import { useRouter } from 'next/navigation'
-import { revalidatePath } from 'next/cache';
-
 
 import { updateUserAccount } from "@/app/lib/action"
 
@@ -41,7 +39,16 @@ const EditForm: React.FC<EditFormProps> = ({
         description: '',
     });
 
-    const[currentAccount, setCurrentAccount] = React.useState<UserAccount>(userAccounts.find((account) => account.id === currentAccountID));
+    // This is create because the .find could return undefined and we need to pass an object 'UserAccount' to the 'currentAccount' state   
+    const defaultAccount: UserAccount = {
+        id: '',
+        title: '',
+        amount: 0,
+    };
+
+    const[currentAccount, setCurrentAccount] = React.useState<UserAccount>(
+        userAccounts.find((account) => account.id === currentAccountID) || defaultAccount
+    );
 
     // This state hold the difference between the currentAccount.amount old value and the currentAccount.amount new value
     // When the user change the currentAccount.amount this state is updated
@@ -93,7 +100,8 @@ const EditForm: React.FC<EditFormProps> = ({
                 description: `Ajuste de cuenta positivo a: ${currentAccount.title}`,
             })
         }
-    }, [difference])
+    }, [difference, adjustmentTransferInfo, currentAccount.id, currentAccount.title])
+    // We add those dependencies to the useEffect because we need to update the adjustmentTransferInfo state when the difference state change. And for deployment erros
 
     return (
         <>
@@ -213,7 +221,7 @@ const SectionEditAccount: React.FC<SectionEditAccountProps> = ({
                                 {` por valor de `}
                                 <span className="font-bold">{formatMoney(adjustmentTransferInfo?.amount)}</span>
                                 {`. Para continuar, pulsa `}
-                                <span className="font-bold">"Guardar"</span>
+                                <span className="font-bold">Guardar</span>
                             </p>
                         </HighLightedContainer>
                     </>
@@ -242,7 +250,7 @@ const SectionEditAccount: React.FC<SectionEditAccountProps> = ({
                                 {` por valor de `}
                                 <span className="font-bold">{formatMoney(adjustmentTransferInfo?.amount)}</span>
                                 {`. Para continuar, pulsa `}
-                                <span className="font-bold">"Guardar"</span>
+                                <span className="font-bold">Guardar</span>
                             </p>
                         </HighLightedContainer>
                     </>

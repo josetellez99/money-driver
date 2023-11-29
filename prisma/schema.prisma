@@ -47,7 +47,7 @@ model Transaction {
 model account {
   id        String      @id @default(uuid())
   title     String
-  amount   Int
+  amount   Int?
   icon String?
   userId    String
   user      User     @relation(fields: [userId], references: [id])

@@ -32,7 +32,7 @@ const ConfirmationMessage: React.FC<ConfirmationMessageProps> = ({ message, type
         }
 
         return () => clearTimeout(timer);
-    }, []);
+    }, [setConfirmationMessage]);
 
     const stylesType = type === 'success' ? 'bg-green-500' : 'bg-red-500';
 

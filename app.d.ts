@@ -9,7 +9,7 @@ type ButtonData = {
 type UserAccount = {
     title: string,
     id?: string,
-    amount?: number,
+    amount: number | null,
     UrlIcon?: string,
 }
 
@@ -100,7 +100,6 @@ type BudgetItem = {
     remaining: number;
     month?: Date;
     userId?: string;
-    budgetCategoryId?: string;
     subcategories?: BudgetItem[];
 }
 

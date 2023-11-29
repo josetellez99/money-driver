@@ -3,7 +3,7 @@ import ElementTitle from "@/components/ElementTitle";
 
 interface SummaryTransactionListProps {
     transactions?: Transaction[];
-    title: string;
+    title?: string;
 }
 
 
@@ -11,7 +11,7 @@ const SummaryTransactionList: React.FC<SummaryTransactionListProps> = ({ transac
 
     return (
         <>
-            <ElementTitle title={title} />
+            { title && <ElementTitle title={title} />}
             <ul className="flex flex-col gap-2 my-4">
                 {transactions?.map(transaction => (
                     <Summarytransaction 

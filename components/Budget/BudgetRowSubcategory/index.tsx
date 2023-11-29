@@ -5,8 +5,8 @@ import styles from "@/components/Budget/Budget.module.css";
 interface BudgetRowProps {
     category?: string;
     amount: number;
-    used: number | undefined;
-    remaining: number | undefined;
+    used: number | null;
+    remaining: number | null;
     subCategories?: BudgetItem[];
 }
 const BudgetRowSubcategory: React.FC<BudgetRowProps> = ({category, amount, used, remaining }) => {

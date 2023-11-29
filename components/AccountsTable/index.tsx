@@ -15,7 +15,7 @@ const AccountsTable: React.FC = async () => {
     const userAccounts = await fetchUserAccounts()
 
     const totalsAccounts = userAccounts.reduce((acc, account) => {
-        return acc + account.amount;
+        return acc + account.amount!;
     }, 0);
 
     return (

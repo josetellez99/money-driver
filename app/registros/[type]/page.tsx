@@ -20,16 +20,21 @@ interface Props {
 }
 const RegistersPage: React.FC<Props> = async ({params}) => {
 
-    const typesInEnglish = {
+    type TransactionTypes = {
+        todos: string;
+        ingreso: string;
+        egreso: string;
+        movimiento: string;
+    };
+
+    const typesInEnglish: TransactionTypes = {
         todos: 'all',
         ingreso: 'income',
         egreso: 'expense',
         movimiento: 'movement',
-    }
+    };
 
-
-    
-    const transactions = await fetchUserTransactions(typesInEnglish[params.type], 10);
+    const transactions = await fetchUserTransactions(typesInEnglish[params.type as keyof TransactionTypes], 10);
 
     return (
         <>
