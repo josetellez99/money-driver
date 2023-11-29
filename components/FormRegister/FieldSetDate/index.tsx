@@ -29,6 +29,9 @@ const DateFieldSet: React.FC<DateFieldSetProps> = ({currentTransaction, setCurre
         )
     });
 
+    // This is to solve an error while deployment
+    CustomInputDate.displayName = 'CustomInputDate';
+
     const onChangeHandle = (currentDate: Date) => {
         setCurrentTransaction({
             ...currentTransaction,

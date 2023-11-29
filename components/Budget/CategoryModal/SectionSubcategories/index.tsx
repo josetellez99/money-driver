@@ -104,7 +104,10 @@ const SectionSubcategories: React.FC<SectionSubcategoriesProps> = ({
                     <h3>Monto presupuestado</h3>
                 </div>
                 { currentCategory.subcategories?.map((subCategory) => (
-                    <div className='flex justify-between items-center gap-4 mb-1'>
+                    <div 
+                        key={subCategory.id}
+                        className='flex justify-between items-center gap-4 mb-1'
+                    >
                         <input 
                             type="text"
                             className={`${styles.subCategoriesInput} border-1 px-2 bg-backgroundBlue border-b-greenYellow w-2/4 `}

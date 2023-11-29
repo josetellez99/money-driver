@@ -61,6 +61,7 @@ const CreditCardTable: React.FC<CreditCardTableProps> = ({userCreditsCards}) => 
                     { creditsCardData.map( creditCardData => {
                             return (
                                 <tr 
+                                    key={creditCardData.id}
                                     onClick={() => rowHandleClick(creditCardData)} 
                                     className='flex justify-between border border-greenYellow rounded-lg p-1 px-2 mb-2 w-full cursor-pointer'
                                 >

@@ -49,6 +49,7 @@ const SectionEditAccount: React.FC<SectionEditAccountProps> = ({
                             { incomeCategories.map( income => {
                                     return (
                                         <UserAccountButton
+                                            key={income.id}
                                             buttonData={income}
                                             onClick={() => setAccountOrCategoryAsAccountFromTrasnferInfo(income)}
                                             isActive={income.title === adjustmentTransferInfo?.accountFrom}
@@ -56,7 +57,7 @@ const SectionEditAccount: React.FC<SectionEditAccountProps> = ({
                                     )
                                 })}
                             <UserAccountButton
-                                buttonData={{id: 234, title: 'Ajuste de cuenta', amount: undefined!}}
+                                buttonData={{id: 'ajuste-cuenta', title: 'Ajuste de cuenta', amount: undefined!}}
                                 onClick={() => {
                                     setAdjustmentTransferInfo({
                                         ...adjustmentTransferInfo,
@@ -75,7 +76,7 @@ const SectionEditAccount: React.FC<SectionEditAccountProps> = ({
                                 {` por valor de `}
                                 <span className="font-bold">{formatMoney(adjustmentTransferInfo?.amount)}</span>
                                 {`. Para continuar, pulsa `}
-                                <span className="font-bold">"Guardar"</span>
+                                <span className="font-bold">Guardar</span>
                             </p>
                         </HighLightedContainer>
                     </>
@@ -85,7 +86,7 @@ const SectionEditAccount: React.FC<SectionEditAccountProps> = ({
                         <p className="mb-4">{`¿A dónde va la cantidad extra de ${formatMoney(difference)}?`}</p>
                         <AccountsFieldsets>
                             <UserAccountButton
-                                buttonData={{id: 234, title: 'Ajuste de cuenta', amount: undefined!}}
+                                buttonData={{id: 'Ajuste-cuenta', title: 'Ajuste de cuenta', amount: undefined!}}
                                 onClick={() => {
                                     setAdjustmentTransferInfo({
                                         ...adjustmentTransferInfo,
@@ -104,7 +105,7 @@ const SectionEditAccount: React.FC<SectionEditAccountProps> = ({
                                 {` por valor de `}
                                 <span className="font-bold">{formatMoney(adjustmentTransferInfo?.amount)}</span>
                                 {`. Para continuar, pulsa `}
-                                <span className="font-bold">"Guardar"</span>
+                                <span className="font-bold">Guardar</span>
                             </p>
                         </HighLightedContainer>
                     </>

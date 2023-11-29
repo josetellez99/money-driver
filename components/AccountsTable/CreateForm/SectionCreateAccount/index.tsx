@@ -57,6 +57,7 @@ const SectionCreateAccount: React.FC<SectionCreateAccountProps> = ({
                     {moneyFromOptions.map( option => {
                         return (
                             <RegularButton
+                                key={option.id}
                                 buttonData={option}
                                 onClick={() => setWhereMoneyCameFrom(option.title)}
                                 isActive={option.title === whereMoneyCameFrom}
@@ -73,6 +74,7 @@ const SectionCreateAccount: React.FC<SectionCreateAccountProps> = ({
                             {accounts.map( account => {
                                 return (
                                     <UserAccountButton
+                                        key={account.id}
                                         buttonData={account}
                                         onClick={() => setTransferInfoAccountFrom(account)}
                                         isActive={account.title === adjustmentTransferInfo?.accountFrom}
@@ -90,6 +92,7 @@ const SectionCreateAccount: React.FC<SectionCreateAccountProps> = ({
                             {incomeCategories.map( income => {
                                 return (
                                     <UserAccountButton
+                                        key={income.id}
                                         buttonData={income}
                                         onClick={() => setTransferInfoAccountFrom(income)}
                                         isActive={income.title === adjustmentTransferInfo?.accountFrom}
@@ -109,7 +112,7 @@ const SectionCreateAccount: React.FC<SectionCreateAccountProps> = ({
                     {` por valor de `}
                     <span className="font-bold">{formatMoney(adjustmentTransferInfo?.amount)}</span>
                     {`. Para continuar, pulsa `}
-                    <span className="font-bold">"Guardar"</span>
+                    <span className="font-bold">Guardar</span>
                 </p>
             </HighLightedContainer>
         )}

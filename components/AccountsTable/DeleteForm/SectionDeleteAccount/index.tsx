@@ -27,9 +27,9 @@ const SectionDeleteAccount: React.FC<SectionDeleteAccountProps> = ({
         setAdjustmentTransferInfo({
             ...adjustmentTransferInfo,
             type: 'movement',
-            accountFrom: currentAccount?.title,
+            accountFrom: currentAccount?.title!,
             accountTo: accountName,
-            amount: currentAccount?.amount,
+            amount: currentAccount?.amount!,
             description: `Ajuste de cuenta: ${currentAccount?.title}`,
         })
         setShowHighLigtedMessage(true);
@@ -47,6 +47,7 @@ const SectionDeleteAccount: React.FC<SectionDeleteAccountProps> = ({
                     if(account.title === currentAccount?.title) return null
                     return (
                         <UserAccountButton
+                            key={account.id}
                             buttonData={account}
                             onClick={() => setInfoForAdjusmentTransfer(account.title)}
                             isActive={account.title === adjustmentTransferInfo?.accountTo}
@@ -54,20 +55,11 @@ const SectionDeleteAccount: React.FC<SectionDeleteAccountProps> = ({
                     )
                 })}
                 <UserAccountButton
-                    buttonData={{id: 234, title: 'Ajuste de cuenta', amount: 0}}
+                    buttonData={{id: 'ajuste-cuenta', title: 'Ajuste de cuenta', amount: 0}}
                     onClick={() => setInfoForAdjusmentTransfer('Ajuste de cuenta')}
                     isActive={adjustmentTransferInfo?.accountTo === 'Ajuste de cuenta'}
                 />
             </AccountsFieldsets>
-            {/* <div className="flex justify-end">
-                <ActionButton 
-                    title='Editar cuenta'
-                    type='edit'
-                    onClick={() => {
-                        setActionType('edit')
-                    }}
-                />
-            </div> */}
             { showHighLigtedMessage && (
                 <HighLightedContainer>
                     <p className="text-black p-1 text-justify">
@@ -78,7 +70,7 @@ const SectionDeleteAccount: React.FC<SectionDeleteAccountProps> = ({
                         {` por valor de `}
                         <span className="font-bold">{formatMoney(adjustmentTransferInfo?.amount)}</span>
                         {`. Para continuar, pulsa `}
-                        <span className="font-bold">"Guardar"</span>
+                        <span className="font-bold">Guardar</span>
                     </p>
                 </HighLightedContainer>
             )}

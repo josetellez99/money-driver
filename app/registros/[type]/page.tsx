@@ -47,7 +47,7 @@ const RegistersPage: React.FC<Props> = async ({params}) => {
                         const textColor = isActive ? 'text-black' : ''
 
                         return (
-                            <li>
+                            <li key={registerType.title}>
                                 <Link 
                                     href={registerType.href}
                                     className={`${bgColor} ${textColor} flex justify-center items-center px-1 h-8 rounded cursor-pointer`}

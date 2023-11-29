@@ -32,7 +32,9 @@ const SummaryTable = async () => {
         <tbody className="block bg-purple rounded-lg">
             <tr className="grid grid-cols-2 grid-rows-2 py-3 gap-3">
                 {tableData.map( item => (
-                    <td className="">
+                    <td 
+                        key={item.id}
+                    >
                         <p className="h-full flex flex-col items-center justify-center">
                             <span className="text-sm text-black">{item.title}</span>
                             <span className="text-xl font-bold">{formatMoney(item.value!)}</span>

@@ -98,10 +98,12 @@ const CreditCardModal: React.FC<CreditCardModalProps> = ({
                                         message="El monto usado se actualiza al registrar un pago con esta tarjeta de credito."
                                     />
                                     <div className="my-6">
-                                        <ElementTitleSmall title="Transacciones"/>
-                                        <SummaryTransactionList>
+                                        <SummaryTransactionList 
+                                            title="Transacciones"
+                                        >
                                             {currentCreditCard.transactionsThisCohorte?.map( transaction => (
                                                 <Summarytransaction
+                                                    key={transaction.id}
                                                     transactionData={transaction}
                                                 />
                                             ))}

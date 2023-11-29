@@ -110,6 +110,7 @@ const SectionDeleteAccount: React.FC<SectionDeleteAccountProps> = ({
                     if(account.title === userAccount.title) return null
                     return (
                         <UserAccountButton
+                            key={account.id}
                             buttonData={account}
                             onClick={() => setAccountToForAdjusmentTransfer(account.title, account.id!)}
                             isActive={account.title === adjustmentTransferInfo?.accountTo}
@@ -132,7 +133,7 @@ const SectionDeleteAccount: React.FC<SectionDeleteAccountProps> = ({
                         {` por valor de `}
                         <span className="font-bold">{formatMoney(adjustmentTransferInfo?.amount)}</span>
                         {`. Para continuar, pulsa `}
-                        <span className="font-bold">"Guardar"</span>
+                        <span className="font-bold">Guardar</span>
                     </p>
                 </HighLightedContainer>
             )}

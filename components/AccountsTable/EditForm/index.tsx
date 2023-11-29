@@ -186,6 +186,7 @@ const SectionEditAccount: React.FC<SectionEditAccountProps> = ({
                             { incomeCategories.map( income => {
                                     return (
                                         <UserAccountButton
+                                            key={income.id}
                                             buttonData={income}
                                             onClick={() => setAccountFromTrasnferInfo(income)}
                                             isActive={income.title === adjustmentTransferInfo?.accountFrom}
