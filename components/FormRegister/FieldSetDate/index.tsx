@@ -22,7 +22,7 @@ const DateFieldSet: React.FC<DateFieldSetProps> = ({currentTransaction, setCurre
         const dateSpanishFormat = getDateSpanishFormat(currentTransaction.date)
         return (
             <>     
-                <div className=" p-2 px-4 rounded border border-greenYellow cursor-pointer" onClick={onClick} ref={ref} >
+                <div className=" p-2 px-4 rounded border border-greenYellow cursor-pointer" onClick={onClick} >
                     {dateSpanishFormat}
                 </div>
             </>

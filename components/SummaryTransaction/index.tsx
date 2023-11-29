@@ -40,7 +40,7 @@ const Summarytransaction: React.FC<SummaryTransactionProps> = ({transactionData}
                         <p className={`${styles.maxLong}`}>{transactionData.accountTo}</p>
                     </div>
                     <div className="flex gap-4 justify-center items-center">
-                        <p className={`${styles.maxLongDate} text-sm font-thin`}>{getSpanishFormatFromDatabaseDate(transactionData.date)}</p>
+                        <p className={`${styles.maxLongDate} text-sm font-thin`}>{getSpanishFormatFromDatabaseDate(transactionData.date.toLocaleString())}</p>
                         <p className="text-lg font-bold text-red-400">{formatMoney(transactionData.amount)}</p>
                     </div>
                 </div>

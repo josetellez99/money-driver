@@ -37,7 +37,7 @@ const EditForm: React.FC<EditFormProps> = ({
 
     const handleShowSubcategoriesFieldset = () => {
         setShowSubcategoriesFieldset(true)
-        setSelectedCategory( (selectedCategory: any) => {
+        setSelectedCategory( (selectedCategory) => {
             const newSubcategory = {
                 title: '',
                 amount: 0
@@ -46,7 +46,7 @@ const EditForm: React.FC<EditFormProps> = ({
             const newSubcategories = [...subcategories, newSubcategory];
             return {
                 ...selectedCategory,
-                subcategories: newSubcategories
+                subcategories: newSubcategories as BudgetItem[]
             };
         });
     }
@@ -78,7 +78,7 @@ const EditForm: React.FC<EditFormProps> = ({
     }
 
     const handleAddNewSubcategory = () => {
-        setSelectedCategory((currentCategory: any) => {
+        setSelectedCategory((currentCategory) => {
             const newSubcategory = {
                 // This is not the "id" for the database, this is just a random number to identify the subcategory and handle it in the frontend
                 id: (Math.floor(Math.random() * (13000 - 10000 + 1)) + 10000).toString(),
@@ -91,7 +91,7 @@ const EditForm: React.FC<EditFormProps> = ({
             const newSubcategories = [...subcategories, newSubcategory];
             return {
                 ...currentCategory,
-                subcategories: newSubcategories
+                subcategories: newSubcategories as BudgetItem[],
             };
         });
     };

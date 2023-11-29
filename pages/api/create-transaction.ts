@@ -1,14 +1,9 @@
 import {createNewTransaction} from '@/app/lib/action';
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { revalidatePath } from "next/cache"
-
-type ResponseData = {
-    transaction: Transaction;
-}
 
 export default async function handler(
     req: NextApiRequest,
-    res: NextApiResponse<ResponseData>
+    res: NextApiResponse
 ) {
     if (req.method === 'POST') {
         const { body } = req;

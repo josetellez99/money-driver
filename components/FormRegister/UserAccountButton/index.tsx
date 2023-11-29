@@ -3,7 +3,7 @@ import React from "react"
 import formatMoney from "@/utils/formatMoney"
 
 interface UserAccountButtonProps {
-    buttonData: UserAccount | BudgetItem,
+    buttonData: UserAccount | BudgetItem | { title: string},
     isActive: boolean,
     onClick?: React.ChangeEventHandler<HTMLInputElement>
     accountType?: string

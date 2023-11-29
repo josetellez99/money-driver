@@ -46,10 +46,13 @@ const CreateForm: React.FC<CreateFormProps> = ({type}) => {
     // This useEffect is to update the amount and remaining of the category when the user add or delete a subcategory
     React.useEffect(() => {
     setSelectedCategory((currentCategory) => {
-        return {
+        const newAccount = {
             ...currentCategory,
             amount: totalSubcategoriesAmount,
             remaining: totalSubcategoriesAmount
+        }
+        return {
+            ...newAccount as BudgetItem
         }
     })
     }, [totalSubcategoriesAmount])
@@ -92,7 +95,7 @@ const CreateForm: React.FC<CreateFormProps> = ({type}) => {
             const newSubcategories = [...subcategories, newSubcategory];
             return {
                 ...currentCategory,
-                subcategories: newSubcategories
+                subcategories: newSubcategories as BudgetItem[],
             };
         });
     };

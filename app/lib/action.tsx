@@ -484,7 +484,7 @@ export async function createNewTransaction (newTransaction: Transaction) {
     }
 }
 
-export async function fetchUserTransactions (type: string, limit: number) {
+export async function fetchUserTransactions (type: string, limit: number)  {
     noStore()
 
     // if type is 'all' it will fetch all the transactions, if not, it will fetch only the transactions of the type specified
@@ -530,7 +530,7 @@ export async function calculateTotalAmountThisMonth(type: 'income' | 'expense') 
                 },
             },
         });
-        return total._sum.amount;
+        return total._sum.amount as number
     } catch (error) {
         console.error("Error calculating total amount:", error);
         throw error;
@@ -550,7 +550,7 @@ export async function calculateTotalAmountInAccounts() {
             },
         });
 
-        return total._sum.amount;
+        return total._sum.amount as number;
     } catch (error) {
         console.error("Error calculating total amount in account:", error);
         throw error;
@@ -580,7 +580,7 @@ export async function getAvailableMoneyStartingThisMonth () {
             available => new Date(available.monthAndYear).toISOString().split('T')[0] === targetDate.split('T')[0]
         );
 
-        return infoThisMonth?.availableMoney;
+        return infoThisMonth?.availableMoney as number;
 
     } catch (error) {
         console.error("Error fetching available starting this month:", error);
@@ -614,7 +614,7 @@ export async function sumTotalBudgetCategoriesThisMonth (type: 'income' | 'expen
             },
         });
 
-        return total._sum.amount;
+        return total._sum.amount as number;
     } catch (error) {
         console.error("Error calculating total amount in account:", error);
         throw error;

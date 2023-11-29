@@ -14,7 +14,7 @@ const RegisterOptionLink: React.FC<RegisterOptionLinkProps> = ({buttonData, setP
     return (
     <>
         <Link  
-            href={buttonData.href} 
+            href={buttonData.href!} 
             onClick={handleEvent} 
             className="flex items-center justify-center w-full h-[36px] bg-mainGray rounded-md text-white">
             {buttonData.title}

@@ -12,8 +12,8 @@ const getDataForSummaryTable = async () => {
     const availableMoneyStartingThisMonth = await getAvailableMoneyStartingThisMonth()
 
     const balance = availableMoneyStartingThisMonth + totalBudgetIncomeThisMonth - totalBudgetExpenseThisMonth
-
     return {balance, totalIncomesThisMonth, totalExpensesThisMonth, totalAmountInAccounts}
+
 }
 
 const SummaryTable = async () => {

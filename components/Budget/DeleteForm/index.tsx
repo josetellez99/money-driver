@@ -48,7 +48,7 @@ const DeleteForm: React.FC<DeleteFormProps> = ({
                         <AmountFieldset
                             titleElement='Monto presupuestado'
                             className=' bg-greenYellow text-black rounded-lg'
-                            amount={totalSubcategoriesAmount}
+                            amount={totalSubcategoriesAmount!}
                             readOnly={true}
                         />
                         <MessageInfo

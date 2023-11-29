@@ -55,7 +55,7 @@ const UserDebt: React.FC<UserDebtProps> = ({userDebtData, isActive, onClick}) =>
                 </div>
                 <div className="flex flex-col items-end mb-1">
                     <div className="flex gap-1 mb-1">
-                        <span className="text-purple font-bold text-sm">{formatMoney(userDebtData.paidAmount)}/</span>
+                        <span className="text-purple font-bold text-sm">{formatMoney(userDebtData.paidAmount!)}/</span>
                         <span className="font-bold text-sm">{formatMoney(userDebtData.totalAmount)}</span>
                     </div>
                     <div className="w-full h-2 rounded-lg bg-black">
@@ -82,7 +82,7 @@ const UserDebt: React.FC<UserDebtProps> = ({userDebtData, isActive, onClick}) =>
                                     </div>
                                     <div className="flex flex-col items-end mb-2">
                                         <div className="flex gap-1 mb-1">
-                                            <span className="text-purple font-bold text-sm">{formatMoney(userDebtData.paidAmount)}/</span>
+                                            <span className="text-purple font-bold text-sm">{formatMoney(userDebtData.paidAmount!)}/</span>
                                             <span className="font-bold text-sm">{formatMoney(userDebtData.totalAmount)}</span>
                                         </div>
                                         <div className="w-full h-2 rounded-lg bg-black">

@@ -5,7 +5,6 @@ import ElementTitle from '@/components/ElementTitle';
 import TitleValuePair from '@/components/TitleValuePair';
 import HighLightedContainer from '@/components/HighLightedContainer';
 import AddNewCreditCardRow from '@/components/CreditCardTable/AddNewCreditCardRow';
-import CreditCardModal from '@/components/CreditCardTable/CreditCardModal';
 
 import formatMoney from '@/utils/formatMoney';
 
@@ -78,15 +77,6 @@ const CreditCardTable: React.FC<CreditCardTableProps> = ({userCreditsCards}) => 
             <HighLightedContainer>
                 <TitleValuePair title={'Total usado este mes'} textColor={'text-black'} value={totalUsed} />
             </HighLightedContainer>
-            { showCreditCardModal && (
-                <CreditCardModal 
-                    typeOfCreditCardModal={typeOfCreditCardModal}
-                    currentCreditCard={currentCreditCard!}
-                    setCurrentCreditCard={setCurrentCreditCard!}
-                    setShowCreditCardModal={setShowCreditCardModal}
-                    setCreditsCardData={setCreditsCardData}
-                />
-            )}
         </>
     )
 }
