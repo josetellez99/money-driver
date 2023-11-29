@@ -7,7 +7,7 @@ const registerOptions = [
     { title: 'Ingreso', titleInEnglish: 'income'},
     { title: 'Egreso', titleInEnglish: 'expense'},
     { title: 'Movimiento', titleInEnglish: 'movement'},
-    // { title: 'Ahorro', titleInEnglish: 'saving'},
+    { title: 'Ahorro', titleInEnglish: 'saving'},
     { title: 'Deuda', titleInEnglish: 'debt'},
     { title: 'Tarjeta de credito', titleInEnglish: 'creditCard'},
 ]
@@ -45,7 +45,10 @@ const RegisterOptionFieldset: React.FC<FieldsetFormProps> = ({
                 const textColor = isActive ? 'text-black' : ''
                 
                 return (
-                    <label htmlFor={`register-${registerType.title}`} className={`${bgColor} ${textColor} flex justify-center items-center px-1 h-8 rounded cursor-pointer`}>
+                    <label 
+                        key={registerType.titleInEnglish}
+                        htmlFor={`register-${registerType.title}`} 
+                        className={`${bgColor} ${textColor} flex justify-center items-center px-1 h-8 rounded cursor-pointer`}>
                         <p>{registerType.title}</p>
                         {
                             isActive ? (

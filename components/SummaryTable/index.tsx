@@ -1,23 +1,28 @@
-import React, { ReactNode } from "react";
+import React from "react";
 import formatMoney from "@/utils/formatMoney";
-import {calculateTotalAmountThisMonth, calculateTotalAmountInAccounts} from '@/app/lib/action'
+import {calculateTotalAmountThisMonth, calculateTotalAmountInAccounts, getAvailableMoneyStartingThisMonth, sumTotalBudgetCategoriesThisMonth} from '@/app/lib/action'
 
 const getDataForSummaryTable = async () => {
 
     const totalIncomesThisMonth = await calculateTotalAmountThisMonth('income')
     const totalExpensesThisMonth = await calculateTotalAmountThisMonth('expense')
+    const totalBudgetIncomeThisMonth = await sumTotalBudgetCategoriesThisMonth('income')
+    const totalBudgetExpenseThisMonth = await sumTotalBudgetCategoriesThisMonth('expense')
     const totalAmountInAccounts = await calculateTotalAmountInAccounts()
+    const availableMoneyStartingThisMonth = await getAvailableMoneyStartingThisMonth()
 
-    return {totalIncomesThisMonth, totalExpensesThisMonth, totalAmountInAccounts}
+    const balance = availableMoneyStartingThisMonth + totalBudgetIncomeThisMonth - totalBudgetExpenseThisMonth
+
+    return {balance, totalIncomesThisMonth, totalExpensesThisMonth, totalAmountInAccounts}
 }
 
 const SummaryTable = async () => {
 
-    const {totalIncomesThisMonth, totalExpensesThisMonth, totalAmountInAccounts} = await getDataForSummaryTable()
+    const {balance, totalIncomesThisMonth, totalExpensesThisMonth, totalAmountInAccounts} = await getDataForSummaryTable()
 
     const tableData = [
         {title: 'Disponible', value: totalAmountInAccounts, id: 1},
-        {title: 'Balance', value: 10000, id: 2},
+        {title: 'Balance', value: balance, id: 2},
         {title: 'Ingresos', value: totalIncomesThisMonth, id: 3},
         {title: 'Egresos', value: totalExpensesThisMonth, id: 4},
     ]

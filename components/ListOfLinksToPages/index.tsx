@@ -12,10 +12,11 @@ const ListOfLinksToPage: React.FC<ListOfLinksToPageProps> = ({ listButtonsData }
             <ul className="flex justify-between mb-10">
                 {listButtonsData.map( item => (
                     <LinksToPage
-                        id={item.id}
+                        key={item.id}
+                        id={item.id!}
                         title={item.title} 
-                        href={item.href} 
-                        iconURL={item.iconURL} />
+                        href={item.href!} 
+                        iconURL={item.iconURL!} />
                 ))}
             </ul>
         </>

@@ -19,7 +19,7 @@ const AccountsSection: React.FC<AccountsSectionProps> = ({typeOfRegister, onInco
                 {typeOfRegister == 'expense' && onExpense && onExpense()}
                 {typeOfRegister == 'movement' && onMovement && onMovement()}
                 {typeOfRegister == 'debt' && onDebt && onDebt()}
-                {/* {typeOfRegister == 'saving' && onSave && onSave()} */}
+                {typeOfRegister == 'saving' && onSave && onSave()}
                 {typeOfRegister == 'creditCard' && onCreditCard && onCreditCard()}
             </section>
         </>

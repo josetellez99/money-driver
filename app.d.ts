@@ -98,7 +98,7 @@ type BudgetItem = {
     amount: number;
     used: number;
     remaining: number;
-    month?: string;
+    month?: Date;
     userId?: string;
     budgetCategoryId?: string;
     subcategories?: BudgetItem[];

@@ -8,7 +8,7 @@ interface HeaderProps {
     userProfileURL: string;
 }
 
-export const Header: React.FC<HeaderProps> = ({nombre = 'Jose', userProfileURL}) => {
+export const Header: React.FC<HeaderProps> = () => {
     return (
         <>
             <header className='mb-8'>
@@ -19,9 +19,9 @@ export const Header: React.FC<HeaderProps> = ({nombre = 'Jose', userProfileURL})
                                 <LiaMoneyBillWaveSolid className={'text-[44px]'} />
                             </Link>
                         </li>
-                        <li className='flex align-middle'>
+                        {/* <li className='flex align-middle'>
                             <HiOutlineMenu className={'text-[44px]'} />
-                        </li>
+                        </li> */}
                         {/* <li className='flex gap-4'>
                             <p className='flex flex-col'>
                                 <span className='text-lg font-bold text-end'>Bienvenid@</span>

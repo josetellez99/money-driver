@@ -1,9 +1,16 @@
-function SavingsPage () {
+import ElementTitle from "@/components/ElementTitle"
+import DownBar from '@/components/DownBar'
+import MainDefault from "@/components/MainDefault"
+
+export default function SavingPage () {
     return (
         <>
-            <h1>Pagina de ahorros</h1>
+            <MainDefault
+                paddingForDownBar={true}
+            >
+                <ElementTitle title='Comming soon...' />
+                <DownBar />
+            </MainDefault>
         </>
     )
 }
-
-export default SavingsPage

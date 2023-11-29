@@ -6,6 +6,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { incomeCase, expenseCase, movementCase } from '@/app/lib/createTransactionCases';
 import { cookies } from 'next/headers'
+import setMonthForBudgetItem from '@/utils/setMonthForBudgetItem'
 
 const prisma = new PrismaClient()
 
@@ -550,6 +551,70 @@ export async function calculateTotalAmountInAccounts() {
             },
             where: {
                 userId: myUserId,
+            },
+        });
+
+        return total._sum.amount;
+    } catch (error) {
+        console.error("Error calculating total amount in account:", error);
+        throw error;
+    }
+}
+
+export async function getAvailableMoneyStartingThisMonth () {
+    noStore()
+
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+
+    try {
+        const availableStartingThisMonth = await prisma.startingMonthStatus.findMany({
+            where: {
+                userId: myUserId,
+            }
+        });
+
+        // Create a target date string in ISO format from the current year and month
+        const targetDate = new Date(currentYear, currentMonth, 1).toISOString();
+
+        // Find the first item in the availableStartingThisMonth array where the monthAndYear property matches the target date
+        // The monthAndYear property is converted to a Date object and then to an ISO string
+        // The ISO string is split at 'T' to get just the date part, which is then compared to the target date
+        const infoThisMonth = availableStartingThisMonth?.find(
+            available => new Date(available.monthAndYear).toISOString().split('T')[0] === targetDate.split('T')[0]
+        );
+
+        return infoThisMonth?.availableMoney;
+
+    } catch (error) {
+        console.error("Error fetching available starting this month:", error);
+        throw error;
+    }
+}
+
+export async function sumTotalBudgetCategoriesThisMonth (type: 'income' | 'expense') {
+    noStore()
+
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+
+    // Create timestamps for the first and last day of the current month
+    const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+    const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
+
+    try {
+        const total = await prisma.budgetItem.aggregate({
+            _sum: {
+                amount: true,
+            },
+            where: {
+                userId: myUserId,
+                type: type,
+                // Add a condition to the where clause to only include items where the month is within the current month
+                month: {
+                    gte: new Date(firstDayOfMonth),
+                    lte: new Date(lastDayOfMonth)
+                }
             },
         });
 

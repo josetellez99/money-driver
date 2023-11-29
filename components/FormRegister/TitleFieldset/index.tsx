@@ -27,7 +27,6 @@ const TitleFieldset: React.FC<TitleFieldsetProps> = ({className, title, onChange
                 <input 
                     type="text" 
                     onChange={handleChange}
-                    defaultValue={title}
                     value={title}
                     readOnly={readOnly}
                     className={`h-[36px] w-full border-b-[1px] bg-backgroundBlue border-greenYellow px-3 focus:rounded-md ${styles.input} ${className} ${readOnlyStyles}`}

@@ -5,6 +5,8 @@ import MainDefault from '@/components/MainDefault';
 import CreditCardTable from '@/components/CreditCardTable';
 import ConfirmationMessage from '@/components/ConfirmationMessage';
 import { cookies } from 'next/headers'
+import DownBar from '@/components/DownBar'
+
 
 
 const BudgetAccountPage: React.FC = async () => {
@@ -14,7 +16,9 @@ const BudgetAccountPage: React.FC = async () => {
 
     return (
         <>
-            <MainDefault>
+            <MainDefault
+                paddingForDownBar={true}
+            >
                 { showConfirmationMessage && showConfirmationMessage?.value !== 'Error' && (
                     <ConfirmationMessage
                         message={showConfirmationMessage?.value!}
@@ -40,6 +44,7 @@ const BudgetAccountPage: React.FC = async () => {
                     userCreditsCards={creditCardsData}
                 /> */}
             </MainDefault>
+            <DownBar />
         </>
     );
 };

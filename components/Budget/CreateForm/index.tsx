@@ -31,9 +31,8 @@ const CreateForm: React.FC<CreateFormProps> = ({type}) => {
         amount: 0,
         used: 0,
         remaining: 0,
-        month: setMonthForBudgetItem(),
+        month: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
         subcategories: []
-    
     })
 
     // The state of the fieldset that show the subcategories inputs

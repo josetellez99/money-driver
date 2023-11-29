@@ -15,14 +15,11 @@ const SummaryTransactionListServerSide: React.FC<SummaryTransactionListServerSid
 
     const transactions = await fetchUserTransactions(transactionsToFetch.type || 'all', transactionsToFetch.limit)
 
-    // Reverse the array to show the last transactions first
-    const reversedTransactions = transactions.reverse();
-
     return (
         <>
             <ElementTitle title={title} />
             <ul className="flex flex-col gap-2 my-4">
-                {reversedTransactions.map(transaction => (
+                {transactions.map(transaction => (
                     <Summarytransaction 
                         key={transaction.id} 
                         transactionData={transaction} 

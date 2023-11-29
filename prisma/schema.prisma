@@ -23,6 +23,7 @@ model User {
   accounts     account[]
   budgetCategories BudgetItem[]
   budgetSubcategories BudgetItemSubcategory[]
+  startingMonthStatus StartingMonthStatus[]
 }
 
 model Transaction {
@@ -59,7 +60,7 @@ model BudgetItem {
     amount              Int
     used                Int
     remaining           Int
-    month               String
+    month               DateTime
     userId              String
     user      User     @relation(fields: [userId], references: [id])
     budgetSubcategories BudgetItemSubcategory[]
@@ -76,4 +77,12 @@ model BudgetItem {
     userId              String
     user                User        @relation(fields: [userId], references: [id])
     budgetCategory      BudgetItem     @relation(fields: [budgetCategoryId], references: [id])
+  }
+
+  model StartingMonthStatus {
+    id                  String      @id @default(uuid())
+    monthAndYear        DateTime
+    availableMoney      Int
+    userId              String
+    user                User        @relation(fields: [userId], references: [id])
   }

@@ -1,5 +1,5 @@
 import React from 'react'
-
+import Styles from './Budget.module.css'
 import SectionDefault from '@/components/SectionDefault'
 
 import ElementTitle from '@/components//ElementTitle'
@@ -25,7 +25,7 @@ const Budget: React.FC<BudgetProps> = async ({title, type}) => {
 
     return (
         <>
-            <SectionDefault className='my-4'>
+            <SectionDefault className={`${Styles.sectionWithAHorizontalScroll} my-4`}>
                 <ElementTitle title={title} />
                 <table>
                     <BudgetHeader />

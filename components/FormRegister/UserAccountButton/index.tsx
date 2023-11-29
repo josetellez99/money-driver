@@ -5,13 +5,13 @@ import formatMoney from "@/utils/formatMoney"
 interface UserAccountButtonProps {
     buttonData: UserAccount | BudgetItem,
     isActive: boolean,
-    onClick?: React.MouseEventHandler<HTMLInputElement>
+    onClick?: React.ChangeEventHandler<HTMLInputElement>
     accountType?: string
 }
 
 const UserAccountButton: React.FC<UserAccountButtonProps> = ({buttonData, isActive, onClick, accountType}) => {
 
-    const handleClick = (event: React.MouseEvent<HTMLInputElement>) => {
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         onClick && onClick(event)
     }
 
@@ -32,7 +32,7 @@ const UserAccountButton: React.FC<UserAccountButtonProps> = ({buttonData, isActi
                         type="checkbox" 
                         checked
                         hidden
-                        onClick={handleClick}
+                        onChange={handleChange}
                         name={accountType} 
                         id={`${accountType}-${buttonData.title}`} 
                     />
@@ -41,7 +41,7 @@ const UserAccountButton: React.FC<UserAccountButtonProps> = ({buttonData, isActi
                         type="checkbox" 
                         checked={false}
                         hidden
-                        onClick={handleClick}
+                        onChange={handleChange}
                         name={accountType} 
                         id={`${accountType}-${buttonData.title}`} 
                     />

@@ -7,18 +7,20 @@ import UserAccountButton from '@/components/FormRegister/UserAccountButton'
 import RegularButtonList from '@/components/RegularButtonList'
 import RegularButton from '@/components/RegularButton'
 
+import ElementTitle from '@/components/ElementTitle'
+
 interface OnDebtFieldsetProps {
-    userAccounts: UserAccount[],
-    userDebts: Debt[],
-    currentTransaction: Transaction,
-    setCurrentTransaction: React.Dispatch<React.SetStateAction<Transaction>>,
+    // userAccounts: UserAccount[],
+    // userDebts: Debt[],
+    // currentTransaction: Transaction,
+    // setCurrentTransaction: React.Dispatch<React.SetStateAction<Transaction>>,
 }
 
 const OnDebtFieldset: React.FC<OnDebtFieldsetProps> = ({
-    userAccounts, 
-    userDebts, 
-    currentTransaction,
-    setCurrentTransaction,
+    // userAccounts, 
+    // userDebts, 
+    // currentTransaction,
+    // setCurrentTransaction,
 }) => {
 
     // Solo falta resolver lo del submitdss
@@ -29,60 +31,60 @@ const OnDebtFieldset: React.FC<OnDebtFieldsetProps> = ({
     })
     const[listDebtsToShow, setListDebtsToShow] = React.useState<Debt[]>([])
 
-    const RegularButtonHanlderClick = (type: string) => {
-        setSelectedDebt({
-            ...selectedDebt,
-            type: type
-        })
-        type === 'Deuda cobrada' && setListDebtsToShow(userDebts.filter( item => !item.toPay))
-        type === 'Deuda pagada' && setListDebtsToShow(userDebts.filter( item => item.toPay))
-        setCurrentTransaction({
-            ...currentTransaction,
-            accountFrom: '',
-            accountTo: '',
-        })
-    }
+    // const RegularButtonHanlderClick = (type: string) => {
+    //     setSelectedDebt({
+    //         ...selectedDebt,
+    //         type: type
+    //     })
+    //     type === 'Deuda cobrada' && setListDebtsToShow(userDebts.filter( item => !item.toPay))
+    //     type === 'Deuda pagada' && setListDebtsToShow(userDebts.filter( item => item.toPay))
+    //     setCurrentTransaction({
+    //         ...currentTransaction,
+    //         accountFrom: '',
+    //         accountTo: '',
+    //     })
+    // }
 
 
-    const debtItemHandleClick = (debtTitle: string, debtId: number) => {
-        setSelectedDebt({
-            ...selectedDebt,
-            id: debtId
-        })
+    // const debtItemHandleClick = (debtTitle: string, debtId: number) => {
+    //     setSelectedDebt({
+    //         ...selectedDebt,
+    //         id: debtId
+    //     })
 
-        if(selectedDebt.type === 'Deuda cobrada') {
-            setCurrentTransaction({
-                ...currentTransaction,
-                accountFrom: debtTitle
-            })
-        }
-        if(selectedDebt.type === 'Deuda pagada') {
-            setCurrentTransaction({
-                ...currentTransaction,
-                accountTo: debtTitle
-            })
-        }
-    }
+    //     if(selectedDebt.type === 'Deuda cobrada') {
+    //         setCurrentTransaction({
+    //             ...currentTransaction,
+    //             accountFrom: debtTitle
+    //         })
+    //     }
+    //     if(selectedDebt.type === 'Deuda pagada') {
+    //         setCurrentTransaction({
+    //             ...currentTransaction,
+    //             accountTo: debtTitle
+    //         })
+    //     }
+    // }
 
-    const accountHandleClick = (debtTitle: string) => {
-        if(selectedDebt.type === 'Deuda cobrada') {
-            setCurrentTransaction({
-                ...currentTransaction,
-                accountTo: debtTitle
-            })
-        }
-        if(selectedDebt.type === 'Deuda pagada') {
-            setCurrentTransaction({
-                ...currentTransaction,
-                accountFrom: debtTitle
-            })
-        }
-    }
+    // const accountHandleClick = (debtTitle: string) => {
+    //     if(selectedDebt.type === 'Deuda cobrada') {
+    //         setCurrentTransaction({
+    //             ...currentTransaction,
+    //             accountTo: debtTitle
+    //         })
+    //     }
+    //     if(selectedDebt.type === 'Deuda pagada') {
+    //         setCurrentTransaction({
+    //             ...currentTransaction,
+    //             accountFrom: debtTitle
+    //         })
+    //     }
+    // }
 
 
     return (
         <>
-        <RegularButtonList>
+        {/* <RegularButtonList>
             <RegularButton
                 buttonData={{
                     title: 'Deuda cobrada'
@@ -133,7 +135,10 @@ const OnDebtFieldset: React.FC<OnDebtFieldsetProps> = ({
                         ))}
                     </AccountsFieldsets>
                 </>
-            )}
+            )} */}
+            <div className='bg-green-500 text-black p-2 rounded text-center'>
+                <ElementTitle title='This section is comming soon, youll be able to handle debts easily' />
+            </div>
         </>
     )
 }

@@ -7,12 +7,20 @@ import PopUpLayer from '@/components/PopupLayer'
 import RegisterOptionLinkList from '@/components/RegisterOptionLinkList'
 import RegisterOptionLink from '@/components/RegisterOptionLink'
 
+const buttonsData = [
+    {title: 'Ingreso', href: 'registrar/Ingreso', id: 1},
+    {title: 'Egreso', href: 'registrar/Egreso', id: 2},
+    {title: 'Movimiento', href: 'registrar/Movimiento', id: 3},
+    {title: 'Deuda', href: 'registrar/Deuda', id: 4},
+    {title: 'Ahorro', href: 'registrar/Ahorro', id: 5},
+    {title: 'Tarjeta de credito', href: 'registrar/Tarjeta-de-credito', id: 6}
+]
+
 
 interface RegisterButtonProps {
-    buttonsDataList: ButtonData[]
 }
 
-const RegisterButton: React.FC<RegisterButtonProps> = ({buttonsDataList}) => {
+const RegisterButton: React.FC<RegisterButtonProps> = ({}) => {
 
     const [open, setOpen] = React.useState<boolean>(false)
 
@@ -33,7 +41,7 @@ const RegisterButton: React.FC<RegisterButtonProps> = ({buttonsDataList}) => {
         { open && 
             <PopUpLayer bottom='bottom-[70px]'>
                 <RegisterOptionLinkList>
-                    {buttonsDataList.map( item => (
+                    {buttonsData.map( item => (
                         <RegisterOptionLink
                             key={item.id}
                             buttonData={item}

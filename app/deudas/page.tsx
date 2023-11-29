@@ -1,7 +1,16 @@
+import ElementTitle from "@/components/ElementTitle"
+import DownBar from '@/components/DownBar'
+import MainDefault from "@/components/MainDefault"
+
 export default function DebtsPage () {
     return (
         <>
-            <h1>Pagina de deudas</h1>
+            <MainDefault
+                paddingForDownBar={true}
+            >
+                <ElementTitle title='Comming soon...' />
+                <DownBar />
+            </MainDefault>
         </>
     )
 }

@@ -30,9 +30,9 @@ const AccountsTable: React.FC = async () => {
                 </thead>
                 <tbody className='block w-full'>
                     {
-                        userAccounts.map( account => {
-                            return (
+                        userAccounts.map( account => (
                                 <tr 
+                                    key={account.id}
                                     className='flex justify-between border border-greenYellow rounded-lg p-1 px-2 mb-2 w-full cursor-pointer'
                                 >
                                     <Link
@@ -44,8 +44,7 @@ const AccountsTable: React.FC = async () => {
                                         <td>{formatMoney(account.amount)}</td>
                                     </Link>
                                 </tr>
-                            )
-                        })
+                            ))
                     }
                     <AddNewAccountRow
                         href={'/presupuesto-cuentas/create-account'}

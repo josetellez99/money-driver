@@ -4,12 +4,14 @@ import React from "react"
 
 import FieldsetTypeOfRegister from "@/components/FormRegister/FieldsetTypeOfRegister"
 import FieldSetDate from "@/components/FormRegister/FieldSetDate"
-
 import AccountsFieldset from "@/components/FormRegister/AccountsFieldset"
 import OnIncomeFieldsets from "@/components/FormRegister/AccountsFieldsets/OnIncomeFieldsets"
 import OnExpenseFieldsets from "@/components/FormRegister/AccountsFieldsets/OnExpensesFieldsets"
 import OnMovementFieldsets from "@/components/FormRegister/AccountsFieldsets/OnMovementFieldsets"
 import OnDebtFieldset from "@/components/FormRegister/AccountsFieldsets/OnDebtFieldset";
+import OnSaveFieldset from "@/components/FormRegister/AccountsFieldsets/OnSaveFieldset";
+import OnCreditCardFieldset from "@/components/FormRegister/AccountsFieldsets/OnCreditCardFieldset";
+
 import AmountFieldset from "@/components/FormRegister/AmountFieldset"
 import DescriptionFieldset from "@/components/FormRegister/DescriptionFieldset"
 import SubmitButton from "@/components/FormRegister/SubmitButton"
@@ -121,7 +123,7 @@ const FormRegister: React.FC<FormRegisterProps> = ({
                     setConfirmationMessage={setConfirmationMessage}
                 />
             )}
-            <form onSubmit={handleSubmit} className="border mb-4 py-4 p-2 border-white rounded-md">
+            <form onSubmit={handleSubmit} className="border mb-4| py-4 p-2 border-white rounded-md">
                 <FieldsetTypeOfRegister
                     currentTransaction={currentTransaction}
                     setCurrentTransaction={setCurrentTransaction}
@@ -152,15 +154,23 @@ const FormRegister: React.FC<FormRegisterProps> = ({
                             currentTransaction={currentTransaction}
                             setCurrentTransaction={setCurrentTransaction}
                         />}                    
-                    // onDebt={() =>
-                    //     <OnDebtFieldset
-                    //         userAccounts={accounts}
-                    //         currentTransaction={currentTransaction}
-                    //         setCurrentTransaction={setCurrentTransaction}
-                    //         userDebts={debts}
-                    //     />}
-                    // onSave={}
-                    // onCreditCard={}
+                    onDebt={() =>
+                        <OnDebtFieldset
+                            // userAccounts={accounts}
+                            // currentTransaction={currentTransaction}
+                            // setCurrentTransaction={setCurrentTransaction}
+                            // userDebts={debts}
+                        />}
+                    onSave={() =>
+                        <OnSaveFieldset 
+                        
+                        />
+                    }
+                    onCreditCard={() =>
+                        <OnCreditCardFieldset 
+                        
+                        />
+                    }
                 />
                 <AmountFieldset
                     amount={currentTransaction.amount}

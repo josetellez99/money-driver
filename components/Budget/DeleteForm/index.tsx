@@ -71,14 +71,14 @@ const DeleteForm: React.FC<DeleteFormProps> = ({
                                     <div className='flex justify-between items-center gap-4 mb-1'>
                                         <input
                                             type="text"
-                                            className={`${styles.subCategoriesInput} border-1 px-2 bg-greenYellow border-b-greenYellow w-2/4 `}
+                                            className={`${styles.subCategoriesInput} rounded-md text-black border-1 px-2 bg-greenYellow border-b-greenYellow w-2/4 `}
                                             value={subCategory.title}
                                             readOnly={true}
 
                                         />
                                         <input
                                             type="text"
-                                            className={`${styles.subCategoriesInput} border-1 px-2 bg-greenYellow border-b-greenYellow w-2/4 text-end`}
+                                            className={`${styles.subCategoriesInput} rounded-md text-black border-1 px-2 bg-greenYellow border-b-greenYellow w-2/4 text-end`}
                                             value={formatMoney(subCategory.amount)}
                                             readOnly={true}
                                         />

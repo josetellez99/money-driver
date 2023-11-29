@@ -48,3 +48,20 @@
     appearance: none;
     margin: 0; /* Optional: Set margin to control spacing */
 }
+
+.sectionWithAHorizontalScroll {
+    overflow-x: scroll;
+}
+
+.sectionWithAHorizontalScroll::-webkit-scrollbar {
+    height: 4px;
+    border-radius: 4px;
+}
+
+.sectionWithAHorizontalScroll::-webkit-scrollbar-thumb {
+    background: #888; /* Adjust scrollbar thumb color */
+}
+
+.sectionWithAHorizontalScroll::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Adjust scrollbar thumb color when hovering */
+}
