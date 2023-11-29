@@ -6,8 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
-  },
+    "lint": "next lint",
+    "postinstall": "prisma generate"
+  }, 
   "dependencies": {
     "@prisma/client": "^5.5.2",
     "@types/node": "20.6.2",
@@ -27,6 +28,7 @@
     "typescript": "5.2.2",
     "use-debounce": "^10.0.0"
   },
+  
   "devDependencies": {
     "@types/react-datepicker": "^4.19.3",
     "css-loader": "^6.8.1",
