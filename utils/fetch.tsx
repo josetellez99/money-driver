@@ -22,7 +22,7 @@ export async function setStartingMonthStatus () {
     await prisma.startingMonthStatus.create({
         data: {
             monthAndYear: new Date(currentYear, currentMonth, 1),
-            userId: '4f968b8e-0790-488f-8ee9-4ed06509954e',
+            userId: '19117e45-ef87-48af-b2a5-df7f1eb36e94',
             availableMoney: 320000
         }
     })

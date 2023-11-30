@@ -6,11 +6,10 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { incomeCase, expenseCase, movementCase } from '@/app/lib/createTransactionCases';
 import { cookies } from 'next/headers'
-import setMonthForBudgetItem from '@/utils/setMonthForBudgetItem'
 
 const prisma = new PrismaClient()
 
-const myUserId = '4f968b8e-0790-488f-8ee9-4ed06509954e'
+const myUserId = '19117e45-ef87-48af-b2a5-df7f1eb36e94'
 
 // SOME DOCS
 
