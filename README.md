@@ -1,40 +1,37 @@
-## Money driver
-An easy way to manage and take the control of your finances
+## Money Manager
+(This project is being developed...)
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+THE PRODUCT
 
-## Getting Started
+An easy way to manage and take control of your finances. You can create monthly budgets, register all your transactions, and define different categories for your expenditures. You only need to focus on recording your transactions and creating budgets; this product will handle all your finances, providing:
 
-First, run the development server:
+- Clarity on how far your money stretches till the end of the month.
+- Insight into how much money you can spend in each expense category.
+- Quick and easy transaction registration.
+- Easy adjustment of your accounts whenever needed.
+- The ability to manage all aspects of your personal finances easily, always maintaining control.
+  
+THE PROJECT
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun run dev
-```
+This project has been planned and developed with the intention of making it available for anyone looking to organize their personal finances.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+It has been designed with a Mobile-First approach, as using it through the phone is the simplest way to develop the habit of recording all your transactions. Whether it's a simple cup of coffee or paying your rent, this project aims to make financial management seamless.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The project is being developed using the following technologies:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- React
+- Next.js 14
+- TypeScript
+- Tailwind
+- CSS modules
+- Prisma ORM (handling database)
+  
+It is designed under the server-side rendering philosophy, prioritizing server-side processing and leaving client-side rendering for user interactivity. Most data fetching is done in the server component that needs the data or in the page component passing data to the client component requiring it. Currently, no React hooks or global state handlers are being used. Client and server connections are established through Next.js server actions. All database tables are created to ensure the app functions properly. Database modifications are made using Prisma ORM, taking into consideration the preservation of data consistency using $transactions.
 
-## Learn More
+The project will continue to grow with the following features:
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
-
+- User authentication
+- Debts handling
+- Savings handling
+- Voice interface for transaction creation
+- Desktop version
