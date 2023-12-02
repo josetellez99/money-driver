@@ -529,6 +529,9 @@ export async function calculateTotalAmountThisMonth(type: 'income' | 'expense') 
                 },
             },
         });
+        if(!total._sum.amount) {
+            return 0
+        }
         return total._sum.amount as number
     } catch (error) {
         console.error("Error calculating total amount:", error);
@@ -578,6 +581,10 @@ export async function getAvailableMoneyStartingThisMonth () {
         const infoThisMonth = availableStartingThisMonth?.find(
             available => new Date(available.monthAndYear).toISOString().split('T')[0] === targetDate.split('T')[0]
         );
+
+        if(!infoThisMonth) {
+            return 0
+        }
 
         return infoThisMonth?.availableMoney as number;
 

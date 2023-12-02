@@ -123,7 +123,7 @@ const FormRegister: React.FC<FormRegisterProps> = ({
                     setConfirmationMessage={setConfirmationMessage}
                 />
             )}
-            <form onSubmit={handleSubmit} className="border mb-4| py-4 p-2 border-white rounded-md">
+            <form onSubmit={handleSubmit} className="border mb-4 py-4 p-2 border-white rounded-md">
                 <FieldsetTypeOfRegister
                     currentTransaction={currentTransaction}
                     setCurrentTransaction={setCurrentTransaction}
