@@ -29,6 +29,7 @@ const AmountFieldset: React.FC<AmountFieldsetProps> = ({className, titleElement 
                 <FieldsetTitle title={titleElement} />
                 <input 
                     type="text" 
+                    inputMode="numeric"
                     readOnly={readOnly}
                     onChange={handleChange}
                     required
