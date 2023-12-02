@@ -17,6 +17,25 @@ interface BudgetProps {
     type: 'income' | 'expense';
 }
 
+import type { InferGetStaticPropsType, GetStaticProps } from 'next'
+
+type Repo = {
+  name: string
+  stargazers_count: number
+}
+
+
+export const getStaticProps: GetStaticProps = async () => {
+    const res = await fetch('https://api.github.com/repos/vercel/next.js')
+    const repo: Repo = await res.json()
+  
+    return {
+      props: {
+        repo
+      }
+    }
+  }
+
 const Budget: React.FC<BudgetProps> = async ({title, type}) => {
     noStore()
     
