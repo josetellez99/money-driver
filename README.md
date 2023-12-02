@@ -1,4 +1,5 @@
 ## Money Manager
+Check out the project here: https://money-driver-eight.vercel.app/
 (This project is being developed...)
 
 THE PRODUCT
