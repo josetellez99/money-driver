@@ -2,6 +2,7 @@ import React from 'react';
 import AccountsTable from '@/components/AccountsTable';
 import Budget from '@/components/Budget';
 import MainDefault from '@/components/MainDefault';
+import SectionDefault from '@/components/SectionDefault';
 import CreditCardTable from '@/components/CreditCardTable';
 import ConfirmationMessage from '@/components/ConfirmationMessage';
 import { cookies } from 'next/headers'
@@ -31,15 +32,21 @@ const BudgetAccountPage: React.FC = async () => {
                         type='error'
                     />
                 )}
-                <AccountsTable />
-                <Budget
-                    title={'Presupuesto de ingresos'}
-                    type='income'
-                />
-                <Budget
-                    title={'Presupuesto de gastos'}
-                    type='expense'
-                />
+                <SectionDefault>
+                    <AccountsTable />
+                </SectionDefault>
+                <SectionDefault>
+                    <Budget
+                        title={'Presupuesto de ingresos'}
+                        type='income'
+                    />
+                </SectionDefault>
+                <SectionDefault>
+                    <Budget
+                        title={'Presupuesto de gastos'}
+                        type='expense'
+                    />
+                </SectionDefault>
                 {/* <CreditCardTable 
                     userCreditsCards={creditCardsData}
                 /> */}

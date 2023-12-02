@@ -20,3 +20,12 @@ body {
   color: white;
   background-color: #121927
 }
+
+.section {
+  display: grid;
+  grid-template-columns: 4fr 3fr 4fr;
+  justify-content: center;
+
+}
+
+/* grid grid-cols-3 gap-10 justify-center */
