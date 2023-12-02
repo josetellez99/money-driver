@@ -16,6 +16,7 @@ const buttonsData = [
 
 export default function Home() {
 
+
   return (
     <>
       <MainDefault
