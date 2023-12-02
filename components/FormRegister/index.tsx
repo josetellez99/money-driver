@@ -78,6 +78,7 @@ const FormRegister: React.FC<FormRegisterProps> = ({
 
         const response = await fetch('/api/create-transaction', {
             method: 'POST',
+            cache: 'no-store',
             headers: {
                 'Content-Type': 'application/json',
             },

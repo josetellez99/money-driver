@@ -21,11 +21,19 @@ body {
   background-color: #121927
 }
 
-.section {
-  display: grid;
-  grid-template-columns: 4fr 3fr 4fr;
-  justify-content: center;
-
+@media (min-width: 415px) {
+  .section {
+    display: grid;
+    grid-template-columns: 4fr 3fr 4fr;
+    justify-content: center;
+  }
 }
 
-/* grid grid-cols-3 gap-10 justify-center */
+@media (max-width: 414px) {
+  .section {
+    display: block;
+  }
+  .container {
+    display: none;
+  }
+}
