@@ -11,12 +11,17 @@ const BudgetRowAddNewCategory: React.FC<BudgetRowAddNewCategoryProps> = ({href})
     return (
         <>
         <tr 
-            className={`${styles.tableRowNewCategoryLayout} border-2 border-greenYellow rounded-lg my-2 cursor-pointer`}
+            className={`${styles.tableRowNewCategoryLayout} my-2 cursor-pointer`}
         >
             <Link
                 href={href}
             >
-                <td className='border-greenYellow px-2 font-bold'>Añadir nueva categoria...</td>
+                <td className='font-bold'>
+                        <p className="flex gap-2 items-center">
+                            <span className="text-xl text-greenYellow">+</span>
+                            <span>Añadir nueva categoria...</span>
+                        </p>
+                    </td>
             </Link>
         </tr>
         </>

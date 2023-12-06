@@ -1,14 +1,27 @@
 import styles from '@/components/Budget/Budget.module.css'
+import React from 'react';
 
-const BudgetHeader = () => {
+interface BudgetHeaderProps {
+    type: 'income' | 'expense';
+}
+
+const BudgetHeader: React.FC<BudgetHeaderProps> = ({type}) => {
+
+    let titles = []
+
+    if (type === 'income') {
+        titles = ['Categoria', 'Presupuesto', 'Ingresado', 'Por Ingresar']
+    } else {
+        titles = ['Categoria', 'Presupuesto', 'Gastado', 'Por gastar']
+    }
+
     return (
         <>
             <thead>
                 <tr className={`${styles.tableRowLayout}`}>
-                    <th className=''>Categoria</th>
-                    <th>Monto</th>
-                    <th>Usado</th>
-                    <th>Por usar</th>
+                    {titles.map((title) => (
+                        <th key={title}>{title}</th>
+                    ))}
                 </tr>
             </thead>
         </>

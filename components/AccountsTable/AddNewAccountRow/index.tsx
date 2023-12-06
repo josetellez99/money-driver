@@ -11,12 +11,17 @@ const AddNewAccountRow: React.FC<AddNewAccountRowProps> = ({href}) => {
     return(
         <>
             <tr 
-                className='flex justify-between border-2 border-greenYellow rounded-lg p-1 px-2 mb-2 w-full cursor-pointer'
+                className='px-2 mb-2 w-full cursor-pointer'
             >
                 <Link
                     href={href}
                 >
-                    <td className='font-bold'>Añadir nueva cuenta...</td>
+                    <td className='font-bold'>
+                        <p className="flex gap-2 items-center">
+                            <span className="text-xl text-greenYellow">+</span>
+                            <span>Añadir nueva cuenta...</span>
+                        </p>
+                    </td>
                 </Link>
             </tr>
         </>

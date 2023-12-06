@@ -24,13 +24,13 @@ export default function RootLayout({
       <body className={`${inter.className} p-1`}>
         <Header nombre={'José David Tellez'} userProfileURL="nan" />
         <section className='section'>
-          <div className='container flex items-center justify-center'> 
+          <div className='container'> 
             <ElementTitle title='Desktop version is comming soon...' />
           </div>
           <div className='content'>
             {children}
           </div>
-          <div className='container flex items-center justify-center'>
+          <div className='container'>
             <ElementTitle title='Desktop version is comming soon...' />
           </div>
         </section>

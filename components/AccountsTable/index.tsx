@@ -20,7 +20,7 @@ const AccountsTable: React.FC = async () => {
 
     return (
         <>
-            <ElementTitle title={'Cuentas'} />
+            <ElementTitle title={'Tus cuentas'} />
             <table className='block w-full mb-10'>
                 <thead className='block w-full'>
                     <tr className='flex justify-between mb-2 px-2'>
@@ -49,10 +49,10 @@ const AccountsTable: React.FC = async () => {
                     <AddNewAccountRow
                         href={'/presupuesto-cuentas/create-account'}
                     />
+                    <HighLightedContainer inTable={true}>
+                        <TitleValuePair title={'Disponible'} textColor={'text-black'} value={totalsAccounts} />
+                    </HighLightedContainer>
                 </tbody>
-                        <HighLightedContainer>
-                            <TitleValuePair title={'Disponible'} textColor={'text-black'} value={totalsAccounts} />
-                        </HighLightedContainer>
             </table>
         </>
     )

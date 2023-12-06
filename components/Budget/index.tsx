@@ -47,7 +47,9 @@ const Budget: React.FC<BudgetProps> = async ({title, type}) => {
             <SectionDefault className={`${Styles.sectionWithAHorizontalScroll} my-4`}>
                 <ElementTitle title={title} />
                 <table>
-                    <BudgetHeader />
+                    <BudgetHeader
+                        type={type}
+                    />
                     <tbody>
                         { budgetData?.map((category) => (
                                 <>
