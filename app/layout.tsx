@@ -27,7 +27,7 @@ export default function RootLayout({
           <div className='container flex items-center justify-center'> 
             <ElementTitle title='Desktop version is comming soon...' />
           </div>
-          <div className=''>
+          <div className='content'>
             {children}
           </div>
           <div className='container flex items-center justify-center'>
