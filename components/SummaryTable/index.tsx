@@ -30,7 +30,7 @@ const SummaryTable = async () => {
     return (
     <table className="w-full mb-10">
         <tbody className="block bg-purple rounded-lg">
-            <tr className="grid grid-cols-2 grid-rows-2 py-3 gap-3">
+            <tr className="grid grid-cols-2 grid-rows-2 py-5 gap-3">
                 {tableData.map( item => (
                     <td 
                         key={item.id}

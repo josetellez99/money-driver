@@ -23,7 +23,7 @@ type FormRegisterData = {
 type Transaction = {
     id?: string,
     type: string,
-    date: Date,
+    date: Date | string,
     accountFrom: string,
     accountFromId: string,
     subcategoryFrom?: string | null,

@@ -11,6 +11,9 @@ const config: Config = {
       backgroundImage: {
         
       },
+      opacity: {
+        '95': '0.95',
+      },
       colors: {
         backgroundBlue: '#121927',
         purple: '#935FF0',
@@ -18,6 +21,12 @@ const config: Config = {
         mainGray: '#3C414D',
         darkBlue: '#263045'
       }
+    },
+  },
+  variants: {
+    extend: {
+      width: ['active'],
+      height: ['active'],
     },
   },
   plugins: [],

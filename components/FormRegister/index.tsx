@@ -51,6 +51,8 @@ const FormRegister: React.FC<FormRegisterProps> = ({
         description: '',
     })
 
+    console.log(currentTransaction)
+
     const [confirmationMessage, setConfirmationMessage] = React.useState({
         show: false,
         type: '',
@@ -106,8 +108,12 @@ const FormRegister: React.FC<FormRegisterProps> = ({
             date: new Date(),
             accountFrom: '',
             accountFromId: '',
+            subcategoryFrom: '',
+            subcategoryFromId: '',
             accountTo: '',
             accountToId: '',
+            subcategoryTo: '',
+            subcategoryToId: '',
             amount: 0,
             description: '',
         });
