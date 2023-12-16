@@ -1,7 +1,9 @@
-import './globals.css'
+import '@/app/globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import React from 'react'
+import MainDefault from '@/components/MainDefault'
+import DownBar from '@/components/DownBar'
 
 import { Header } from '@/components/Header'
 import ElementTitle from '@/components/ElementTitle'
@@ -18,6 +20,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+
+  console.log('Root layout')
 
   return (
     <html lang="en" className='relative'>

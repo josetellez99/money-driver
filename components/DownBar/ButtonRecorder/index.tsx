@@ -8,30 +8,12 @@ import { fetchUserAccounts, fetchUserBudgetWithSubcategories } from '@/app/lib/a
 import { getParamsFromUserVoice } from "@/app/lib/voice-assistant";
 import Summarytransaction from "@/components/SummaryTransaction";
 import SubmitButton from "@/components/FormRegister/SubmitButton";
-import { FaArrowRight } from "react-icons/fa";
 import { FaMicrophone } from "react-icons/fa";
-
-
 import PopUpLayer from "@/components/PopupLayer";
 
 
-const API_KEY = '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'
+const API_KEY = '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'
 const openai = new OpenAI({ apiKey: API_KEY, dangerouslyAllowBrowser: true });
-
-
-
-// La experiencia es que cuando des click lo que pasará es que se mostrará el modal.
-// Vamos a seguir trabajando en esa funcionalidad y vamos a mostrar el modal y debajo la barra.
-// Algo que será muy interesante será incorporar las ultimas transacciones en tiempo real y añadirlas a la lista en el home, eso será sublime
-// Entonces hagamos al experiencia escueta y con botones y luego tood automatico
-// Puedes tener algo para que se grabe el audio hasta que la información esté completa y allí se detenga y se habiliten los bbotones de confirmar o descartar
-// Manejar el error de cuando el usuario no dice nada
-// No puede ser que nos gastemos una petición cada vez que se unde ese botóm, eso es muy costoso. Lo haremos en la pagina al inicio.
-// Solo activar los botones cuando la información esté completa
-// Cómo rellenar los campos si el usuario no los nombró
-// Que se grabe mientras el botón está pulsado
-
-
 
 async function getAudioTranscription (audioFile: any) {
     const transcription = await openai.audio.transcriptions.create({
@@ -162,7 +144,6 @@ const ButtonRecorder = () => {
         description: ''
     })
 
-    console.log(newTransaction)
 
     React.useEffect(() => {
         fetchUserAccounts()
@@ -199,7 +180,9 @@ const ButtonRecorder = () => {
                     audioChunks.push(event.data);
                 }
             };
+            
             mediaRecorder.onstop = async () => {
+
                 const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
                 const audioFile = new File([audioBlob], 'audio.wav', { type: 'audio/wav' });
 
@@ -289,49 +272,56 @@ const ButtonRecorder = () => {
                 <PopUpLayer bottom="bottom-[70px]">
                     <section className="flex flex-col items-center justify-between">
                         <section>
-                            <p className="flex flex-col opacity-90">
-                                <span className="text-center mb-4">Mantén pulsado el botón y menciona lo siguiente para registrar una transacción:</span>
-
-                                <p className="flex items-center mb-2">
-                                    <FaArrowRight className="text-greenYellow mr-2" />
-                                    <span>¿Es un ingreso, egreso o movimiento?</span>
-                                </p>
-                                <p className="flex items-center mb-2">
-                                    <FaArrowRight className="text-greenYellow mr-2" />
-                                    <span>¿Qué cuentas y categorias están en la transacción?</span>
-                                </p>
-                                <p className="flex items-center mb-2">
-                                    <FaArrowRight className="text-greenYellow mr-2" />
-                                    <span>Monto de la transacción</span>
-                                </p>
-                                <p className="flex items-center mb-2">
-                                    <FaArrowRight className="text-greenYellow mr-2" />
-                                    <span>Descripción de la transacción</span>
-                                </p>
-                            </p>
-                        </section>
-                        {/* <section>
-                            { isRecording && (
-                                <p>Estoy escuchando</p>
-                            )}
-                        </section> */}
-                        <section className="w-full">
-                            <Summarytransaction transactionData={newTransaction} showSkeletons={true} />
-                            <div className="mt-4">
-                                { activeButtons && (
-                                    <>
-                                        <SubmitButton title="Confirmar" buttonType={true} buttonStyle="confirm" onClick={handleConfirmTransaction} />
-                                        <SubmitButton title="Descartar" buttonType={true} buttonStyle="cancel" onClick={handleDiscardTransaction} />
-                                    </>
-                                )}
-                                { !activeButtons && (
-                                    <>
-                                        <SubmitButton title="Confirmar" buttonType={true} buttonStyle="confirm" desactive={true} />
-                                        <SubmitButton title="Descartar" buttonType={true} buttonStyle="cancel" desactive={true} />
-                                    </>
-                                )}
+                            <h2 className="flex justify-center mb-2">
+                                { isRecording && ('Escuchando...')}
+                                { !isRecording && ('Escuchando')}
+                            </h2>
+                            <div className="mb-5">
+                                <h3 className="font-bold mb-2">Tus Cuentas personales:</h3>
+                                <ul className="grid grid-cols-3">
+                                    { userAccounts?.map((account) => (
+                                        <li 
+                                            key={account.id}
+                                            className="font-thin text-center"    
+                                        >{account.title}</li>
+                                        ))}
+                                </ul>
+                            </div>
+                            <div className="mb-5">
+                                <h3 className="font-bold mb-2">Tus categorias de ingreso:</h3>
+                                <ul className="grid grid-cols-3">
+                                    { userIncomeBudget?.map((budget) => (
+                                        <li 
+                                            key={budget.id}
+                                            className="font-thin"
+                                        >{budget.title}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                            <div>
+                                <h3 className="font-bold mb-2">Tus categorias de egreso:</h3>
+                                <ul className="grid grid-cols-3 gap-2">
+                                    { userExpenseBudget?.map((budget) => (
+                                        <li 
+                                            key={budget.id}
+                                            className="font-thin text-center text-sm"
+                                        >{budget.title}</li>    
+                                    ))}                                
+                                </ul>
                             </div>
                         </section>
+                            <section className="w-full">
+                                <Summarytransaction transactionData={newTransaction} showSkeletons={true} />
+                                <div className="flex gap-2 mt-4">
+                                    { activeButtons && (
+                                        <SubmitButton title="Confirmar" buttonType={true} buttonStyle="confirm" onClick={handleConfirmTransaction} />
+                                    )}
+                                    { !activeButtons && (
+                                        <SubmitButton title="Confirmar" buttonType={true} buttonStyle="confirm" desactive={true} />
+                                    )}
+                                    <SubmitButton title="Cancelar" buttonType={true} buttonStyle="cancel" onClick={handleDiscardTransaction} />
+                                </div>
+                            </section>
                     </section>
                 </PopUpLayer>
             )}

@@ -16,12 +16,8 @@ const buttonsData = [
 
 export default function Home() {
 
-
   return (
     <>
-      <MainDefault
-        paddingForDownBar={true}
-      >
         <SectionDefault>
           <ElementTitle title='Tus finanzas este mes' />
           <SummaryTable />
@@ -35,8 +31,6 @@ export default function Home() {
               transactionsToFetch={{limit: 10}}
             />
         </SectionDefault>
-      </MainDefault>
-      <DownBar />
     </>
   )
 }

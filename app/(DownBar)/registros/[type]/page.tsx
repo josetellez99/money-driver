@@ -1,10 +1,8 @@
 import React from 'react';
-import MainDefault from '@/components/MainDefault';
 import Link from 'next/link';
 import SummaryTransactionList from '@/components/SummaryTransactionList';
 import { fetchUserTransactions } from '@/app/lib/action';
 import ElementTitle from '@/components/ElementTitle';
-import DownBar from '@/components/DownBar'
 
 const registerTypes = [
     {title: 'Todos', href: '/registros/todos'},
@@ -38,9 +36,6 @@ const RegistersPage: React.FC<Props> = async ({params}) => {
 
     return (
         <>
-            <MainDefault
-                paddingForDownBar={true}
-            >
                 <ElementTitle 
                     title='Tus transacciones'
                 />
@@ -66,8 +61,6 @@ const RegistersPage: React.FC<Props> = async ({params}) => {
                 <SummaryTransactionList 
                     transactions={transactions} 
                 />
-            </MainDefault>
-            <DownBar />
         </>
     );
 };

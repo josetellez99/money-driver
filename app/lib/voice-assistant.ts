@@ -1,7 +1,8 @@
 import OpenAI from "openai";
 
-const API_KEY = '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'
-const openai = new OpenAI({ apiKey: API_KEY, dangerouslyAllowBrowser: true });
+// const openai = new OpenAI({ apiKey: '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', dangerouslyAllowBrowser: true });
+
+const openai = new OpenAI({ apiKey: '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', dangerouslyAllowBrowser: true });
 
 export const getParamsFromUserVoice = async (
     userVoiceTranscript: string,
