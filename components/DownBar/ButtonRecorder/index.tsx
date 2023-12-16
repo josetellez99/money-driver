@@ -5,23 +5,11 @@ import React from "react"
 import OpenAI from "openai";
 import createTransactionVoicefull from '@/app/lib/test'
 import { fetchUserAccounts, fetchUserBudgetWithSubcategories } from '@/app/lib/action'
-import { getParamsFromUserVoice } from "@/app/lib/voice-assistant";
 import Summarytransaction from "@/components/SummaryTransaction";
 import SubmitButton from "@/components/FormRegister/SubmitButton";
 import { FaMicrophone } from "react-icons/fa";
 import PopUpLayer from "@/components/PopupLayer";
 
-
-const API_KEY = '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'
-const openai = new OpenAI({ apiKey: API_KEY, dangerouslyAllowBrowser: true });
-
-async function getAudioTranscription (audioFile: any) {
-    const transcription = await openai.audio.transcriptions.create({
-        file: audioFile,
-        model: 'whisper-1',
-    })
-    return transcription;
-}
 
 function joinStrings(stringArray: string[]): string {
     return stringArray.join(', ');
@@ -180,24 +168,11 @@ const ButtonRecorder = () => {
                     audioChunks.push(event.data);
                 }
             };
-            
+
             mediaRecorder.onstop = async () => {
 
                 const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
                 const audioFile = new File([audioBlob], 'audio.wav', { type: 'audio/wav' });
-
-                const userVoiceTranscription = await getAudioTranscription(audioFile);
-
-                const params = await getParamsFromUserVoice(
-                    userVoiceTranscription.text,
-                    userAccountsNames, 
-                    userIncomeBudgetNames, 
-                    userExpenseBudgetNames, 
-                    incomeSubcategoriesnames, 
-                    expenseSubcategoriesnames
-                )
-
-                console.log(params)
 
                 const newTransactionFromVoice = getNewTransactionDataFromVoice(params, userAccounts, userIncomeBudget, userExpenseBudget)
 
@@ -206,15 +181,16 @@ const ButtonRecorder = () => {
                 setActiveButtons(true)
 
 
-                // const formData = new FormData();
-                // formData.append('audioFile', audioFile);
+                const formData = new FormData();
+                formData.set('username', 'Chris');
+                formData.set('audioFile', audioFile);
                 
                 
-                // const res = await fetch('/api/send-audio', {
-                //     method: 'POST',
-                //     body:  formData
-                // });
-                // const data = await res.json();
+                const res = await fetch('/api/transaction-voice', {
+                    method: 'POST',
+                    body:  formData
+                });
+                const data = await res.json();
 
 
                 
@@ -228,7 +204,7 @@ const ButtonRecorder = () => {
         });
     }
 
-    const handleStopRecord = () => {
+    const handleStopRecord = async () => {
         mediaRecorder.stop();
         audioChunks = [];
         setIsRecording(false)
