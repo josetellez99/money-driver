@@ -11,7 +11,7 @@ import { FaMicrophone } from "react-icons/fa";
 import PopUpLayer from "@/components/PopupLayer";
 
 
-let mediaRecorder;
+let mediaRecorder: MediaRecorder | null;
 let audioChunks : any = [];
 
 const ButtonRecorder = () => {
@@ -104,6 +104,7 @@ const ButtonRecorder = () => {
     }
 
     const handleStopRecord = async () => {
+        if(!mediaRecorder) return;
         mediaRecorder.stop();
         audioChunks = [];
         setIsRecording(false)

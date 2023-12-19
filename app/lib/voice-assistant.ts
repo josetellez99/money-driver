@@ -115,11 +115,20 @@ export const getParamsFromUserVoice = async (
                 },
             },
         ]
-    });     
+    });
 
-    if(response.choices[0].message.tool_calls[0]) {
-        const responseAsObject = JSON.parse(response.choices[0].message.tool_calls[0].function.arguments)
-        return responseAsObject
+    if (response) {
+        const choices = response.choices;
+        if (choices && choices[0]) {
+            const message = choices[0].message;
+            if (message && message.tool_calls && message.tool_calls[0]) {
+                const args = message.tool_calls[0].function.arguments;
+                if (args) {
+                    const responseAsObject = JSON.parse(args);
+                    return responseAsObject;
+                }
+            }
+        }
     }
 }
 
