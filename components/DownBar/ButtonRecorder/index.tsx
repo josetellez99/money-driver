@@ -11,99 +11,6 @@ import { FaMicrophone } from "react-icons/fa";
 import PopUpLayer from "@/components/PopupLayer";
 
 
-function joinStrings(stringArray: string[]): string {
-    return stringArray.join(', ');
-}
-
-const getNamesAsString = (array: any[]) => {
-    const itemsArray = array.map((account) => account.title)
-    const namesString = joinStrings(itemsArray)
-    return namesString
-}
-
-const getSubcategoriesNamesAsString = (array: any[]) => {
-    const itemsArray = array.filter((budget: BudgetItem) => budget.subcategories?.length! > 0)
-    const namesArray = itemsArray.map( (budget: BudgetItem) => {
-        return { category: budget.title, subcategories: joinStrings(budget.subcategories?.map((subcategory: BudgetItem) => subcategory.title)) }
-    })
-
-    const namesString = namesArray.map(item => `Categoria: ${item.category}. Subcategorias: ${item.subcategories}.`).join(', ');
-
-    if(namesString.length === 0) {
-        return 'There is not categories with subcategories'
-    }
-
-    return namesString;
-}
-
-const findElementIdByTitle = (itemsArray: UserAccount[] | BudgetItem[], titleToFind: string) => {
-    const itemFound = itemsArray.find((item) => item.title === titleToFind)
-    if(itemFound) {
-        return itemFound.id
-    }
-    return ''
-}
-
-const findSubcategory = (budget: BudgetItem[], parentCategory: string, subcategoryToFind: string) => {
-    const budgetItem = budget.find((item) => item.title === parentCategory)
-    if(budgetItem) {
-        const subcategoryItem = budgetItem.subcategories?.find((subcategory) => subcategory.title === subcategoryToFind)
-        if(subcategoryItem) {
-            return subcategoryItem.id
-        }
-    }
-    return ''
-} 
-
-const getNewTransactionDataFromVoice = (params: any, userAccount: UserAccount[], userIncomeBudget: BudgetItem[], userExpenseBudget: BudgetItem[]) => {
-
-    if(params.type === 'income') {
-
-        const subcategoryID = findSubcategory(userExpenseBudget, params.accountTo, params.subcategoryTo)
-
-        return {
-            type: params.type,
-            date: new Date().toISOString(),
-            accountFrom: params.accountFrom,
-            accountFromId: findElementIdByTitle(userIncomeBudget, params.accountFrom),
-            subcategoryFrom: params.subcategoryFrom,
-            subcategoryFromId: subcategoryID,
-            accountTo: params.accountTo,
-            accountToId: findElementIdByTitle(userAccount, params.accountTo),
-            amount: params.amount,
-            description: params.description
-        } 
-    } else if (params.type === 'expense') {
-
-        const subcategoryID = findSubcategory(userExpenseBudget, params.accountTo, params.subcategoryTo)
-
-        return {
-            type: params.type,
-            date: new Date().toISOString(),
-            accountFrom: params.accountFrom,
-            accountFromId: findElementIdByTitle(userAccount, params.accountFrom),
-            accountTo: params.accountTo,
-            accountToId: findElementIdByTitle(userExpenseBudget, params.accountTo),
-            subcategoryTo: params.subcategoryTo,
-            subcategoryToId: subcategoryID,
-            amount: params.amount,
-            description: params.description
-        }
-    } else if (params.type === 'movement') {
-        return {
-            type: params.type,
-            date: new Date().toISOString(),
-            accountFrom: params.accountFrom,
-            accountFromId: findElementIdByTitle(userAccount, params.accountFrom),
-            accountTo: params.accountTo,
-            accountToId: findElementIdByTitle(userAccount, params.accountTo),
-            amount: params.amount,
-            description: params.description
-        }
-    }
-}
-
-
 let mediaRecorder;
 let audioChunks : any = [];
 
@@ -111,11 +18,11 @@ const ButtonRecorder = () => {
 
     const [isRecording, setIsRecording] = React.useState(false)
     const[openModal, setOpenModal] = React.useState(false)
+    const[activeButtons, setActiveButtons] = React.useState<boolean>(false)
 
     const[userAccounts, setUserAccounts] = React.useState<UserAccount[]>([])
     const[userIncomeBudget, setUserIncomeBudget] = React.useState<BudgetItem[]>([])
     const[userExpenseBudget, setUserExpenseBudget] = React.useState<BudgetItem[]>([])
-    const[activeButtons, setActiveButtons] = React.useState<boolean>(false)
 
     const[newTransaction, setNewTransaction] = React.useState<Transaction>({
         type: '',
@@ -153,12 +60,6 @@ const ButtonRecorder = () => {
     const handleRecordStart = async () => {
 
         setOpenModal(true)
-
-        const userAccountsNames = getNamesAsString(userAccounts)
-        const userIncomeBudgetNames = getNamesAsString(userIncomeBudget)
-        const userExpenseBudgetNames = getNamesAsString(userExpenseBudget)
-        const incomeSubcategoriesnames = getSubcategoriesNamesAsString(userIncomeBudget)
-        const expenseSubcategoriesnames = getSubcategoriesNamesAsString(userExpenseBudget)
         
         navigator.mediaDevices.getUserMedia({ audio: true })
         .then((stream) => {
@@ -172,28 +73,26 @@ const ButtonRecorder = () => {
             mediaRecorder.onstop = async () => {
 
                 const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-                const audioFile = new File([audioBlob], 'audio.wav', { type: 'audio/wav' });
-
-                const newTransactionFromVoice = getNewTransactionDataFromVoice(params, userAccounts, userIncomeBudget, userExpenseBudget)
-
-                console.log(newTransactionFromVoice)
-                setNewTransaction(newTransactionFromVoice)
-                setActiveButtons(true)
-
+                const audioFile = new File([audioBlob], 'audio.wav', { type: 'audio/wav' });              
 
                 const formData = new FormData();
-                formData.set('username', 'Chris');
+                formData.set('userAccounts', JSON.stringify(userAccounts));
+                formData.set('userIncomeBudget', JSON.stringify(userIncomeBudget));
+                formData.set('userExpenseBudget', JSON.stringify(userExpenseBudget));
                 formData.set('audioFile', audioFile);
-                
                 
                 const res = await fetch('/api/transaction-voice', {
                     method: 'POST',
                     body:  formData
                 });
                 const data = await res.json();
+                const transactionData = data.transactionData;
 
+                // here is where we set to validate the transaction, an dif it is valid, we set the new transaction
+                // And if the validation throws an error, we need to find the field where the error exits and give the user the modal to complete the information fast and easy
 
-                
+                setNewTransaction(transactionData)                
+                setActiveButtons(true)
             };
             
             mediaRecorder.start();
@@ -211,8 +110,21 @@ const ButtonRecorder = () => {
     }
 
 
-    const handleConfirmTransaction = () => {
+    const handleConfirmTransaction = async () => {
         setActiveButtons(false)
+
+        const response = await fetch('/api/create-transaction', {
+            method: 'POST',
+            cache: 'no-store',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newTransaction),
+        });
+
+        const {transaction} = await response.json();
+        console.log(transaction)
+        setOpenModal(false)
     }
 
     const handleDiscardTransaction = () => {
