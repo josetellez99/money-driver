@@ -19,7 +19,7 @@ interface DateFieldSetProps {
 const DateFieldSet: React.FC<DateFieldSetProps> = ({currentTransaction, setCurrentTransaction}) => {
     
     const CustomInputDate: React.FC<CustomInputDateProps> = forwardRef(({ onClick }, ref) => {
-        const dateSpanishFormat = getDateSpanishFormat(currentTransaction.date)
+        const dateSpanishFormat = getDateSpanishFormat(currentTransaction.date as Date)
         return (
             <>     
                 <div className=" p-2 px-4 rounded border border-greenYellow cursor-pointer" onClick={onClick} >
@@ -46,7 +46,7 @@ const DateFieldSet: React.FC<DateFieldSetProps> = ({currentTransaction, setCurre
         >
                 <FieldsetTitle title='Seleccion una fecha' />
                 <DatePicker
-                    selected={currentTransaction.date}
+                    selected={currentTransaction.date as Date}
                     todayButton="Hoy"
                     onChange={onChangeHandle}
                     customInput={<CustomInputDate />}
