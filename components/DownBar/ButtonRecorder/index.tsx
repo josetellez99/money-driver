@@ -151,7 +151,9 @@ const ButtonRecorder = () => {
         <>
             <button 
                 onMouseDown={handleRecordStart} 
-                onMouseUp={handleStopRecord} 
+                onMouseUp={handleStopRecord}
+                onTouchStart={handleRecordStart}
+                onTouchEnd={handleStopRecord}
                 className='h-[58px] active:h-[68px] w-[58px] active:w-[68px] bg-greenYellow rounded-full flex justify-center items-center'
             >
                 <FaMicrophone className="text-[32px] text-black" />
